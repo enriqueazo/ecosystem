@@ -5,9 +5,9 @@ FR-023) y dónde quedan los valores aprobados (FR-020). Amplía el
 [contrato visual de la spec 004](../../004-territorio-hexagonal/contracts/visual-direction.md), cuyos
 valores de hierba, fondo, cámara y luz **no cambian**.
 
-> **Estado**: variantes (nieve, arena y agua) y nivel del agua `hw` **aprobados por el responsable el
-> 2026-11-25** (T033), sin cambios sobre la propuesta. El río (`w`, `rp`) y la composición con el río
-> están **pendientes** (T050).
+> **Estado**: **aprobado por el responsable el 2026-11-25**, sin cambios sobre la propuesta, en dos
+> partes: variantes (nieve, arena y agua) y nivel del agua `hw` (T033), y río (`w`, `rp`) con la
+> composición completa (T050).
 > Artefacto de diseño: <https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp> (privado: solo lo abre su
 > propietario hasta que se comparta).
 
@@ -39,18 +39,20 @@ de research.md R-7. Contiene:
 | Agua: base, luz y sombra | `#4E8E9F`, `#6DA8B5` y `#3D7585` | Igual |
 | Agua: lecho y lámina del lateral | lecho `#7A6A55` y `#5E5040`; lámina en el 12 % superior | Igual |
 | Nivel del agua `hw` (con `h = 0,35`) | 0,25 | 0,25 |
-| Anchura del cauce `w` (con `W ≈ 0,866`) | 0,26 | |
-| Radio de la poza `rp` | 0,17 | |
+| Anchura del cauce `w` (con `W ≈ 0,866`) | 0,26 | 0,26 |
+| Radio de la poza `rp` | 0,17 | 0,17 |
 | Composición de las variantes | data-model.md → *Composición de partida* | Igual (nieve 8, arena 6, agua 6) |
-| Composición del río | data-model.md → *Composición de partida* | |
-| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp> | Variantes: 2026-11-25. Río: pendiente |
+| Composición del río | data-model.md → *Composición de partida* | Igual (6 piezas, de (5,1) al lago por (3,7)) |
+| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp> | Variantes y río: 2026-11-25 |
 
 **Cómo se hicieron las texturas** (registro de T032): con un script determinista (Python, sin
 dependencias, fuera del repositorio) que reutiliza el ruido y el borde hexagonal del script de la spec
 004, a partir de la paleta de esta tabla. Se subieron al artefacto y son **los mismos archivos** que se
 importan en Unity. Las referencias 16:9 y 9:19.5 son renders reales de la escena en *Play*. Medido en la
 aprobación: contraste de la nieve frente al fondo de 30 L* (93,4 frente a 63,4) y `T_Water_Top`
-idéntica a sí misma desplazada (½, ½).
+idéntica a sí misma desplazada (½, ½). El río no añade texturas: la orilla usa `M_Grass_Top`, las
+paredes `M_Earth_Side` y el agua `M_Water_Top`; sus referencias (uniones, manantial y desembocadura)
+son renders reales de las 15 mallas generadas.
 
 **Condiciones que el revisor comprueba en la revisión manual**:
 - la nieve no se confunde con el fondo `#8E9BAA` ni con la arena;

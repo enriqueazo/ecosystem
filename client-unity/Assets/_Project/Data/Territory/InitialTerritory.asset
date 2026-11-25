@@ -50,9 +50,9 @@ MonoBehaviour:
     rotation: 0
   - column: 5
     row: 1
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 1
+    rotation: 4
   - column: 6
     row: 1
     terrain: 0
@@ -80,9 +80,9 @@ MonoBehaviour:
     rotation: 0
   - column: 5
     row: 2
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 2
+    rotation: 1
   - column: 6
     row: 2
     terrain: 0
@@ -115,9 +115,9 @@ MonoBehaviour:
     rotation: 0
   - column: 4
     row: 3
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 2
+    rotation: 1
   - column: 5
     row: 3
     terrain: 0
@@ -150,9 +150,9 @@ MonoBehaviour:
     rotation: 0
   - column: 4
     row: 4
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 3
+    rotation: 5
   - column: 5
     row: 4
     terrain: 0
@@ -190,9 +190,9 @@ MonoBehaviour:
     rotation: 0
   - column: 4
     row: 5
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 3
+    rotation: 2
   - column: 5
     row: 5
     terrain: 0
@@ -225,9 +225,9 @@ MonoBehaviour:
     rotation: 0
   - column: 4
     row: 6
-    terrain: 0
-    river: 0
-    rotation: 0
+    terrain: 4
+    river: 2
+    rotation: 1
   - column: 5
     row: 6
     terrain: 0

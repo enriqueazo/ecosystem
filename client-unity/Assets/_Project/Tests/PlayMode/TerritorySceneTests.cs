@@ -282,5 +282,15 @@ namespace Ecosystem.Tests.PlayMode
             Assert.That(_camera.transform.rotation, Is.EqualTo(rotation));
             Assert.That(_camera.orthographicSize, Is.EqualTo(size));
         }
+
+        /// <summary>La composición de la escena muestra un río de al menos 5 piezas (spec FR-017, US3).</summary>
+        [Test]
+        public void Scene_ShowsARiverOfAtLeastFivePieces()
+        {
+            var river = _view.Layout.Entries.Where(entry => entry.Terrain == TerrainKind.River).ToArray();
+
+            Assert.That(river, Has.Length.GreaterThanOrEqualTo(5));
+            Assert.That(river.Select(entry => entry.River), Is.SupersetOf(new[] { RiverShape.Spring, RiverShape.Straight, RiverShape.Curve }));
+        }
     }
 }

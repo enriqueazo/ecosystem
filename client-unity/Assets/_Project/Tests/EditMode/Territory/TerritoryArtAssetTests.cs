@@ -100,5 +100,25 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(material.IsKeywordEnabled("_SPECULAR_COLOR"), Is.False);
             Assert.That(material.IsKeywordEnabled("_RECEIVE_SHADOWS_OFF"), Is.True);
         }
+
+        /// <summary>RiverTile: sin malla propia (la pone la vista), orilla, tierra y agua, sin sombras.</summary>
+        [Test]
+        public void RiverTilePrefab_HasGrassEarthAndWaterMaterialsWithoutAMesh()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{Art}/Prefabs/RiverTile.prefab");
+            Assert.That(prefab, Is.Not.Null, "Falta RiverTile.prefab.");
+
+            var renderer = prefab.GetComponent<MeshRenderer>();
+            Assert.That(prefab.GetComponents<Component>(), Has.Length.EqualTo(3), "Solo Transform, MeshFilter y MeshRenderer.");
+            Assert.That(prefab.GetComponent<MeshFilter>().sharedMesh, Is.Null);
+            Assert.That(renderer.sharedMaterials, Is.EqualTo(new[]
+            {
+                AssetDatabase.LoadAssetAtPath<Material>($"{Art}/Materials/M_Grass_Top.mat"),
+                AssetDatabase.LoadAssetAtPath<Material>($"{Art}/Materials/M_Earth_Side.mat"),
+                AssetDatabase.LoadAssetAtPath<Material>($"{Art}/Materials/M_Water_Top.mat"),
+            }));
+            Assert.That(renderer.shadowCastingMode, Is.EqualTo(UnityEngine.Rendering.ShadowCastingMode.Off));
+            Assert.That(renderer.receiveShadows, Is.False);
+        }
     }
 }

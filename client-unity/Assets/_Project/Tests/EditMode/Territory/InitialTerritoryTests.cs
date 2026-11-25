@@ -80,5 +80,41 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(cells, Has.Length.GreaterThanOrEqualTo(4), kind.ToString());
             Assert.That(cells.Intersect(layout.FrontBorderCells()), Is.Not.Empty, $"{kind}: ninguna celda en el borde frontal.");
         }
+
+        /// <summary>
+        /// Spec FR-017: un río de al menos 5 piezas, con un manantial, algún tramo recto y alguna curva,
+        /// que desemboca en una celda de agua siguiendo sus aristas abiertas.
+        /// </summary>
+        [Test]
+        public void HasARiverFromASpringIntoWater()
+        {
+            var layout = Load();
+            var river = layout.Entries.Where(entry => entry.Terrain == TerrainKind.River).ToDictionary(entry => entry.Cell);
+
+            Assert.That(river, Has.Count.GreaterThanOrEqualTo(5));
+            Assert.That(river.Values.Count(entry => entry.River == RiverShape.Spring), Is.EqualTo(1));
+            Assert.That(river.Values.Count(entry => entry.River == RiverShape.Straight), Is.GreaterThanOrEqualTo(1));
+            Assert.That(river.Values.Count(entry => entry.River == RiverShape.Curve), Is.GreaterThanOrEqualTo(1));
+
+            var current = river.Values.Single(entry => entry.River == RiverShape.Spring);
+            var previous = (HexCell?)null;
+            var visited = 1;
+            while (true)
+            {
+                var exit = RiverPiece.OpenEdges(current.River, current.Rotation)
+                    .Select(edge => current.Cell.Neighbour(edge))
+                    .Single(cell => !cell.Equals(previous));
+                Assert.That(layout.Contains(exit), Is.True, $"El río sale del territorio en {current.Cell}.");
+                if (layout.TerrainAt(exit) == TerrainKind.Water) break;
+
+                Assert.That(river.ContainsKey(exit), Is.True, $"El río no continúa desde {current.Cell}.");
+                previous = current.Cell;
+                current = river[exit];
+                visited++;
+                Assert.That(visited, Is.LessThanOrEqualTo(river.Count), "El río no puede volver sobre sí mismo.");
+            }
+
+            Assert.That(visited, Is.EqualTo(river.Count), "Todas las piezas forman un solo curso.");
+        }
     }
 }

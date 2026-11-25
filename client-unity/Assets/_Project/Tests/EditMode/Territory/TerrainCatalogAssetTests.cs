@@ -180,5 +180,31 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(actual, Is.EqualTo(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>($"{Prefabs}/{prefab}")));
             Assert.That(catalog.TerrainEntryCount(kind), Is.EqualTo(1), "Una sola entrada por variante.");
         }
+
+        // --- Piezas de río del catálogo del proyecto (data-model.md → TerrainCatalogAsset.riverPrefab y .riverMeshes) ---
+
+        [Test]
+        public void ProjectCatalog_UsesTheRiverTilePrefab()
+        {
+            var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<TerrainCatalogAsset>(CatalogPath);
+
+            Assert.That(catalog.RiverPrefab, Is.EqualTo(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>($"{Prefabs}/RiverTile.prefab")));
+        }
+
+        [Test]
+        public void ProjectCatalog_HasExactlyTheFifteenRiverMeshes()
+        {
+            var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<TerrainCatalogAsset>(CatalogPath);
+
+            foreach (var (shape, rotation) in RiverPiece.CanonicalKeys())
+            {
+                Assert.That(catalog.RiverMeshEntryCount(shape, rotation), Is.EqualTo(1), $"{shape} {rotation}: una sola entrada.");
+                Assert.That(catalog.TryGetRiverMesh(shape, rotation, out var mesh), Is.True);
+                var path = $"Assets/_Project/Art/Territory/Meshes/River/River_{shape}_{rotation}.asset";
+                Assert.That(mesh, Is.EqualTo(UnityEditor.AssetDatabase.LoadAssetAtPath<Mesh>(path)), path);
+            }
+
+            Assert.That(catalog.RiverMeshEntryCount(RiverShape.Straight, 3), Is.EqualTo(0), "El recto se guarda con giro canónico 0–2.");
+        }
     }
 }
