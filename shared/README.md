@@ -124,7 +124,8 @@ Desde `server-nakama/` (requisitos en [server-nakama/README.md](../server-nakama
 |---------|----------|
 | `npm run contracts:check` | Comprueba el metaesquema, que los esquemas compilen, los ejemplos, los `id` y códigos de error únicos, `protocol.json` y que la huella de cada `id@version` coincida con `contracts.lock.json`. Cambiar un contrato sin subir su versión hace que falle. |
 | `npm run contracts:lock` | Registra la huella de cada `id@version` nuevo. **Se niega** a sobrescribir la de una versión ya registrada. |
-| `npm run generate` | Genera en `server-nakama/src/generated/` (ignorado) los validadores y las constantes que usa el módulo. Lo ejecutan solos `build`, `typecheck` y `test`. |
+| `npm run generate` | Genera en `server-nakama/src/generated/` (ignorado) los validadores y las constantes del módulo de servidor, y los validadores **C# del cliente** (`client-unity/…/Contracts.g.cs`, versionado; ADR-0010). Lo ejecutan solos `build`, `typecheck` y `test`. |
 
-La CI ejecuta `contracts:check` en cada PR. El cliente C# validará en el futuro los mismos
-archivos con una biblioteca de JSON Schema 2020-12, sin duplicar la definición a mano.
+La CI ejecuta `contracts:check` en cada PR; también falla si el C# generado del cliente está
+desactualizado. El cliente valida con esos validadores generados, que admiten el subconjunto
+declarado en ADR-0010; una palabra clave fuera de él hace fallar la generación.

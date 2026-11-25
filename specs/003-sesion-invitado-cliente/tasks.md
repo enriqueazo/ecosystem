@@ -295,14 +295,14 @@ carga, con PlayMode.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T037 [P] Crear `docs/decisions/0009-sdk-nakama-unity.md` (aceptada, research.md R-1, R-4 y R-7):
+- [X] T037 [P] Crear `docs/decisions/0009-sdk-nakama-unity.md` (aceptada, research.md R-1, R-4 y R-7):
   - SDK 3.23.0 fijado por commit;
   - `PlayerPrefs` y su revisión obligatoria al añadir cuentas;
   - el punto de extensión `IAuthenticator` (FR-004);
   - verificación solo en el editor.
 
   Cambiar el estado de `docs/decisions/0004-conectividad-sin-sdk-cliente.md` a «sustituida por 0009». Actualizar `docs/decisions/README.md`.
-- [ ] T038 [P] Crear `docs/decisions/0010-validadores-csharp-generados.md` (aceptada, research.md R-2 y R-3, con la desviación de FR-022 confirmada por el responsable) y añadir una referencia a él en `docs/decisions/0008-contratos-json-versionados.md` sin cambiar su decisión. Actualizar `shared/README.md` → *g* con la salida C# y su comprobación.
+- [X] T038 [P] Crear `docs/decisions/0010-validadores-csharp-generados.md` (aceptada, research.md R-2 y R-3, con la desviación de FR-022 confirmada por el responsable) y añadir una referencia a él en `docs/decisions/0008-contratos-json-versionados.md` sin cambiar su decisión. Actualizar `shared/README.md` → *g* con la salida C# y su comprobación.
 - [ ] T039 Actualizar el README raíz:
   - el mapa (`client-unity` conecta con Nakama);
   - los primeros pasos del cliente (configuración local);
@@ -428,3 +428,5 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T034 / A6 | 2026-11-25 | ✅ | Red: 1 caso nuevo fallaba; Green: `tools/tests/run.sh` 35/35 (también se permite `connection.example.json`). En el repositorio real, `git add -f connection.local.json` → `check-repo --only secrets` → 1 nombrando el archivo; retirado del índice. Contrato de la spec 001 actualizado |
 | T035 / A3 / C1 / C2 / SC-006 | 2026-11-25 | ✅ | **Entorno apagado**: EditMode 113/113 y PlayMode 2/2; integración → las 10 pruebas que necesitan Nakama fallan al instante (≤ 0,04 s cada una) con «Entorno local no disponible…», y las 3 de resiliencia (sin Nakama) pasan. **Entorno arrancado**: integración 13/13. **Ajuste de la propia prueba**: la cota inferior del caso «servidor mudo» (≥ 39 s) falló por 0,2 s (38,8 s), porque el tiempo límite de `UnityWebRequest` corta algo antes de 10 s. No es un requisito y se relaja al 90 % (≥ 36 s): sigue distinguiendo «tiempo agotado» de «rechazo» (≈ 6–7 s). Mediciones: 37,7 s y 7,4 s |
 | T036 | 2026-11-25 | ✅ | `client-unity/README.md`: estructura y dirección de dependencias, C# generado (no se edita), tres grupos de pruebas con comandos en modo batch, cómo llevarlos a la CI, recuperación ante la caché de Burst, conexión (identidad, sesión, versión, reintentos), configuración local, limitaciones (reinstalación = cuenta nueva) y paquetes nuevos. Sustituye «sin SDK» |
+| T037 | 2026-11-25 | ✅ | ADR-0009 (SDK 3.23.0 fijado por commit, identidad = `userId`, `IAuthenticator`, sesión en `PlayerPrefs` con revisión obligatoria al añadir cuentas, caducidades 2 h / 7 días, códigos HTTP verificados). ADR-0004 pasa a «sustituida por 0009»; índice actualizado |
+| T038 | 2026-11-25 | ✅ | ADR-0010 (alternativas descartadas, subconjunto admitido, equivalencia con Ajv en 42 ejemplos). ADR-0008 enlaza a 0010; `shared/README.md` describe la generación C# y la comprobación de desactualización |
