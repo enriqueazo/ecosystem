@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { GrpcStatus, toNakamaError } from "../../src/errors.ts";
+import { GrpcStatus, runSafely, toNakamaError } from "../../src/errors.ts";
 
 // nkruntime.Codes es un const enum: no existe en ejecución, así que se compara con su definición.
 function officialCode(name: string): number {
@@ -15,7 +15,12 @@ function officialCode(name: string): number {
 }
 
 describe("GrpcStatus", () => {
-  for (const name of ["INVALID_ARGUMENT", "PERMISSION_DENIED", "UNAUTHENTICATED"] as const) {
+  for (const name of [
+    "INVALID_ARGUMENT",
+    "PERMISSION_DENIED",
+    "INTERNAL",
+    "UNAUTHENTICATED",
+  ] as const) {
     it(`${name} coincide con nkruntime.Codes`, () => {
       assert.equal(GrpcStatus[name], officialCode(name));
     });
@@ -43,5 +48,55 @@ describe("toNakamaError", () => {
     });
 
     assert.deepEqual(Object.keys(JSON.parse(error.message)).sort(), ["code", "message"]);
+  });
+});
+
+describe("runSafely", () => {
+  it("devuelve el resultado si no hay errores", () => {
+    assert.equal(
+      runSafely(
+        () => "ok",
+        () => assert.fail("no debe registrar"),
+      ),
+      "ok",
+    );
+  });
+
+  it("deja pasar los errores del contrato sin cambiarlos", () => {
+    const contractError = toNakamaError(GrpcStatus.INVALID_ARGUMENT, { code: "X", message: "y" });
+
+    assert.throws(
+      () =>
+        runSafely(
+          () => {
+            throw contractError;
+          },
+          () => assert.fail("no debe registrar"),
+        ),
+      (thrown) => thrown === contractError,
+    );
+  });
+
+  it("convierte una excepción inesperada en INTERNAL sin detalles y la registra en el servidor", () => {
+    const logged: string[] = [];
+
+    assert.throws(
+      () =>
+        runSafely(
+          () => {
+            throw new TypeError("Cannot add property errors, object is not extensible");
+          },
+          (message) => logged.push(message),
+        ),
+      (thrown: { code: number; message: string }) => {
+        assert.equal(thrown.code, 13);
+        assert.deepEqual(JSON.parse(thrown.message), {
+          code: "INTERNAL",
+          message: "Error interno del servidor.",
+        });
+        return true;
+      },
+    );
+    assert.deepEqual(logged, ["TypeError: Cannot add property errors, object is not extensible"]);
   });
 });

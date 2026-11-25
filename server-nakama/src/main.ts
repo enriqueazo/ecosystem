@@ -2,21 +2,26 @@
 // Nakama busca InitModule y las funciones RPC en el ámbito global y analiza el código para
 // localizarlas: deben declararse con `function` en el nivel superior (research.md R-2).
 
-import { toNakamaError } from "./errors.ts";
+import { runSafely, toNakamaError } from "./errors.ts";
 import { MODULE_VERSION } from "./generated/contracts.js";
 import { handleProtocolVersion } from "./rpc/protocolVersion.ts";
 
 function rpcProtocolVersion(
   ctx: nkruntime.Context,
-  _logger: nkruntime.Logger,
+  logger: nkruntime.Logger,
   _nk: nkruntime.Nakama,
   payload: string,
 ): string {
-  const outcome = handleProtocolVersion(payload, ctx.userId);
-  if (!outcome.ok) {
-    throw toNakamaError(outcome.grpcStatus, outcome.error);
-  }
-  return JSON.stringify(outcome.response);
+  return runSafely(
+    () => {
+      const outcome = handleProtocolVersion(payload, ctx.userId);
+      if (!outcome.ok) {
+        throw toNakamaError(outcome.grpcStatus, outcome.error);
+      }
+      return JSON.stringify(outcome.response);
+    },
+    (message) => logger.error("protocol_version: error inesperado: %s", message),
+  );
 }
 
 function InitModule(

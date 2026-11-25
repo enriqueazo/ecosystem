@@ -4,6 +4,8 @@
 // El código generado no puede depender de nada en ejecución (FR-004): el único ayudante de Ajv
 // que aparece con los contratos actuales (ucs2length, para minLength/maxLength) se sustituye por
 // una implementación propia equivalente; cualquier otro ayudante hace fallar la generación.
+// Tampoco puede guardar estado en las funciones (la VM de Nakama las congela): ver
+// withoutValidatorState. Los validadores generados solo devuelven true/false, sin .errors.
 
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -122,7 +124,30 @@ function buildValidatorsCode(contracts: Contract[]): string {
         "Evita esa palabra clave de JSON Schema o amplía scripts/generate.ts con un ADR.",
     );
   }
-  return usesUcs2length ? `${code}\n${UCS2LENGTH_SOURCE}\n` : `${code}\n`;
+  return `${withoutValidatorState(code)}\n${usesUcs2length ? `${UCS2LENGTH_SOURCE}\n` : ""}`;
+}
+
+// La VM de Nakama congela los objetos globales después de InitModule, así que un validador no puede
+// guardar estado en sí mismo: `validateN.errors = …` lanzaría "object is not extensible". Se
+// eliminan esas asignaciones (los validadores solo devuelven true/false) y se rechaza cualquier
+// esquema cuyo código necesite leer .errors de otro validador o escribir estado de evaluación
+// dinámica ($dynamicRef con unevaluated*).
+function withoutValidatorState(code: string): string {
+  if (/"dynamic(Props|Items)":true/.test(code)) {
+    throw new Error(
+      "Un esquema necesita estado de evaluación dinámica, que no funciona con las funciones " +
+        "congeladas de la VM de Nakama. Simplifica el contrato (sin $dynamicRef/unevaluated*) " +
+        "o amplía scripts/generate.ts con un ADR.",
+    );
+  }
+  const stripped = code.replace(/\bvalidate\d+\.errors\s*=\s*/g, "");
+  if (/\bvalidate\d+\.errors\b/.test(stripped)) {
+    throw new Error(
+      "El código generado lee .errors de otro validador, que no puede guardar estado en la VM " +
+        "congelada de Nakama. Evita esa composición de esquemas o amplía scripts/generate.ts con un ADR.",
+    );
+  }
+  return stripped;
 }
 
 function contractConstName(id: string): string {

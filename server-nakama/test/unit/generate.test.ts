@@ -82,6 +82,37 @@ describe("generate", () => {
     assert.equal(mod.validateDemoEchoRequest({ text: "😀😀😀😀" }), false);
   });
 
+  it("los validadores funcionan con las funciones congeladas, como en la VM de Nakama", async () => {
+    const fixture = makeFixture();
+    generate(fixture);
+    const mod = await importGenerated(fixture.outDir);
+    // Nakama congela los objetos globales tras InitModule: un validador no puede guardar estado en
+    // sí mismo (p. ej. validate.errors = ...) sin lanzar "object is not extensible".
+    Object.freeze(mod.validateDemoEchoRequest);
+    Object.freeze(mod.validateDemoEchoResponse);
+
+    assert.equal(mod.validateDemoEchoRequest({ text: "abc" }), true);
+    assert.equal(mod.validateDemoEchoRequest([]), false);
+    assert.equal(mod.validateDemoEchoResponse({ ok: true, extra: 1 }), false);
+  });
+
+  it("rechaza contratos que exigirían escribir estado en los validadores", () => {
+    const fixture = makeFixture();
+    const contract = {
+      ...demoContract,
+      request: {
+        $schema: "https://json-schema.org/draft/2020-12/schema",
+        type: "object",
+        $dynamicAnchor: "node",
+        unevaluatedProperties: false,
+        properties: { child: { $dynamicRef: "#node" } },
+      },
+    };
+    writeFileSync(join(fixture.contractsDir, "rpc", "demo_echo.json"), JSON.stringify(contract));
+
+    assert.throws(() => generate(fixture), /estado|congel/);
+  });
+
   it("genera las constantes de protocolo, módulo y contrato", async () => {
     const fixture = makeFixture();
     generate(fixture);

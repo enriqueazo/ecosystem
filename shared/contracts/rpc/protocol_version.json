@@ -39,6 +39,11 @@
       "code": "INVALID_ARGUMENT",
       "grpcStatus": 3,
       "when": "La petición no es JSON válido o no es un objeto."
+    },
+    {
+      "code": "INTERNAL",
+      "grpcStatus": 13,
+      "when": "Error inesperado del servidor. Se registra solo en el servidor; la respuesta no incluye detalles internos."
     }
   ],
   "examples": {
