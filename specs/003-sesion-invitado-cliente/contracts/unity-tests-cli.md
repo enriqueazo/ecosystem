@@ -6,7 +6,7 @@ raíz del repositorio:
 | Grupo | Necesita | Comando |
 |-------|----------|---------|
 | EditMode sin servidor | Nada | `"$UNITY" -batchmode -nographics -projectPath client-unity -runTests -testPlatform EditMode -assemblyNames Ecosystem.Tests.EditMode -testResults editmode.xml -logFile -` |
-| PlayMode sin servidor | Nada | `"$UNITY" -batchmode -projectPath client-unity -runTests -testPlatform PlayMode -assemblyNames Ecosystem.Tests.PlayMode -testResults playmode.xml -logFile -` |
+| PlayMode sin servidor | Nada | `"$UNITY" -batchmode -projectPath client-unity -runTests -testPlatform PlayMode -assemblyNames Ecosystem.Tests.PlayMode -testResults playmode.xml -logFile -` (la prueba fuerza `ECOSYSTEM_NAKAMA_CONFIG=none`, así que el resultado no depende de la configuración local) |
 | Integración | Entorno local con módulo (`tools/check-backend.sh --module` → 0) y configuración ([client-config.md](client-config.md)) | `"$UNITY" -batchmode -nographics -projectPath client-unity -runTests -testPlatform EditMode -assemblyNames Ecosystem.Tests.Integration -testResults integration.xml -logFile -` |
 
 - Código de salida: `0` si todo pasa y `2` si alguna prueba falla. No se usa `-quit`.

@@ -32,8 +32,11 @@ actualizarse. `UpdateRequired`, `AccountError` y `ConfigurationError` no ofrecen
 | Sin red, tiempo agotado, HTTP 5xx o 404 del RPC | Sí (hasta 3) | `Offline` si se agotan | «Sin conexión con el servidor.» + «Reintentar» |
 | El refresco falla con 401 (refresco caducado o revocado) | Una vez, como reautenticación | Se sigue con la reautenticación | — |
 | Autenticación de invitado rechazada (401 o 403, cuenta deshabilitada) | No | `AccountError` | «No se puede acceder a la cuenta.» |
-| Clave de servidor incorrecta (401 al autenticar sin sesión previa) | No | `AccountError`; el registro de desarrollo indica que se revise `serverKey` | Igual |
+| Clave de servidor incorrecta (Nakama rechaza la autenticación básica del cliente) | No | `ConfigurationError`; el registro de desarrollo indica que se revise `serverKey` (sin mostrar su valor) | «Configuración de conexión no válida.» |
 | Falta configuración o no es válida | No | `ConfigurationError` | «Configuración de conexión ausente.» El registro (aviso) nombra `client-unity/LocalConfig/connection.local.json` |
+
+La diferencia entre clave errónea y cuenta deshabilitada se basa en la respuesta real de Nakama
+(código HTTP y mensaje), confirmada en T019.
 
 Los códigos HTTP exactos de Nakama para refresco y autenticación rechazados se confirman con las
 pruebas de integración y se corrigen aquí si difieren.

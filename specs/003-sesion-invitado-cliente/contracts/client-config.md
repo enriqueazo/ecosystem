@@ -2,6 +2,9 @@
 
 ## Fuentes, por orden de precedencia
 
+0. Si `ECOSYSTEM_NAKAMA_CONFIG=none`, se ignoran el archivo y las demás variables y el estado es
+   `ConfigurationError`. Lo usan las pruebas «sin servidor» para no depender de la configuración
+   local.
 1. **Variables de entorno**, si están todas definidas. Las usarían la CI o las pruebas en modo
    batch:
 

@@ -170,6 +170,7 @@ build (FR-027).
 | El *stripping* de IL2CPP elimina tipos de Newtonsoft o del SDK | El paquete de Unity ya incluye `link.xml`; se comprueba con las builds de Android e iOS (quickstart C3) |
 | Con el SDK, la prueba PlayMode registra errores sin configuración | Sin configuración, el estado es «error de configuración» y se registra como aviso |
 | Errores de sesión distintos de lo previsto (401 o 403 al refrescar) | Las pruebas de integración fijan los códigos reales y se documentan en `connection-states.md` |
+| Unity Test Framework 1.6 no admite pruebas `async Task` en EditMode | T013 lo verifica con la primera prueba de integración; si no las admite, se usa `[UnityTest]` con `IEnumerator` que espera a la `Task` |
 
 ## Complexity Tracking
 

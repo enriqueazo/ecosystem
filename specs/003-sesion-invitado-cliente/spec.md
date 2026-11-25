@@ -310,9 +310,11 @@ omitir con justificación escrita.
 - **FR-021**: El SDK de Nakama para Unity MUST añadirse con versión exacta, compatible con Unity
   6000.3.29f1 y con IL2CPP en Android e iOS, con un ADR que **sustituye** a ADR-0004 (estado de
   ADR-0004 → «sustituida por NNNN»). El ADR incluye el punto de extensión de FR-004.
-- **FR-022**: La biblioteca de validación de JSON Schema 2020-12 en C# MUST ser compatible con Unity e
-  IL2CPP (sin generación de código en tiempo de ejecución que IL2CPP no admita), con versión exacta
-  y justificada en un ADR o en la ampliación de ADR-0008.
+- **FR-022**: La validación de contratos en C# MUST basarse en la definición compartida, ser
+  compatible con Unity e IL2CPP (sin generar código en ejecución), fijar la versión de toda
+  dependencia y justificarse en un ADR. **Decisión confirmada (2026-11-25)**: validadores C#
+  generados desde `shared/contracts/` con el subconjunto declarado de JSON Schema 2020-12, usando
+  el Newtonsoft oficial de Unity para leer el JSON (ADR-0010, research.md R-2).
 - **FR-023**: Cada paquete nuevo MUST documentarse en la tabla de paquetes de
   `client-unity/README.md` con su necesidad (principio IV).
 
@@ -350,7 +352,7 @@ omitir con justificación escrita.
 | ID | Decisión | Qué bloquea | Cómo se resuelve |
 |----|----------|-------------|------------------|
 | P-01 | Versión exacta del SDK de Nakama para Unity y su forma de instalación (paquete UPM por URL de Git, tarball u otra) | FR-021 | Verificar la compatibilidad con Unity 6000.3, IL2CPP y Nakama 3.42.0; ADR |
-| P-02 | Biblioteca de JSON Schema 2020-12 para C# y cómo llegan los esquemas al cliente (copia generada en la construcción o lectura en el editor) | FR-011, FR-013, FR-022 | Verificar la compatibilidad con IL2CPP y el soporte de 2020-12; ADR o ampliación de ADR-0008 |
+| P-02 | Biblioteca de JSON Schema 2020-12 para C# y cómo llegan los esquemas al cliente (copia generada en la construcción o lectura en el editor) | FR-011, FR-013, FR-022 | **Resuelta**: validadores generados (research.md R-2, ADR-0010) |
 | P-03 | Almacenamiento local de la sesión (preferencias de la app frente a almacenamiento seguro del sistema) | FR-005 | Valorar el riesgo (tokens de invitado) frente a la complejidad en Android e iOS |
 | P-04 | Valores de caducidad de la sesión y del token de refresco, y política de reintentos (número, espera y tiempo límite por petición) | FR-009, FR-014, FR-015 | Valores coherentes con SC-001 y SC-004 |
 | P-05 | Perfil de las partidas (rendimiento frente a turnos), heredado de la spec 002 | Nada en esta spec | El responsable, antes de la spec de partidas |

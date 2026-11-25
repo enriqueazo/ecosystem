@@ -119,10 +119,12 @@ carga, con PlayMode.
   - las variables `ECOSYSTEM_NAKAMA_*` tienen precedencia sobre el archivo;
   - archivo válido;
   - sin configuración → `ConfigurationError` con el nombre del archivo;
-  - campo inválido → `ConfigurationError` nombrando el campo, nunca su valor (`data-model.md` → `Configuración de conexión.serverKey`).
+  - campo inválido → `ConfigurationError` nombrando el campo, nunca su valor (`data-model.md` → `Configuración de conexión.serverKey`);
+  - `ECOSYSTEM_NAKAMA_CONFIG=none` → `ConfigurationError` aunque exista el archivo.
 
   La lógica de análisis vive en el núcleo: recibe el texto y las variables como datos.
 - [ ] T013 [US1] Crear el ensamblado `_Project/Tests/Integration/Ecosystem.Tests.Integration.asmdef` (EditMode, solo Editor) y `_Project/Tests/Integration/GuestSignInIntegrationTests.cs` (Red):
+  - verificar primero si Unity Test Framework 1.6 ejecuta pruebas `async Task` en EditMode (una prueba mínima); si no, usar `[UnityTest]` + `IEnumerator`, y anotar el resultado;
   - comprueba primero que el servidor está disponible y falla en ≤ 15 s con «Entorno local no disponible…» (FR-025);
   - con un identificador nuevo, crea una cuenta y obtiene `Connected`;
   - dos identificadores dan dos cuentas distintas (US1-2).
@@ -150,7 +152,7 @@ carga, con PlayMode.
 
   Añadir un GameObject con `ConnectionScreen` a `_Project/Scenes/Bootstrap.unity`, que sigue siendo la única escena de la build (FR-027).
 - [ ] T017 [US1] Validar:
-  - PlayMode (A4): `Bootstrap` carga sin errores, sin configuración;
+  - PlayMode (A4): la prueba `BootstrapSceneTests` fija `ECOSYSTEM_NAKAMA_CONFIG=none` (y lo restaura al terminar), comprueba que `ConnectionScreen` está en `ConfigurationError` y que no hay errores registrados, con o sin `connection.local.json` ni servidor;
   - EditMode completo;
   - quickstart.md A5 y B1 en el editor (≤ 5 s, cuenta nueva en la consola de Nakama).
 
@@ -173,7 +175,7 @@ carga, con PlayMode.
   - caducada → se refresca;
   - refresco rechazado → una sola reautenticación con el mismo identificador y la misma cuenta;
   - rechazo durante el uso → mismo orden, una sola vez (FR-007);
-  - autenticación rechazada o cuenta deshabilitada → `AccountError`, sin bucle (FR-008);
+  - autenticación rechazada o cuenta deshabilitada → `AccountError`, sin bucle (FR-008); clave de servidor rechazada → `ConfigurationError` (spec, *Edge Cases*);
   - tokens ilegibles → se descartan y se reautentica (`data-model.md` → `Sesión.Datos ilegibles`);
   - margen de 60 s en la validez local (`Sesión.Validez local`);
   - nunca se crea una cuenta nueva si el identificador es el mismo.
@@ -182,14 +184,16 @@ carga, con PlayMode.
   - sin `authToken` → refresco y misma cuenta;
   - sin ningún token → reautenticación y misma cuenta.
 
+  Además, el caso «clave de servidor errónea»: identificar la respuesta de Nakama y comprobar que se distingue de una cuenta deshabilitada.
+
   Anotar los códigos HTTP reales que devuelve Nakama al rechazar un refresco o una autenticación.
 
 ### Implementation for User Story 2
 
 - [ ] T020 [US2] Implementar en el núcleo el ciclo de vida de la sesión en `ConnectionFlow.cs` y `SessionTokens.cs` (Green: T018), según `data-model.md` → `Sesión.authToken`, `Sesión.refreshToken`, `Sesión.Validez local` y `Sesión.Datos ilegibles`.
-- [ ] T021 [US2] Implementar el refresco y la restauración en `NakamaGameServer.cs` y crear `PlayerPrefsSessionStore.cs` (claves de `data-model.md` → `Sesión.authToken` y `Sesión.refreshToken`; nunca en registros). Green: T019. Si los códigos HTTP reales difieren de contracts/connection-states.md, corregir el contrato.
+- [ ] T021 [US2] Implementar el refresco y la restauración en `NakamaGameServer.cs` y crear `PlayerPrefsSessionStore.cs` (claves de `data-model.md` → `Sesión.authToken` y `Sesión.refreshToken`; nunca en registros). Green: T019. Si los códigos HTTP reales difieren de contracts/connection-states.md, corregir el contrato. En `ConnectionScreen.cs`, mostrar el estado `AccountError` con su texto de contracts/connection-states.md, sin «Reintentar».
 - [ ] T022 [US2] Añadir `--session.refresh_token_expiry_sec 604800` en `deploy/local/compose.yaml` y documentar las dos caducidades en `deploy/local/README.md` (FR-009, research.md R-6). Reiniciar el entorno y comprobar con `tools/check-backend.sh --module` y `npm run test:integration` que la spec 002 sigue en verde.
-- [ ] T023 [US2] Validar quickstart.md B2–B5 en el editor (10 reaperturas, caducidad forzada, sin tokens y cuenta deshabilitada desde la consola) y anotar los resultados.
+- [ ] T023 [US2] Validar quickstart.md B2–B5 en el editor (10 reaperturas, caducidad forzada, sin tokens y cuenta deshabilitada desde la consola; en B5, la escena muestra «No se puede acceder a la cuenta») y anotar los resultados.
 
 **Checkpoint**: commits `feat(client)` (T018, T020), `feat(client)` (T019, T021) y `feat(deploy)` (T022).
 
