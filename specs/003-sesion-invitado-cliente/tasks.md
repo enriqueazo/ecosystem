@@ -238,12 +238,12 @@ carga, con PlayMode.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T029 [P] [US4] Escribir `_Project/Tests/EditMode/Connection/RetryPolicyTests.cs` (Red), según `data-model.md` → *Política de reintentos*:
+- [X] T029 [P] [US4] Escribir `_Project/Tests/EditMode/Connection/RetryPolicyTests.cs` (Red), según `data-model.md` → *Política de reintentos*:
   - 3 reintentos con esperas de 1, 2 y 4 s (±20 %);
   - qué se reintenta y qué no;
   - el peor caso queda en ≤ 60 s;
   - con `IDelay` falso y variación aleatoria determinista.
-- [ ] T030 [P] [US4] Escribir `_Project/Tests/EditMode/Connection/ResilienceTests.cs` (Red):
+- [X] T030 [P] [US4] Escribir `_Project/Tests/EditMode/Connection/ResilienceTests.cs` (Red):
   - tiempo límite por petición → fallo transitorio;
   - reintentos agotados → `Offline`;
   - «Reintentar» desde `Offline` sigue el flujo completo;
@@ -252,14 +252,14 @@ carga, con PlayMode.
 
 ### Implementation for User Story 4
 
-- [ ] T031 [US4] Implementar `RetryPolicy.cs` y la gestión de generaciones, tiempo límite y cancelación en `ConnectionFlow.cs` (Green: T029–T030), según `data-model.md` → `Política de reintentos.Reintentos automáticos`, `.Peor caso hasta Offline`, `.Se reintenta`, `.No se reintenta` y *Generación de intento*.
-- [ ] T032 [US4] En `NakamaGameServer.cs`:
+- [X] T031 [US4] Implementar `RetryPolicy.cs` y la gestión de generaciones, tiempo límite y cancelación en `ConnectionFlow.cs` (Green: T029–T030), según `data-model.md` → `Política de reintentos.Reintentos automáticos`, `.Peor caso hasta Offline`, `.Se reintenta`, `.No se reintenta` y *Generación de intento*.
+- [X] T032 [US4] En `NakamaGameServer.cs`:
   - tiempo límite de 10 s por petición (`data-model.md` → `Política de reintentos.Tiempo límite por petición`);
   - pasar el `CancellationToken` a cada llamada;
   - traducir los errores del SDK a fallo transitorio o rechazo definitivo según contracts/connection-states.md.
 
   En `ConnectionScreen.cs`, el estado `Offline` con el botón «Reintentar».
-- [ ] T033 [US4] Validar quickstart.md B6–B8 en el editor (entorno detenido → `Offline` en ≤ 60 s; «Reintentar» tras arrancar; salir del modo reproducción a mitad sin errores) y anotar los tiempos medidos.
+- [X] T033 [US4] Validar quickstart.md B6–B8 en el editor (entorno detenido → `Offline` en ≤ 60 s; «Reintentar» tras arrancar; salir del modo reproducción a mitad sin errores) y anotar los tiempos medidos.
 
 **Checkpoint**: commits `feat(client)` (T029–T031) y `feat(client)` (T032–T033).
 
@@ -421,3 +421,7 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T026 Green | 2026-11-25 | ✅ | EditMode 102/102. `ProtocolCompatibility.Evaluate`: valida la respuesta con `ProtocolVersionContract.ValidateResponse`; igual → `Connected`, servidor mayor → `UpdateRequired`, menor o respuesta fuera del contrato (falta un campo, tipo erróneo, campo extra, no JSON) → `ServerIncompatible`, sin reintento. `StandardError.TryParseCode` lee el código del contrato en `message` e ignora el campo `error` de Nakama (FR-012). Versión del cliente: `ProtocolContracts.ProtocolVersion` por defecto |
 | T025 / T027 | 2026-11-25 | ✅ | El adaptador `GetProtocolVersionAsync` ya existía desde T015 (sin Red real). Prueba de integración nueva: la respuesta real del RPC valida contra el contrato generado y su versión es la del cliente. Integración 9/9. Los estados `UpdateRequired` y `ServerIncompatible` se muestran con `ConnectionTexts`; «Reintentar» solo en `ServerIncompatible` |
 | T028 / B9 / SC-004 | 2026-11-25 | ✅ | Automatizado contra el servidor real inyectando la versión del cliente (sin cambiar archivos versionados): cliente por detrás → `UpdateRequired`; cliente por delante → `ServerIncompatible`. Integración 10/10 y PlayMode 2/2; `git status` sin cambios en contratos |
+| T029–T030 Red | 2026-11-25 | ✅ | No compilaban: faltaba `RetryPolicy`. **Corrección de la propia prueba**: en «resultado tardío», el orden de la cola del doble estaba invertido (el intento superado consume su resultado al final) |
+| T031 Green | 2026-11-25 | ✅ | `RetryPolicy` (3 reintentos con 1, 2 y 4 s ±20 %; solo se reintentan los transitorios; peor caso teórico 48,4 s) y `ConnectionFlow` reestructurado: intentos por generación (un resultado superado no cambia el estado ni guarda la sesión), reintentos con espera cancelable, cancelación sin pasar por estados de error, y la sesión se guarda al aplicar el resultado vigente. EditMode 113/113 |
+| T032 | 2026-11-25 | ✅ | El tiempo límite de 10 s y la cancelación por petición estaban en el adaptador desde T015. Los errores del SDK se traducen a transitorio o definitivo. La escena muestra `Offline` con «Reintentar» (`ConnectionTexts.CanRetry`) y no permite ejecuciones simultáneas |
+| T033 / B6–B8 / SC-003 | 2026-11-25 | ✅ (B7 en parte) | Automatizado con red real, sin Nakama: puerto cerrado → `Offline` en **6,2 s**; servidor TCP que acepta y nunca responde → los 4 intentos agotan el tiempo límite y `Offline` en **41,5 s** (≤ 60 s); salir de `Bootstrap` a mitad de conexión → sin errores ni excepciones (B8, `LogAssert`). Integración 13/13 y PlayMode 2/2. B7 («Reintentar» tras volver el servidor) está cubierto por la prueba unitaria; la pulsación real en el editor queda para el responsable |
