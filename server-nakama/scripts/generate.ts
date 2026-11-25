@@ -72,13 +72,13 @@ function pascalCase(id: string): string {
     .join("");
 }
 
-function listContractFiles(contractsDir: string): string[] {
-  const files = readdirSync(contractsDir, { recursive: true, withFileTypes: true })
+export function listContractFiles(contractsDir: string): string[] {
+  // Se normaliza (p. ej. sin barra final) para comparar rutas de forma fiable.
+  const root = resolve(contractsDir);
+  const files = readdirSync(root, { recursive: true, withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
     .map((entry) => join(entry.parentPath, entry.name))
-    .filter(
-      (path) => !(dirname(path) === contractsDir && ROOT_FILES.has(relative(contractsDir, path))),
-    );
+    .filter((path) => !(dirname(path) === root && ROOT_FILES.has(relative(root, path))));
   return files.sort();
 }
 

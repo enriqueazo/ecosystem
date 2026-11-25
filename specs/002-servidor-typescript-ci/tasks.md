@@ -234,7 +234,7 @@ dependen de `generate`) y US2 los necesitan.
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T033 [US4] Escribir `server-nakama/test/unit/contracts.test.ts` (Red) con contratos de prueba en una carpeta temporal. Debe cubrir cada regla de contracts/contract-format.md → *Comprobaciones* (1–6):
+- [X] T033 [US4] Escribir `server-nakama/test/unit/contracts.test.ts` (Red) con contratos de prueba en una carpeta temporal. Debe cubrir cada regla de contracts/contract-format.md → *Comprobaciones* (1–6):
   - contrato que no cumple el metaesquema;
   - ejemplo válido que no valida y ejemplo inválido que valida;
   - `id` duplicado o distinto del nombre de archivo;
@@ -244,12 +244,12 @@ dependen de `generate`) y US2 los necesitan.
 
 ### Implementation for User Story 4
 
-- [ ] T034 [US4] Implementar `server-nakama/scripts/contracts.ts` (Green):
+- [X] T034 [US4] Implementar `server-nakama/scripts/contracts.ts` (Green):
   - subcomandos `check` y `lock`; las entradas usan la clave de `data-model.md` → `Huella.Clave` y la huella, el JSON canónico de `data-model.md` → `Huella.Valor`;
   - conectar `contracts:check` y `contracts:lock` en `server-nakama/package.json`;
   - generar `shared/contracts/contracts.lock.json` con `npm run contracts:lock`;
   - `npm run check` en verde.
-- [ ] T035 [US4] Validar B1–B3 de quickstart.md con cambios temporales que se revierten, y anotar los resultados.
+- [X] T035 [US4] Validar B1–B3 de quickstart.md con cambios temporales que se revierten, y anotar los resultados.
 - [ ] T036 [P] [US4] Completar `shared/README.md` según research.md R-6 y contracts/contract-format.md:
   - en *a. Organización*, la carpeta `contracts/`;
   - en *b. Formato*, JSON Schema 2020-12 y el metaesquema (ya no pendiente);
@@ -430,3 +430,6 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | C5 | 2026-11-25 | ✅ | La misma tabla de 12 casos da el mismo resultado en Node (unitarias) y en Nakama (integración) |
 | C3 | 2026-11-25 | ✅ | Ningún valor secreto de `.env` en los registros de `nakama` ni de `postgres`, incluida la `http_key` que viaja en la URL (0 apariciones de `http_key`) |
 | T031 forma HTTP | 2026-11-25 | ✅ | Verificada: 400/403/401; cuerpo de error `{"code":<gRPC>,"error":{"stackTrace":…},"message":"<error estándar JSON>"}`; sin `unwrap`, respuesta `{"payload":"…"}`. **Limitación de Nakama**: `server/runtime_javascript.go` (`invokeFunction`, v3.42.0) adjunta `exErr.String()` a toda excepción JS, también a la de los errores del contrato, sin opción para desactivarlo. Con `runSafely` solo se lanzan objetos planos, así que la traza no incluye mensajes, datos ni secretos, solo nombres de función y posiciones. Documentado en `contracts/rpc-protocol-version.md` |
+| T033 Red | 2026-11-25 | ✅ | `contracts.test.ts` falla con `ERR_MODULE_NOT_FOUND` |
+| T034 Green | 2026-11-25 | ✅ | 17/17 (unitarias totales 68/68). La prueba «contratos reales» encontró un **fallo en `listContractFiles`** (`generate.ts`): con una ruta con barra final no excluía `protocol.json`, el metaesquema ni el lockfile. Corregido normalizando con `resolve`. Mejora sobre el plan: `contracts:lock` **se niega** a sobrescribir la huella de un `id@version` ya registrado (si no, bastaría ejecutarlo para saltarse la subida de versión). Además se comprueba que los códigos de error de cada contrato son únicos (`data-model.md` → `Contrato.errors`). `contracts.lock.json` generado: `protocol_version@1` |
+| B1–B3 | 2026-11-25 | ✅ | B1 `contracts:check` OK. B2: `maxRequestBytes` 1024 → 2048 sin subir `version` → «protocol_version@1: la huella no coincide… sube "version"», código 1; `contracts:lock` también lo rechaza y el lockfile no cambia. B3: `[]` en `examples.request.valid` → «examples.request.valid[2] no valida contra request». Todo revertido |
