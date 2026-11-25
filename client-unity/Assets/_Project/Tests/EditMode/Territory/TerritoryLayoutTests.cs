@@ -70,7 +70,7 @@ namespace Ecosystem.Tests.EditMode.Territory
         [Test]
         public void Create_WithNull_IsEmpty()
         {
-            var result = TerritoryLayout.Create(null);
+            var result = TerritoryLayout.Create((HexCell[])null);
 
             Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.Empty));
             Assert.That(result.Layout, Is.Null);
@@ -92,7 +92,7 @@ namespace Ecosystem.Tests.EditMode.Territory
 
             Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.Duplicate));
             Assert.That(result.Layout, Is.Null);
-            Assert.That(result.DuplicateCell, Is.EqualTo(new HexCell(1, 0)));
+            Assert.That(result.Cell, Is.EqualTo(new HexCell(1, 0)));
             Assert.That(result.Message, Is.EqualTo("La disposición repite la celda (columna 1, fila 0)."));
         }
 
@@ -121,6 +121,116 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(bounds.Max.X - bounds.Min.X, Is.EqualTo(4.5f * Metrics.Width).Within(1e-5f));
             Assert.That(bounds.Max.Z - bounds.Min.Z, Is.EqualTo(3 * 1.5f * Metrics.OuterRadius + 2 * Metrics.OuterRadius).Within(1e-5f));
             Assert.That(bounds.Corners(), Has.Length.EqualTo(8));
+        }
+
+        // --- Variantes y datos de río (data-model.md → TerritoryLayout, órdenes 1–4; research.md R-6) ---
+
+        private static TerritoryCell Grass(int column, int row) => new TerritoryCell(new HexCell(column, row), TerrainKind.Grass);
+
+        [Test]
+        public void Create_WithTerritoryCells_KeepsEntriesAndCellsInTheDataOrder()
+        {
+            var entries = new[]
+            {
+                new TerritoryCell(new HexCell(1, 0), TerrainKind.Snow),
+                new TerritoryCell(new HexCell(0, 0), TerrainKind.Water),
+                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 1),
+                new TerritoryCell(new HexCell(1, 1), TerrainKind.Sand),
+            };
+
+            var result = TerritoryLayout.Create(entries);
+
+            Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.Ok), result.Message);
+            Assert.That(result.Layout.Entries, Is.EqualTo(entries));
+            Assert.That(result.Layout.Cells, Is.EqualTo(entries.Select(entry => entry.Cell)));
+            Assert.That(result.Layout.TerrainAt(new HexCell(0, 0)), Is.EqualTo(TerrainKind.Water));
+        }
+
+        [Test]
+        public void Create_WithHexCells_MakesEveryCellGrass()
+        {
+            var layout = TerritoryLayout.Create(new[] { new HexCell(0, 0), new HexCell(1, 0) }).Layout;
+
+            Assert.That(layout.Entries.Select(entry => entry.Terrain), Is.All.EqualTo(TerrainKind.Grass));
+            Assert.That(layout.Entries.Select(entry => entry.River), Is.All.EqualTo(RiverShape.None));
+            Assert.That(layout.Entries.Select(entry => entry.Rotation), Is.All.EqualTo(0));
+        }
+
+        [Test]
+        public void Create_WithAnUnknownTerrain_ReportsTheCell()
+        {
+            var result = TerritoryLayout.Create(new[] { Grass(0, 0), new TerritoryCell(new HexCell(1, 0), (TerrainKind)9) });
+
+            Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.UnknownTerrain));
+            Assert.That(result.Layout, Is.Null);
+            Assert.That(result.Cell, Is.EqualTo(new HexCell(1, 0)));
+            Assert.That(result.Message, Is.EqualTo("La celda (columna 1, fila 0) tiene una variante de terreno desconocida (9)."));
+        }
+
+        private static readonly object[] InvalidRiverPieces =
+        {
+            new object[] { TerrainKind.River, RiverShape.None, 0, "es de río y no tiene forma" },
+            new object[] { TerrainKind.River, (RiverShape)7, 0, "forma de río desconocida (7)" },
+            new object[] { TerrainKind.Sand, (RiverShape)7, 0, "forma de río desconocida (7)" },
+            new object[] { TerrainKind.Snow, RiverShape.Curve, 0, "no es de río y tiene forma de río" },
+            new object[] { TerrainKind.Grass, RiverShape.None, 2, "no es de río y tiene giro 2" },
+            new object[] { TerrainKind.River, RiverShape.Spring, 6, "giro 6 fuera de 0–5" },
+            new object[] { TerrainKind.River, RiverShape.Curve, -1, "giro -1 fuera de 0–5" },
+        };
+
+        [TestCaseSource(nameof(InvalidRiverPieces))]
+        public void Create_WithInvalidRiverData_ReportsTheCause(TerrainKind terrain, RiverShape river, int rotation, string cause)
+        {
+            var result = TerritoryLayout.Create(new[] { Grass(0, 0), new TerritoryCell(new HexCell(1, 0), terrain, river, rotation) });
+
+            Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.InvalidRiverPiece));
+            Assert.That(result.Layout, Is.Null);
+            Assert.That(result.Cell, Is.EqualTo(new HexCell(1, 0)));
+            Assert.That(result.Message, Is.EqualTo($"La celda (columna 1, fila 0) tiene datos de río no válidos: {cause}."));
+        }
+
+        [Test]
+        public void Create_ReportsTheFirstErrorInTheFixedOrder()
+        {
+            var unknown = new TerritoryCell(new HexCell(0, 0), (TerrainKind)9);
+            var badRiver = new TerritoryCell(new HexCell(1, 0), TerrainKind.River);
+            var duplicate = Grass(2, 0);
+
+            // Repetida gana a variante desconocida y a datos de río, aunque vaya después en el dato.
+            Assert.That(TerritoryLayout.Create(new[] { unknown, badRiver, duplicate, duplicate }).Status, Is.EqualTo(TerritoryLayoutStatus.Duplicate));
+            // Variante desconocida gana a datos de río, aunque vaya después en el dato.
+            Assert.That(TerritoryLayout.Create(new[] { badRiver, unknown }).Status, Is.EqualTo(TerritoryLayoutStatus.UnknownTerrain));
+        }
+
+        [Test]
+        public void RequiredVisuals_ListsTheUsedTerrainsAndCanonicalRiverPieces()
+        {
+            var layout = TerritoryLayout.Create(new[]
+            {
+                Grass(0, 0),
+                new TerritoryCell(new HexCell(1, 0), TerrainKind.Snow),
+                new TerritoryCell(new HexCell(2, 0), TerrainKind.Snow),
+                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 4),
+                new TerritoryCell(new HexCell(1, 1), TerrainKind.River, RiverShape.Curve, 4),
+            }).Layout;
+
+            Assert.That(layout.RequiredVisuals(), Is.EquivalentTo(new[]
+            {
+                VisualKey.ForTerrain(TerrainKind.Grass),
+                VisualKey.ForTerrain(TerrainKind.Snow),
+                VisualKey.ForRiver(RiverShape.Straight, 1),
+                VisualKey.ForRiver(RiverShape.Curve, 4),
+            }));
+        }
+
+        [Test]
+        public void VisualKey_DescribesItselfInSpanish()
+        {
+            Assert.That(VisualKey.ForTerrain(TerrainKind.Snow).ToString(), Is.EqualTo("variante nieve"));
+            Assert.That(VisualKey.ForTerrain(TerrainKind.Water).ToString(), Is.EqualTo("variante agua"));
+            Assert.That(VisualKey.ForRiver(RiverShape.Curve, 3).ToString(), Is.EqualTo("pieza de río curva, giro 3"));
+            Assert.That(VisualKey.ForRiver(RiverShape.Straight, 1).ToString(), Is.EqualTo("pieza de río tramo recto, giro 1"));
+            Assert.That(VisualKey.ForRiver(RiverShape.Spring, 0).ToString(), Is.EqualTo("pieza de río manantial, giro 0"));
         }
     }
 }

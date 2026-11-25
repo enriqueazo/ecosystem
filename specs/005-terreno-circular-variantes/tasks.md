@@ -54,7 +54,7 @@ arte y el aspecto se validan a mano con quickstart C (FR-027).
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Comprobar las precondiciones y anotarlas en `specs/005-terreno-circular-variantes/tasks.md` → *Registro de verificación*:
+- [X] T001 Comprobar las precondiciones y anotarlas en `specs/005-terreno-circular-variantes/tasks.md` → *Registro de verificación*:
   - rama `feat/005-terreno-circular-variantes` sin cambios pendientes;
   - Unity 6000.3.29f1 instalado;
   - línea base en verde de A1 (EditMode) y A2 (PlayMode), con el número de pruebas;
@@ -73,17 +73,17 @@ través del catálogo.
 
 ### Tests (Red) ⚠️
 
-- [ ] T002 [P] Crear `_Project/Tests/EditMode/Territory/HexEdgeTests.cs`:
+- [X] T002 [P] Crear `_Project/Tests/EditMode/Territory/HexEdgeTests.cs`:
   - orden y nombres de data-model.md → `HexEdge`;
   - `Opposite`;
   - `HexCell.Neighbour(e)` igual al vecino `e` de `Neighbours()`, en filas pares e impares;
   - la cara lateral `k` de `HexPrismMeshBuilder` corresponde a la arista `(k+1) mod 6`
     (research.md R-3).
-- [ ] T003 [P] Crear `_Project/Tests/EditMode/Territory/RiverPieceTests.cs`:
+- [X] T003 [P] Crear `_Project/Tests/EditMode/Territory/RiverPieceTests.cs`:
   - `RiverPiece.OpenEdges` y `RiverPiece.Canonical` para cada `RiverShape` y cada giro 0–5
     (data-model.md → `RiverShape`, `RiverPiece.OpenEdges`, `RiverPiece.Canonical`);
   - el recto con giro `r` y `r+3` abre las mismas aristas.
-- [ ] T004 [P] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs` con los estados 1–4 de data-model.md → `TerritoryLayout` (tabla de creación):
+- [X] T004 [P] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs` con los estados 1–4 de data-model.md → `TerritoryLayout` (tabla de creación):
   - `Create(IEnumerable<TerritoryCell>)`: `Empty`, `Duplicate` y `UnknownTerrain` (valor 9 en `TerritoryCell.Terrain`);
   - `InvalidRiverPiece` con cada causa de `TerritoryCell.River` y `TerritoryCell.Rotation`;
   - el orden fijo (el primer error gana, research.md R-6) y el texto exacto de cada `Message`;
@@ -91,35 +91,35 @@ través del catálogo.
   - `Create(IEnumerable<HexCell>)` da todo hierba;
   - sustituir `DuplicateCell` por `Cell`;
   - `RequiredVisuals()` con rotación canónica.
-- [ ] T005 [P] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutAssetTests.cs`:
+- [X] T005 [P] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutAssetTests.cs`:
   - una entrada con el formato de la spec 004 (solo `column` y `row`) se lee como hierba
     (data-model.md → `TerritoryLayoutAsset`);
   - `terrain`, `river` y `rotation` llegan a `TerritoryCell`;
   - `DuplicateCell` → `Cell`.
-- [ ] T006 [P] Crear `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs`, sobre catálogos en memoria:
+- [X] T006 [P] Crear `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs`, sobre catálogos en memoria:
   - con un catálogo incompleto, `TerritoryView` registra `[Territorio] El catálogo no tiene recursos para …` con el texto de data-model.md → `TerrainCatalogAsset` y no crea piezas;
   - con un catálogo completo, resuelve el prefab de cada `TerrainKind` y la malla de cada (forma, giro canónico);
   - las entradas repetidas se resuelven con la primera.
 
 ### Implementation (Green)
 
-- [ ] T007 Crear en `_Project/Scripts/Territory/`:
+- [X] T007 Crear en `_Project/Scripts/Territory/`:
   - `HexEdge.cs`, con `HexEdge`, `Opposite` y `HexCell.Neighbour`;
   - `TerrainKind.cs`, con `TerrainKind`, `RiverShape` y `TerritoryCell`;
   - `RiverPiece.cs`, con `OpenEdges` y `Canonical`.
 
   Valores según data-model.md → `HexEdge`, `TerrainKind`, `RiverShape` y `TerritoryCell`. T002 y
   T003 pasan a verde.
-- [ ] T008 Ampliar `_Project/Scripts/Territory/TerritoryLayout.cs`:
+- [X] T008 Ampliar `_Project/Scripts/Territory/TerritoryLayout.cs`:
   - añadir `Entries` y conservar `Cells` (data-model.md → `TerritoryLayout.Entries`, `TerritoryLayout.Cells`), `Create(IEnumerable<TerritoryCell>)` y `RequiredVisuals()`;
   - `TerritoryLayoutResult` con `Cell`, `Edge` y los estados `UnknownTerrain` e `InvalidRiverPiece`, con sus mensajes (data-model.md → `TerritoryLayout`, órdenes 1–4);
   - mantener `Create(IEnumerable<HexCell>)` como todo hierba;
   - renombrar `DuplicateCell` a `Cell`.
 
   T004 pasa a verde.
-- [ ] T009 Ampliar `_Project/Scripts/Territory.View/TerritoryLayoutAsset.cs` con `terrain`, `river` y `rotation` en cada `Cell`, con valores por defecto 0 (data-model.md → `TerritoryLayoutAsset.terrain`, `TerritoryLayoutAsset.river`, `TerritoryLayoutAsset.rotation`). `ToLayout()` construye `TerritoryCell`, y `SetCells` admite `TerritoryCell`. T005 pasa a verde.
-- [ ] T010 Crear `_Project/Scripts/Territory.View/TerrainCatalogAsset.cs`, un ScriptableObject con `terrains`, `riverPrefab` y `riverMeshes` (data-model.md → `TerrainCatalogAsset.terrains`, `.riverPrefab` y `.riverMeshes`). Incluye la resolución por clave y la lista de claves que faltan para un `RequiredVisuals()`.
-- [ ] T011 Cambiar `_Project/Scripts/Territory.View/TerritoryView.cs` (research.md R-5):
+- [X] T009 Ampliar `_Project/Scripts/Territory.View/TerritoryLayoutAsset.cs` con `terrain`, `river` y `rotation` en cada `Cell`, con valores por defecto 0 (data-model.md → `TerritoryLayoutAsset.terrain`, `TerritoryLayoutAsset.river`, `TerritoryLayoutAsset.rotation`). `ToLayout()` construye `TerritoryCell`, y `SetCells` admite `TerritoryCell`. T005 pasa a verde.
+- [X] T010 Crear `_Project/Scripts/Territory.View/TerrainCatalogAsset.cs`, un ScriptableObject con `terrains`, `riverPrefab` y `riverMeshes` (data-model.md → `TerrainCatalogAsset.terrains`, `.riverPrefab` y `.riverMeshes`). Incluye la resolución por clave y la lista de claves que faltan para un `RequiredVisuals()`.
+- [X] T011 Cambiar `_Project/Scripts/Territory.View/TerritoryView.cs` (research.md R-5):
   - `tilePrefab` → `catalog`, con `SetCatalog` interno para las pruebas;
   - antes de instanciar, comprobar `RequiredVisuals()` contra el catálogo y, si falta algo, `LogError` y 0 piezas;
   - instanciar el prefab de cada variante;
@@ -127,9 +127,9 @@ través del catálogo.
   - el ciclo de vida no cambia (`[ExecuteAlways]` y `DontSave`).
 
   T006 pasa a verde.
-- [ ] T012 Crear `_Project/Data/Territory/TerrainCatalog.asset` con la entrada `Grass` → `_Project/Art/Territory/Prefabs/HexTile.prefab`. En `_Project/Scenes/Territory.unity`, asignar `catalog` y quitar `tilePrefab` (contracts/territory-scene.md → *Composición*).
-- [ ] T013 Actualizar `_Project/Tests/PlayMode/TerritorySceneTests.cs` y `_Project/Tests/EditMode/Territory/TerritorySceneAssetTests.cs` a `catalog`, en lugar de `tilePrefab`. Ejecutar A1 y A2: todo en verde con el tablero 4 × 4 aún vigente. Anotarlo en el registro.
-- [ ] T014 Commit `feat(client): add terrain variants, river pieces and a terrain catalog to the territory core and view` (T002–T013).
+- [X] T012 Crear `_Project/Data/Territory/TerrainCatalog.asset` con la entrada `Grass` → `_Project/Art/Territory/Prefabs/HexTile.prefab`. En `_Project/Scenes/Territory.unity`, asignar `catalog` y quitar `tilePrefab` (contracts/territory-scene.md → *Composición*).
+- [X] T013 Actualizar `_Project/Tests/PlayMode/TerritorySceneTests.cs` y `_Project/Tests/EditMode/Territory/TerritorySceneAssetTests.cs` a `catalog`, en lugar de `tilePrefab`. Ejecutar A1 y A2: todo en verde con el tablero 4 × 4 aún vigente. Anotarlo en el registro.
+- [X] T014 Commit `feat(client): add terrain variants, river pieces and a terrain catalog to the territory core and view` (T002–T013).
 
 **Checkpoint**: el núcleo conoce variantes y piezas de río. La escena se construye a través del
 catálogo y no cambia nada visible.
@@ -453,3 +453,11 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 
 | Fecha | Tarea | Comando o comprobación | Resultado |
 |-------|-------|------------------------|-----------|
+| 2026-11-25 | T001 | Rama y `git status` | `feat/005-terreno-circular-variantes`, sin cambios pendientes. El editor estaba abierto con el proyecto; el responsable lo cerró antes de empezar |
+| 2026-11-25 | T001 | Unity instalado | 6000.3.29f1 en `/Applications/Unity/Hub/Editor/` |
+| 2026-11-25 | T001 | A1 y A2 (línea base) | EditMode: salida 0 · 171/171. PlayMode: salida 0 · 20/20 |
+| 2026-11-25 | T001 | `tools/check-repo.sh` y binarios de `client-unity/Assets` | Salida 0. Total 1,2 MB (ADR-0011) |
+| 2026-11-25 | T002–T006 | A1 con las pruebas nuevas, sin implementación (Red) | Salida 1: el ensamblado de pruebas no compila porque faltan `HexEdge`, `RiverShape`, `TerritoryCell`, `RiverPiece`, `VisualKey` y `TerrainCatalogAsset` |
+| 2026-11-25 | T007–T011 | A1 (Green, salvo la escena) | Salida 2 · 235/236: solo falla `TerritoryScene_OpenedInTheEditor_…` (la escena aún no tiene catálogo). Ajuste: `Create(null)` pasa a ser ambiguo con las dos sobrecargas, así que la prueba lo tipa como `(HexCell[])null`. Las piezas se nombran ahora `‹prefab› (columna, fila)` en lugar de `Tile (columna, fila)`; nada dependía del nombre |
+| 2026-11-25 | T012 | `TerrainCatalog.asset` y su `.meta` escritos a mano en YAML (GUID nuevo) con Grass → `HexTile.prefab`. En `Territory.unity`, `tilePrefab` → `catalog` | La escena solo cambia en esa línea |
+| 2026-11-25 | T013 | A1 y A2 (Green) | EditMode: salida 0 · 236/236 (171 previas + 65 nuevas). PlayMode: salida 0 · 20/20. Unity no reescribe la escena ni los datos |

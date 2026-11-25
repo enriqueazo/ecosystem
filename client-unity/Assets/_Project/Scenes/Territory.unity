@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Ecosystem.Territory.View::Ecosystem.Territory.View.TerritoryView
   layout: {fileID: 11400000, guid: 14b3e1acf5ea74d059caaca62d29ad73, type: 2}
-  tilePrefab: {fileID: 2122814189498614032, guid: 9d8237d1a89ed4edab6f36643c4c90fd, type: 3}
+  catalog: {fileID: 11400000, guid: 8b0929be75ff4e13b86cdbb404c70bc7, type: 2}
 --- !u!4 &2062568650
 Transform:
   m_ObjectHideFlags: 0

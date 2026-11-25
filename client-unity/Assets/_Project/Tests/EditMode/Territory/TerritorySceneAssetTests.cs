@@ -12,7 +12,8 @@ namespace Ecosystem.Tests.EditMode.Territory
 {
     /// <summary>
     /// Las piezas no se serializan en la escena: TerritoryView las crea al habilitarse
-    /// (research.md R-7). La referencia al prefab en el campo tilePrefab sí es válida.
+    /// (research.md R-7). El catálogo de terrenos sí referencia los prefabs, pero la escena no
+    /// guarda instancias.
     /// </summary>
     public sealed class TerritorySceneAssetTests
     {
