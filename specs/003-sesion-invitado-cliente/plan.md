@@ -127,7 +127,7 @@ client-unity/
     └── Tests/
         ├── EditMode/                      # + pruebas del núcleo, validadores y configuración
         ├── PlayMode/                      # Bootstrap carga (estado de configuración sin errores)
-        └── Integration/                   # Nuevo: Ecosystem.Tests.Integration (necesita Nakama)
+        └── Integration/                   # Nuevo: Ecosystem.Tests.Integration (PlayMode, necesita Nakama)
 server-nakama/scripts/
 ├── generate.ts                            # + salida C# (subconjunto de JSON Schema)
 └── contracts.ts                           # + comprobación de que el C# generado está al día

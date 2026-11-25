@@ -177,8 +177,13 @@ Bibliotecas evaluadas:
 |-----------|-----------|-------------------|-----------|
 | `Ecosystem.Tests.EditMode` (existente) | EditMode | No | Configuración del proyecto y, además, `ConnectionFlow`, `RetryPolicy`, compatibilidad, validadores C# con los ejemplos de los contratos y cargador de configuración |
 | `Ecosystem.Tests.PlayMode` (existente) | PlayMode | No | Carga de `Bootstrap`. Sin configuración, el estado es «error de configuración» con un aviso, no un error |
-| `Ecosystem.Tests.Integration` (nuevo) | EditMode | **Sí** | Flujo real contra Nakama local: alta, misma cuenta al volver, refresco y versión de protocolo |
+| `Ecosystem.Tests.Integration` (nuevo) | **PlayMode** (corregido en la implementación) | **Sí** | Flujo real contra Nakama local: alta, misma cuenta al volver, refresco y versión de protocolo |
 
+- **Corrección durante la implementación (T013)**: `UnityWebRequestAdapter` del SDK es un
+  `MonoBehaviour` que usa corrutinas y `DontDestroyOnLoad`, y no funciona en EditMode (la primera
+  ejecución se quedó colgada). Las pruebas de integración son `[UnityTest]` en **PlayMode**, que
+  esperan a la `Task` cediendo fotogramas, con `[Timeout]`. Unity Test Framework 1.6 sí admite
+  `async Task` en `[Test]` (verificado), pero no se usa en `[OneTimeSetUp]`.
 - **Comandos en modo batch**: `-runTests -testPlatform EditMode -assemblyNames <ensamblado>`,
   documentados en `client-unity/README.md`.
 - **Pruebas de integración**: comprueban primero la disponibilidad del servidor y fallan de

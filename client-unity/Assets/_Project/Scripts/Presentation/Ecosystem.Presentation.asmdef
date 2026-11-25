@@ -1,0 +1,14 @@
+{
+  "name": "Ecosystem.Presentation",
+  "rootNamespace": "Ecosystem.Presentation",
+  "references": ["Ecosystem.Connection", "Ecosystem.Connection.Nakama", "Ecosystem.Contracts"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

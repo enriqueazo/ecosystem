@@ -105,17 +105,17 @@ carga, con PlayMode.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T010 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/InstallationIdTests.cs` (Red), según `data-model.md` → `Identificador de instalación.Valor` y `Identificador de instalación.Ciclo de vida`:
+- [X] T010 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/InstallationIdTests.cs` (Red), según `data-model.md` → `Identificador de instalación.Valor` y `Identificador de instalación.Ciclo de vida`:
   - se genera si no existe y luego se reutiliza;
   - se regenera solo si es inválido;
   - nunca se regenera por un error.
 
   Usa un almacén en memoria.
-- [ ] T011 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/GuestConnectionTests.cs` (Red), con un doble de `IGameServer`:
+- [X] T011 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/GuestConnectionTests.cs` (Red), con un doble de `IGameServer`:
   - el primer arranque autentica como invitado con el identificador de instalación y `create=true`;
   - el estado final es `Connected`, con el `userId` del servidor como identidad (`data-model.md` → `Cuenta de jugador.userId`);
   - el identificador de instalación nunca se usa como identidad (FR-003).
-- [ ] T012 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/ConnectionConfigTests.cs` (Red) para el cargador de configuración (contracts/client-config.md):
+- [X] T012 [P] [US1] Escribir `_Project/Tests/EditMode/Connection/ConnectionConfigTests.cs` (Red) para el cargador de configuración (contracts/client-config.md):
   - las variables `ECOSYSTEM_NAKAMA_*` tienen precedencia sobre el archivo;
   - archivo válido;
   - sin configuración → `ConfigurationError` con el nombre del archivo;
@@ -123,7 +123,7 @@ carga, con PlayMode.
   - `ECOSYSTEM_NAKAMA_CONFIG=none` → `ConfigurationError` aunque exista el archivo.
 
   La lógica de análisis vive en el núcleo: recibe el texto y las variables como datos.
-- [ ] T013 [US1] Crear el ensamblado `_Project/Tests/Integration/Ecosystem.Tests.Integration.asmdef` (EditMode, solo Editor) y `_Project/Tests/Integration/GuestSignInIntegrationTests.cs` (Red):
+- [X] T013 [US1] Crear el ensamblado `_Project/Tests/Integration/Ecosystem.Tests.Integration.asmdef` (EditMode, solo Editor) y `_Project/Tests/Integration/GuestSignInIntegrationTests.cs` (Red):
   - verificar primero si Unity Test Framework 1.6 ejecuta pruebas `async Task` en EditMode (una prueba mínima); si no, usar `[UnityTest]` + `IEnumerator`, y anotar el resultado;
   - comprueba primero que el servidor está disponible y falla en ≤ 15 s con «Entorno local no disponible…» (FR-025);
   - con un identificador nuevo, crea una cuenta y obtiene `Connected`;
@@ -133,25 +133,25 @@ carga, con PlayMode.
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implementar en el núcleo (Green: T010–T012):
+- [X] T014 [US1] Implementar en el núcleo (Green: T010–T012):
   - `InstallationIdentity.cs`, que cumple `data-model.md` → `Identificador de instalación.Valor` y `Identificador de instalación.Ciclo de vida`;
   - `ConnectionConfig.cs` y su análisis, según `data-model.md` → `Configuración de conexión.host`, `.port`, `.serverKey` y `.useSsl`;
   - `GuestDeviceAuthenticator.cs` (implementa `IAuthenticator`, FR-004; única credencial según `data-model.md` → `Cuenta de jugador.Credenciales vinculadas`);
   - en `ConnectionFlow.cs`, el camino del primer arranque: configuración, autenticación de invitado y `Connected`, con la identidad en `data-model.md` → `Cuenta de jugador.userId`.
-- [ ] T015 [US1] Implementar los adaptadores en `_Project/Scripts/Connection.Nakama/` (`Ecosystem.Connection.Nakama.asmdef`, que referencia el SDK, `Ecosystem.Connection` y `Ecosystem.Contracts`):
+- [X] T015 [US1] Implementar los adaptadores en `_Project/Scripts/Connection.Nakama/` (`Ecosystem.Connection.Nakama.asmdef`, que referencia el SDK, `Ecosystem.Connection` y `Ecosystem.Contracts`):
   - `NakamaGameServer.cs`: autenticación por dispositivo y desactivación del reintento global del SDK (R-6);
   - `PlayerPrefsInstallationIdStore.cs`, con la clave de `data-model.md` → `Identificador de instalación.Clave`;
   - `ConnectionConfigLoader.cs`, que lee `client-unity/LocalConfig/connection.local.json` y las variables;
   - el registro solo muestra los 6 primeros caracteres del identificador (`data-model.md` → `Identificador de instalación.Exposición`).
 
   Green: T013 pasa con el entorno local arrancado.
-- [ ] T016 [US1] Crear `_Project/Scripts/Presentation/ConnectionScreen.cs` (`Ecosystem.Presentation.asmdef`):
+- [X] T016 [US1] Crear `_Project/Scripts/Presentation/ConnectionScreen.cs` (`Ecosystem.Presentation.asmdef`):
   - `MonoBehaviour` con IMGUI que monta las dependencias y arranca el flujo con `destroyCancellationToken`;
   - muestra los estados de contracts/connection-states.md (de momento `Connecting`, `Connected` con el id corto y `ConfigurationError`);
   - `ConfigurationError` se registra como aviso, no como error.
 
   Añadir un GameObject con `ConnectionScreen` a `_Project/Scenes/Bootstrap.unity`, que sigue siendo la única escena de la build (FR-027).
-- [ ] T017 [US1] Validar:
+- [X] T017 [US1] Validar:
   - PlayMode (A4): la prueba `BootstrapSceneTests` fija `ECOSYSTEM_NAKAMA_CONFIG=none` (y lo restaura al terminar), comprueba que `ConnectionScreen` está en `ConfigurationError` y que no hay errores registrados, con o sin `connection.local.json` ni servidor;
   - EditMode completo;
   - quickstart.md A5 y B1 en el editor (≤ 5 s, cuenta nueva en la consola de Nakama).
@@ -404,3 +404,10 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T006 / A1–A2 | 2026-11-25 | ✅ | Red: las pruebas de `checkGeneratedCSharp` fallaban (no existía). Green: `contracts.test.ts` 20/20. Antes de generar, `contracts:check` → «Contracts.g.cs desactualizado» y «ContractFixtures.g.cs desactualizado» (A2); tras `npm run generate`, OK (A1). Unitarias 83/83. **Corrección**: al hacer el commit `c89fd95`, `npm run check` devolvía 1 por la regla `noShadowRestrictedNames` de Biome (variable `escape` en `generate-csharp.ts`) y se registró por error como «en verde». Se corrigió en el commit siguiente; desde entonces `npm run check` → 0 |
 | T007 / T008 | 2026-11-25 | ✅ | `Ecosystem.Contracts` (sin referencias a Unity, con Newtonsoft). `ContractExamplesTests`: los **42 ejemplos** (11 de `protocol_version` y 31 de `keyword_coverage`) dan el mismo resultado que Ajv → EditMode 53/53. **Red de la prueba**: alterar el C# generado (`maxLength` 64 → 3) hace fallar 1 prueba en Unity **y** `contracts:check`; se restauró con `npm run generate` |
 | T009 | 2026-11-25 | ✅ | Núcleo `Ecosystem.Connection` (`noEngineReferences`, sin Nakama): `ConnectionState` y textos, `ServerResult`/`FailureKind` (sin excepciones como flujo), `SessionTokens`/`AuthenticatedSession` (identidad = `UserId`) y los puertos `IGameServer`, `ISessionStore`, `IInstallationIdStore`, `IDelay`, `IClock` e `IAuthenticator`. Compila y EditMode sigue en 53/53 |
+| T010–T012 Red | 2026-11-25 | ✅ | Las pruebas no compilan: faltan `ConfigResult`, `ConnectionFlow` e `InstallationIdentity` |
+| T014 Green | 2026-11-25 | ✅ | EditMode 77/77 (24 nuevas: identificador de instalación, primer arranque como invitado, identidad = `userId`, configuración con precedencia, `ECOSYSTEM_NAKAMA_CONFIG=none` y errores sin el valor de la clave) |
+| T013 sonda | 2026-11-25 | ✅ | Unity Test Framework 1.6 **sí** ejecuta `async Task` en `[Test]` de EditMode (el `Assert.Fail` posterior al `await` se ejecutó) |
+| T013 / T015 | 2026-11-25 | ✅ tras corrección | Red: no compilaba sin los adaptadores. **1.ª ejecución colgada (> 10 min)**: el `UnityWebRequestAdapter` del SDK es un `MonoBehaviour` con corrutinas y `DontDestroyOnLoad`, y no funciona en EditMode. Al matar Unity quedó corrupta la caché de Burst (*segmentation fault* al arrancar); se resolvió borrando `Temp/` y `Library/BurstCache`. **Corrección**: integración en **PlayMode** con `[UnityTest]` + `[Timeout(60000)]`, sin `OneTimeSetUp` asíncrono (documentado en research.md R-9, plan y contracts/unity-tests-cli.md). El ensamblado del adaptador referencia `NakamaRuntime`. Green: 2/2 contra Nakama real (alta y dos instalaciones con cuentas distintas) |
+| T016 | 2026-11-25 | ✅ | `ConnectionScreen` (IMGUI) añadido a `Bootstrap` con un script de editor temporal ya eliminado; sigue siendo la única escena de la build. Red: la prueba PlayMode no compilaba. `LogAssert.NoUnexpectedReceived` también falla con registros normales, así que la prueba declara los dos esperados (`Connecting` y el aviso de `ConfigurationError`) y exige que no haya más. Green: PlayMode 2/2, fijando `ECOSYSTEM_NAKAMA_CONFIG=none` |
+| T017 / A4 / A5 / B1 / SC-001 | 2026-11-25 | ✅ | PlayMode 2/2, también con `connection.local.json` presente (A4, determinista). A5: sin configuración, `ConfigurationError` con el aviso que nombra el archivo y la variable. B1 **automatizado** (no puedo pulsar Play en la interfaz): `BootstrapSceneIntegrationTests` carga la escena real con `PlayerPrefs` y configuración reales → «Conectado» en **0,10 s** con una cuenta nueva. El log no contiene tokens ni la clave. La comprobación visual en el editor queda para el responsable |
+| Regresión US1 | 2026-11-25 | ✅ | EditMode 77/77, PlayMode 2/2, integración 3/3, `check-repo` 0 y `npm run check` 0 |

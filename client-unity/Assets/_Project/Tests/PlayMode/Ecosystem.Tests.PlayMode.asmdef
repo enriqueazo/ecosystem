@@ -2,8 +2,10 @@
   "name": "Ecosystem.Tests.PlayMode",
   "rootNamespace": "Ecosystem.Tests.PlayMode",
   "references": [
-    "UnityEngine.TestRunner",
-    "UnityEditor.TestRunner"
+    "Ecosystem.Connection",
+    "Ecosystem.Presentation",
+    "UnityEditor.TestRunner",
+    "UnityEngine.TestRunner"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
