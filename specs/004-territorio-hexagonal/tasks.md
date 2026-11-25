@@ -321,7 +321,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - tras cerrar, ningún archivo versionado cambia salvo los esperados, que se justifican en el registro.
 - [X] T042 Ejecutar quickstart D (higiene) y `tools/tests/run.sh`. Las cuatro comprobaciones de D salen vacías o con 0. Anotarlo.
 - [ ] T043 Revisión visual manual **completa** de quickstart C (tabla C1–C11 en las seis proporciones y *Simulator*), hecha o confirmada por el responsable. Registrar la tabla con fecha y persona en `specs/004-territorio-hexagonal/spec.md` → nueva sección *Revisión visual* (FR-024 y SC-005).
-- [ ] T044 Push y PR hacia `main` **solo con autorización explícita** del responsable (constitución → Git). Anotar el número del PR y el resultado de la CI.
+- [X] T044 Push y PR hacia `main` **solo con autorización explícita** del responsable (constitución → Git). Anotar el número del PR y el resultado de la CI.
 
 **Checkpoint**: commits `docs: …` (T038–T039) y `docs(spec): log the verification for spec 004` (T040–T043).
 
@@ -443,3 +443,4 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T040 | A1, A2 y B1 seguidos, con el backend local (`tools/check-backend.sh --module` → 0) | EditMode: salida 0 · 171/171. PlayMode: salida 0 · 20/20. Integración: salida 0 · 14/14 (conectado en 0,08 s; territorio visible 0,10 s después) |
 | 2026-11-25 | T041 | Builds de desarrollo en modo batch con `BuildPipeline.BuildPlayer` y las escenas de la build (script de editor temporal, no versionado) | Android: correcta, `Builds/Android/Ecosystem-dev.apk` (60 MB), 0 errores. iOS: correcta, proyecto Xcode en `Builds/iOS/`, 0 errores. Las dos con `Bootstrap` y `Territory`. Ningún archivo versionado cambió. Queda iOS como plataforma activa del editor (`Library/`, no versionado) |
 | 2026-11-25 | T042 | Quickstart D y `tools/tests/run.sh` | Sin cambios en `server-nakama/`, `shared/` ni `deploy/`; sin cambios de orientación ni resolución; `tools/check-repo.sh` → 0; ningún recurso sin `.meta`; `tools/tests/run.sh` → 35/35. Binarios nuevos: solo los dos PNG aprobados (0,3 MB en total, por debajo del umbral de ADR-0011) |
+| 2026-11-25 | T044 | Push de `feat/004-territorio-hexagonal` y PR hacia `main`, autorizado por el responsable | PR #4 (https://github.com/enriqueazo/ecosystem/pull/4). CI en verde: `repo` 7 s, `server` 23 s, `backend` 45 s |
