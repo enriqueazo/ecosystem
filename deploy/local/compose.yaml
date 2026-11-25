@@ -51,6 +51,7 @@ services:
           --database.address "$$DB_ADDRESS" \
           --logger.level INFO \
           --session.token_expiry_sec 7200 \
+          --session.refresh_token_expiry_sec 604800 \
           --socket.server_key "$$SERVER_KEY" \
           --runtime.http_key "$$RUNTIME_HTTP_KEY" \
           --session.encryption_key "$$SESSION_ENCRYPTION_KEY" \

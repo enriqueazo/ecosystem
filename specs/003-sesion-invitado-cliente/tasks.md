@@ -170,7 +170,7 @@ carga, con PlayMode.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T018 [P] [US2] Escribir `_Project/Tests/EditMode/Connection/SessionLifecycleTests.cs` (Red), con dobles:
+- [X] T018 [P] [US2] Escribir `_Project/Tests/EditMode/Connection/SessionLifecycleTests.cs` (Red), con dobles:
   - sesión vigente → se usa, sin autenticar;
   - caducada → se refresca;
   - refresco rechazado → una sola reautenticación con el mismo identificador y la misma cuenta;
@@ -179,7 +179,7 @@ carga, con PlayMode.
   - tokens ilegibles → se descartan y se reautentica (`data-model.md` → `Sesión.Datos ilegibles`);
   - margen de 60 s en la validez local (`Sesión.Validez local`);
   - nunca se crea una cuenta nueva si el identificador es el mismo.
-- [ ] T019 [P] [US2] Escribir `_Project/Tests/Integration/SessionIntegrationTests.cs` (Red):
+- [X] T019 [P] [US2] Escribir `_Project/Tests/Integration/SessionIntegrationTests.cs` (Red):
   - reabrir con la sesión guardada → misma cuenta;
   - sin `authToken` → refresco y misma cuenta;
   - sin ningún token → reautenticación y misma cuenta.
@@ -190,10 +190,10 @@ carga, con PlayMode.
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Implementar en el núcleo el ciclo de vida de la sesión en `ConnectionFlow.cs` y `SessionTokens.cs` (Green: T018), según `data-model.md` → `Sesión.authToken`, `Sesión.refreshToken`, `Sesión.Validez local` y `Sesión.Datos ilegibles`.
-- [ ] T021 [US2] Implementar el refresco y la restauración en `NakamaGameServer.cs` y crear `PlayerPrefsSessionStore.cs` (claves de `data-model.md` → `Sesión.authToken` y `Sesión.refreshToken`; nunca en registros). Green: T019. Si los códigos HTTP reales difieren de contracts/connection-states.md, corregir el contrato. En `ConnectionScreen.cs`, mostrar el estado `AccountError` con su texto de contracts/connection-states.md, sin «Reintentar».
-- [ ] T022 [US2] Añadir `--session.refresh_token_expiry_sec 604800` en `deploy/local/compose.yaml` y documentar las dos caducidades en `deploy/local/README.md` (FR-009, research.md R-6). Reiniciar el entorno y comprobar con `tools/check-backend.sh --module` y `npm run test:integration` que la spec 002 sigue en verde.
-- [ ] T023 [US2] Validar quickstart.md B2–B5 en el editor (10 reaperturas, caducidad forzada, sin tokens y cuenta deshabilitada desde la consola; en B5, la escena muestra «No se puede acceder a la cuenta») y anotar los resultados.
+- [X] T020 [US2] Implementar en el núcleo el ciclo de vida de la sesión en `ConnectionFlow.cs` y `SessionTokens.cs` (Green: T018), según `data-model.md` → `Sesión.authToken`, `Sesión.refreshToken`, `Sesión.Validez local` y `Sesión.Datos ilegibles`.
+- [X] T021 [US2] Implementar el refresco y la restauración en `NakamaGameServer.cs` y crear `PlayerPrefsSessionStore.cs` (claves de `data-model.md` → `Sesión.authToken` y `Sesión.refreshToken`; nunca en registros). Green: T019. Si los códigos HTTP reales difieren de contracts/connection-states.md, corregir el contrato. En `ConnectionScreen.cs`, mostrar el estado `AccountError` con su texto de contracts/connection-states.md, sin «Reintentar».
+- [X] T022 [US2] Añadir `--session.refresh_token_expiry_sec 604800` en `deploy/local/compose.yaml` y documentar las dos caducidades en `deploy/local/README.md` (FR-009, research.md R-6). Reiniciar el entorno y comprobar con `tools/check-backend.sh --module` y `npm run test:integration` que la spec 002 sigue en verde.
+- [X] T023 [US2] Validar quickstart.md B2–B5 en el editor (10 reaperturas, caducidad forzada, sin tokens y cuenta deshabilitada desde la consola; en B5, la escena muestra «No se puede acceder a la cuenta») y anotar los resultados.
 
 **Checkpoint**: commits `feat(client)` (T018, T020), `feat(client)` (T019, T021) y `feat(deploy)` (T022).
 
@@ -411,3 +411,9 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T016 | 2026-11-25 | ✅ | `ConnectionScreen` (IMGUI) añadido a `Bootstrap` con un script de editor temporal ya eliminado; sigue siendo la única escena de la build. Red: la prueba PlayMode no compilaba. `LogAssert.NoUnexpectedReceived` también falla con registros normales, así que la prueba declara los dos esperados (`Connecting` y el aviso de `ConfigurationError`) y exige que no haya más. Green: PlayMode 2/2, fijando `ECOSYSTEM_NAKAMA_CONFIG=none` |
 | T017 / A4 / A5 / B1 / SC-001 | 2026-11-25 | ✅ | PlayMode 2/2, también con `connection.local.json` presente (A4, determinista). A5: sin configuración, `ConfigurationError` con el aviso que nombra el archivo y la variable. B1 **automatizado** (no puedo pulsar Play en la interfaz): `BootstrapSceneIntegrationTests` carga la escena real con `PlayerPrefs` y configuración reales → «Conectado» en **0,10 s** con una cuenta nueva. El log no contiene tokens ni la clave. La comprobación visual en el editor queda para el responsable |
 | Regresión US1 | 2026-11-25 | ✅ | EditMode 77/77, PlayMode 2/2, integración 3/3, `check-repo` 0 y `npm run check` 0 |
+| T018 Red | 2026-11-25 | ✅ | `SessionLifecycleTests`: 6 de 10 fallan (el flujo siempre se reautenticaba). El caso «rechazo durante el uso» (FR-007) depende del RPC y se cubre en US3 (T024) |
+| T020 Green | 2026-11-25 | ✅ | `EstablishSessionAsync`: sesión vigente → se usa; caducada (margen de 60 s) → refresco; refresco rechazado, caducado o tokens ilegibles → reautenticación con la misma instalación; cuenta rechazada → `AccountError` sin bucle. EditMode 87/87 |
+| T019 / T021 | 2026-11-25 | ✅ | Integración en PlayMode contra Nakama: reabrir con sesión → misma cuenta y sin refresco; caducidad forzada (reloj +3 h) → refresco real y misma cuenta; sin tokens → reautenticación y misma cuenta; clave errónea → `ConfigurationError`. El adaptador de refresco ya existía desde T015, así que estas pruebas no pasaron por Red. **Códigos HTTP reales** (curl contra Nakama 3.42.0): clave de servidor errónea → **401**; refresco inválido → **401**; cuenta deshabilitada (ban desde la API de la consola local, reactivada después) → **403** «User account banned.». Coinciden con la clasificación del adaptador y con contracts/connection-states.md. **Corrección en la propia prueba**: la aserción comparaba tokens, era inestable (un refresco en el mismo segundo da un token idéntico) **e imprimía un token** en el resultado (solo en el log temporal local de una cuenta desechable). Ahora cuenta refrescos con un envoltorio y nunca pone tokens en las aserciones; 2 ejecuciones seguidas en verde y 0 apariciones de `eyJ` en logs y XML. `AccountError` ya se mostraba: la escena pinta `ConnectionTexts.For(state)` y no ofrece «Reintentar» |
+| T022 | 2026-11-25 | ✅ | `--session.refresh_token_expiry_sec 604800` en `compose.yaml` (documentado en `deploy/local/README.md`). Medido en los JWT emitidos: sesión 7200 s y refresco 604 800 s. Spec 002: `check-backend --module` OK e integración 13/13 |
+| T023 / B2–B5 / SC-002 | 2026-11-25 | ✅ (B5 en parte) | B2 automatizado: 10 reaperturas, alternando sesión vigente y caducidad forzada → misma cuenta las 10 veces (integración 8/8). B3 y B4 cubiertos por T019. B5: clasificación 403 → `AccountError` verificada con el servidor real y con la prueba unitaria; **no verificado** visualmente en el editor (requiere la interfaz) |
+| Incidencia de herramientas | 2026-11-25 | — | Un vigilante de tiempo en segundo plano (`sleep 300; pkill`) de una ejecución anterior mató una ejecución posterior. Se eliminó y no se vuelve a usar; el `[Timeout]` de las pruebas limita el tiempo |
