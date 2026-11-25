@@ -25,6 +25,9 @@ namespace Ecosystem.Territory.View
         /// <summary>La disposición construida; null si no hay una válida.</summary>
         internal TerritoryLayout Layout => _built;
 
+        /// <summary>El catálogo de recursos asignado.</summary>
+        internal TerrainCatalogAsset Catalog => catalog;
+
         private void OnEnable() => Rebuild();
 
         private void OnDisable() => Clear();

@@ -23,6 +23,19 @@ namespace Ecosystem.Territory
         public int[] SideIndices { get; }
     }
 
+    /// <summary>Mapeo de la cara superior (data-model.md → Mallas generadas).</summary>
+    public enum TopUv
+    {
+        /// <summary>El de la spec 004: el hexágono inscrito en el cuadrado de la textura.</summary>
+        Inscribed,
+
+        /// <summary>
+        /// En red: u = x/W y v = z/(3R), para texturas periódicas en la red hexagonal que no tienen
+        /// costura entre piezas (research.md R-4 de la spec 005).
+        /// </summary>
+        Lattice,
+    }
+
     /// <summary>
     /// Genera el prisma hexagonal con vértice arriba (data-model.md → HexPrismMesh; research.md R-3):
     /// 30 vértices y 16 triángulos con sombreado plano, sin cara inferior. Los triángulos van en
@@ -32,7 +45,7 @@ namespace Ecosystem.Territory
     {
         private const int TopVertexCount = 6;
 
-        public static HexPrismMeshData Build(HexMetrics metrics)
+        public static HexPrismMeshData Build(HexMetrics metrics, TopUv topUv = TopUv.Inscribed)
         {
             var vertices = new Point3[30];
             var normals = new Point3[30];
@@ -47,7 +60,9 @@ namespace Ecosystem.Territory
                 var corner = corners[i];
                 vertices[i] = corner;
                 normals[i] = up;
-                uvs[i] = new Point2(corner.X / metrics.Width + 0.5f, corner.Z / (2f * metrics.OuterRadius) + 0.5f);
+                uvs[i] = topUv == TopUv.Lattice
+                    ? new Point2(corner.X / metrics.Width, corner.Z / (3f * metrics.OuterRadius))
+                    : new Point2(corner.X / metrics.Width + 0.5f, corner.Z / (2f * metrics.OuterRadius) + 0.5f);
             }
 
             var topIndices = new int[12];

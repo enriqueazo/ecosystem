@@ -8,7 +8,7 @@ namespace Ecosystem.Tests.EditMode.Territory
     /// <summary>
     /// La malla guardada coincide con la salida del generador para HexMetrics.Default
     /// (research.md R-3). Si cambia la altura aprobada y no se regenera la malla
-    /// (Ecosystem → Territorio → Regenerar malla de pieza), esta prueba falla.
+    /// (Ecosystem → Territorio → Regenerar mallas del territorio), esta prueba falla.
     /// </summary>
     public sealed class HexTileMeshAssetTests
     {
@@ -19,10 +19,10 @@ namespace Ecosystem.Tests.EditMode.Territory
         public void SavedMesh_MatchesTheGeneratorOutput()
         {
             var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(MeshPath);
-            Assert.That(mesh, Is.Not.Null, $"Falta {MeshPath}: ejecuta Ecosystem → Territorio → Regenerar malla de pieza.");
+            Assert.That(mesh, Is.Not.Null, $"Falta {MeshPath}: ejecuta Ecosystem → Territorio → Regenerar mallas del territorio.");
 
             var expected = HexPrismMeshBuilder.Build(HexMetrics.Default);
-            const string regenerate = " La malla está desactualizada: ejecuta Ecosystem → Territorio → Regenerar malla de pieza.";
+            const string regenerate = " La malla está desactualizada: ejecuta Ecosystem → Territorio → Regenerar mallas del territorio.";
 
             Assert.That(mesh.subMeshCount, Is.EqualTo(2), regenerate);
             Assert.That(mesh.vertexCount, Is.EqualTo(expected.Vertices.Length), regenerate);

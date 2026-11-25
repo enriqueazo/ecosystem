@@ -189,17 +189,17 @@ con los recursos de su variante) y los criterios C2–C5, C8, C10, C11 y C13 de 
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T022 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/HexPrismMeshBuilderTests.cs` con el mapeo superior en red (`u = x/W`, `v = z/(3R)`), según data-model.md → *Mallas generadas* (`WaterTile`). Las pruebas existentes del mapeo por defecto **no cambian**: comprueban que `HexTile` sigue igual.
-- [ ] T023 [P] [US2] Crear `_Project/Tests/EditMode/Territory/RiverMetricsTests.cs`: valores de partida y restricciones de data-model.md → `RiverMetrics.WaterLevel`, `.ChannelWidth` y `.PoolRadius` (`0 < hw < h`, `0 < w < W/2`, `w/2 < rp < W/2`). Fuera de rango, `ArgumentOutOfRangeException`.
-- [ ] T024 [P] [US2] Crear `_Project/Tests/EditMode/Territory/TerritoryMeshAssetTests.cs`: `Art/Territory/Meshes/WaterTile.asset` coincide con `HexPrismMeshBuilder.Build(new HexMetrics(R, RiverMetrics.Default.WaterLevel), TopUv.Lattice)`, con la misma técnica que `HexTileMeshAssetTests`, que no cambia.
-- [ ] T025 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/TerritoryArtAssetTests.cs`:
+- [X] T022 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/HexPrismMeshBuilderTests.cs` con el mapeo superior en red (`u = x/W`, `v = z/(3R)`), según data-model.md → *Mallas generadas* (`WaterTile`). Las pruebas existentes del mapeo por defecto **no cambian**: comprueban que `HexTile` sigue igual.
+- [X] T023 [P] [US2] Crear `_Project/Tests/EditMode/Territory/RiverMetricsTests.cs`: valores de partida y restricciones de data-model.md → `RiverMetrics.WaterLevel`, `.ChannelWidth` y `.PoolRadius` (`0 < hw < h`, `0 < w < W/2`, `w/2 < rp < W/2`). Fuera de rango, `ArgumentOutOfRangeException`.
+- [X] T024 [P] [US2] Crear `_Project/Tests/EditMode/Territory/TerritoryMeshAssetTests.cs`: `Art/Territory/Meshes/WaterTile.asset` coincide con `HexPrismMeshBuilder.Build(new HexMetrics(R, RiverMetrics.Default.WaterLevel), TopUv.Lattice)`, con la misma técnica que `HexTileMeshAssetTests`, que no cambia.
+- [X] T025 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/TerritoryArtAssetTests.cs`:
   - importación de las 6 texturas nuevas según contracts/visual-direction.md §3 (512, sRGB, mipmaps, trilineal, *wrap* de cada una y ASTC 6×6 en Android e iOS);
   - materiales `Simple Lit` sin especular ni sombras;
   - prefabs `SnowTile`, `SandTile` y `WaterTile` con su malla, sus materiales y sin sombras;
   - las comprobaciones actuales de hierba se mantienen tal cual.
-- [ ] T026 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs`: `TerrainCatalog.asset` tiene una sola entrada por cada `TerrainKind` que no es río (data-model.md → `TerrainCatalogAsset.terrains`), y Grass apunta a `HexTile.prefab`.
-- [ ] T027 [P] [US2] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` (invariantes 3 y 6 de contracts/territory-scene.md): cada pieza de hierba, nieve, arena o agua usa la malla y los materiales del prefab de su variante, y ninguna proyecta ni recibe sombras.
-- [ ] T028 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs` con los mínimos de FR-017 para las variantes:
+- [X] T026 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs`: `TerrainCatalog.asset` tiene una sola entrada por cada `TerrainKind` que no es río (data-model.md → `TerrainCatalogAsset.terrains`), y Grass apunta a `HexTile.prefab`.
+- [X] T027 [P] [US2] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` (invariantes 3 y 6 de contracts/territory-scene.md): cada pieza de hierba, nieve, arena o agua usa la malla y los materiales del prefab de su variante, y ninguna proyecta ni recibe sombras.
+- [X] T028 [P] [US2] Ampliar `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs` con los mínimos de FR-017 para las variantes:
   - cada una con al menos 4 celdas;
   - al menos una celda de cada variante en `FrontBorderCells()`.
 
@@ -207,15 +207,15 @@ con los recursos de su variante) y los criterios C2–C5, C8, C10, C11 y C13 de 
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Añadir el mapeo superior en red como opción a `_Project/Scripts/Territory/HexPrismMeshBuilder.cs` (`TopUv.Inscribed` por defecto y `TopUv.Lattice`, research.md R-4). Crear `_Project/Scripts/Territory/RiverMetrics.cs` con `RiverMetrics.Default` (data-model.md → `RiverMetrics.WaterLevel`, `.ChannelWidth`, `.PoolRadius`, `.ArcSegments` y `.PoolSegments`). T022 y T023 pasan a verde, y `HexTileMeshAssetTests` sigue en verde.
-- [ ] T030 [US2] Sustituir `_Project/Scripts/Territory.Editor/HexTileMeshMenu.cs` por `TerritoryMeshesMenu.cs` (research.md R-2):
+- [X] T029 [US2] Añadir el mapeo superior en red como opción a `_Project/Scripts/Territory/HexPrismMeshBuilder.cs` (`TopUv.Inscribed` por defecto y `TopUv.Lattice`, research.md R-4). Crear `_Project/Scripts/Territory/RiverMetrics.cs` con `RiverMetrics.Default` (data-model.md → `RiverMetrics.WaterLevel`, `.ChannelWidth`, `.PoolRadius`, `.ArcSegments` y `.PoolSegments`). T022 y T023 pasan a verde, y `HexTileMeshAssetTests` sigue en verde.
+- [X] T030 [US2] Sustituir `_Project/Scripts/Territory.Editor/HexTileMeshMenu.cs` por `TerritoryMeshesMenu.cs` (research.md R-2):
   - menú *Ecosystem → Territorio → Regenerar mallas del territorio* y método `TerritoryMeshesMenu.Regenerate`;
   - regenera `HexTile.asset` y `WaterTile.asset` (en US3, también las de río) con `CopySerialized` sobre los existentes, para conservar el GUID;
   - en `_Project/Tests/EditMode/Territory/HexTileMeshAssetTests.cs`, cambiar solo los textos que remiten a *Regenerar malla de pieza* (comentario y mensajes de error) por *Regenerar mallas del territorio*. Lo que comprueba la prueba no cambia.
 
   Generar `_Project/Art/Territory/Meshes/WaterTile.asset` en modo batch. Comprobar que
   `HexTile.asset` no cambia (`git diff` vacío). T024 pasa a verde.
-- [ ] T031 [US2] Commit `feat(client): generate the water tile mesh and the territory meshes command` (T022–T024 y T029–T030). T025–T028 siguen en rojo hasta T036 y **no** se incluyen: entran en T038.
+- [X] T031 [US2] Commit `feat(client): generate the water tile mesh and the territory meshes command` (T022–T024 y T029–T030). T025–T028 siguen en rojo hasta T036 y **no** se incluyen: entran en T038.
 - [ ] T032 [US2] **Diseño** (sin commit de código): crear el artefacto de Claude Design con la herramienta de artefactos, intención *design* (FR-019, research.md R-7, contracts/visual-direction.md §1).
   - Contenido: paletas de nieve, arena y agua, vista aislada de cada variante, la composición de las variantes, referencias en 16:9 y 9:19.5 y notas de estilo.
   - Texturas: pintar las 6 de research.md R-7 con un script determinista **fuera del repositorio** (`$CLAUDE_JOB_DIR/tmp` o equivalente). `T_Water_Top` tiene que ser periódica en `(½, ½)`.
@@ -466,3 +466,7 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T020 | A3, automatizado en `TerritorySceneAssetTests.TerritoryScene_OpenedInTheEditor_ShowsFiftyFivePiecesAndStaysClean` | Sin *Play*: 55 piezas `DontSave` y `scene.isDirty == false` |
 | 2026-11-25 | T020 | A4: 10 procesos de `TerritorySceneTests` en modo batch (incluye `LogAssert.NoUnexpectedReceived`) | 10/10 con 17/17 y salida 0. Las ejecuciones 6–10 se repitieron: la primera vez fallaron porque se estaban escribiendo las pruebas de US2 en el mismo proyecto (errores de compilación ajenos a la escena) |
 | 2026-11-25 | T020 | Captura en *Play* con una prueba temporal no versionada (16:9 y 9:19.5) | Disco redondo en escorzo, sin huecos ni piezas sueltas, con los laterales del borde frontal visibles. En 9:19.5 ocupa el 88 % del ancho. Observación para C1: las filas 3 y 5 (8 piezas) sobresalen media pieza respecto a la 4 a izquierda y derecha, lo que deja una pequeña muesca en el contorno; es propio del disco K = 13 acordado |
+| 2026-11-25 | T022–T028 | A1 con las pruebas de US2 y sin implementación (Red) | Salida 1: no compila porque faltan `TopUv`, `RiverMetrics`, `TerrainCatalogAsset.TerrainEntryCount` y `TerritoryView.Catalog` |
+| 2026-11-25 | T029–T030 | `TerritoryMeshesMenu` sustituye a `HexTileMeshMenu` (`git mv`, mismo `.meta`). `-executeMethod Ecosystem.Territory.Editor.TerritoryMeshesMenu.Regenerate` | Salida 0. `WaterTile.asset` nuevo (6,7 KB). `HexTile.asset` regenerado **sin cambios** (`git status` limpio) |
+| 2026-11-25 | T029–T030 | A1 | Salida 2 · 263/284: pasan T022–T024 (mapeo en red, `RiverMetrics` y `WaterTile` al día). Fallan solo las 21 comprobaciones de arte, catálogo y composición de T025, T026 y T028 (faltan las texturas, materiales, prefabs y composición que llegan con T034–T036) |
+| 2026-11-25 | T031 | Commit con T022–T024 y T029–T030 | T025–T028 quedan fuera del commit, en rojo, y entran en T038 |

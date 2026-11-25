@@ -61,6 +61,13 @@ namespace Ecosystem.Territory.View
             return false;
         }
 
+        /// <summary>Número de entradas de una variante (para comprobar que no hay repetidas).</summary>
+        public int TerrainEntryCount(TerrainKind kind) => terrains.Count(entry => entry.kind == kind);
+
+        /// <summary>Número de entradas de una pieza de río (para comprobar que no hay repetidas).</summary>
+        public int RiverMeshEntryCount(RiverShape shape, int rotation) =>
+            riverMeshes.Count(entry => entry.shape == shape && entry.rotation == rotation);
+
         /// <summary>Las claves pedidas que el catálogo no puede resolver, en el orden recibido.</summary>
         public IReadOnlyList<VisualKey> Missing(IEnumerable<VisualKey> required) =>
             required.Where(key => !Has(key)).ToList().AsReadOnly();
