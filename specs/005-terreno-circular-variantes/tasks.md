@@ -316,7 +316,7 @@ con 55 piezas. No se espera código nuevo (research.md R-8).
 
 - [X] T055 [P] [US4] Ejecutar A2 y comprobar, en `_Project/Tests/PlayMode/TerritorySceneTests.cs`, que la prueba de encuadre por proporción (invariante 4 de contracts/territory-scene.md) recorre las 6 proporciones con 55 piezas, y `TerritoryFramingTests` con área segura. Si la ocupación cae por debajo del 70 %, parar y plantearlo al responsable (plan.md → *Riesgos*). Anotarlo en el registro.
 - [X] T056 [P] [US4] Con el entorno local arrancado, ejecutar B1 (`_Project/Tests/Integration/BootstrapSceneIntegrationTests.cs`, con 55 piezas en ≤ 2 s), B2 y B3. Anotarlo en el registro.
-- [ ] T057 [US4] En el editor, vista *Simulator* con un iPhone con muesca, en vertical y en horizontal: comprobar C9 (55 piezas fuera de la muesca, legibles en 9:19.5) y C12. Anotarlo en el registro. Los resultados definitivos los da la revisión del responsable (T064).
+- [X] T057 [US4] En el editor, vista *Simulator* con un iPhone con muesca, en vertical y en horizontal: comprobar C9 (55 piezas fuera de la muesca, legibles en 9:19.5) y C12. Anotarlo en el registro. Los resultados definitivos los da la revisión del responsable (T064).
 
 **Checkpoint**: el territorio ampliado funciona en cualquier proporción y en el flujo de invitado.
 
@@ -353,7 +353,7 @@ quickstart.md.
   - sección *Territorio*: disco de 55 celdas, variantes, río, catálogo, cómo cambiar la composición y el comando *Regenerar mallas del territorio* con su línea en modo batch (`TerritoryMeshesMenu.Regenerate`, que sustituye a `HexTileMeshMenu.Regenerate`);
   - pruebas nuevas en la tabla de grupos.
 - [X] T063 [P] Actualizar la línea de estado de `README.md` (raíz).
-- [ ] T064 Revisión visual manual completa (quickstart C, C1–C13) por el responsable en las 6 proporciones y el simulador, incluida la prueba SC-003 de 8 celdas y el tiempo (≤ 15 min, SC-009). Registrar los resultados en `specs/005-terreno-circular-variantes/spec.md` → nueva sección *Revisión visual*, con fecha y persona. Un ❌ vuelve a la fase que corresponda.
+- [X] T064 Revisión visual manual completa (quickstart C, C1–C13) por el responsable en las 6 proporciones y el simulador, incluida la prueba SC-003 de 8 celdas y el tiempo (≤ 15 min, SC-009). Registrar los resultados en `specs/005-terreno-circular-variantes/spec.md` → nueva sección *Revisión visual*, con fecha y persona. Un ❌ vuelve a la fase que corresponda.
 - [X] T065 Higiene (quickstart D, SC-004 y SC-010):
   - `git diff` vacío en `server-nakama/`, `shared/`, `deploy/`, `.github/`, `ProjectSettings/` y los recursos de hierba;
   - ningún GUID de `.meta` cambiado;
@@ -363,7 +363,7 @@ quickstart.md.
 
   Anotarlo en el registro.
 - [X] T066 Ejecución final de A1, A2 y B1, y builds de desarrollo de Android e iOS que compilan, según `client-unity/README.md` → *Builds de desarrollo*. Anotar los resultados y las salidas en el registro. Si una build no se puede ejecutar, anotar qué falta y por qué.
-- [ ] T067 Commit `docs: describe the circular territory, terrain variants and rivers in the READMEs` (T062–T063) y commit `docs(spec): log the visual review, tests, builds and repository checks for spec 005` (T064–T066).
+- [X] T067 Commit `docs: describe the circular territory, terrain variants and rivers in the READMEs` (T062–T063) y commit `docs(spec): log the visual review, tests, builds and repository checks for spec 005` (T064–T066).
 - [X] T068 Con la autorización explícita del responsable: push y PR hacia `main`. La CI tiene que estar en verde. Anotar el PR y el resultado de la CI en el registro y confirmarlo con `docs(spec): log the PR and CI result for spec 005`.
 
 ---
@@ -496,3 +496,5 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T066 | Ejecución final: A1, A2 y B1 sobre el código final | EditMode: salida 0 · 427/427. PlayMode: salida 0 · 28/28. Integración: salida 0 · 14/14 |
 | 2026-11-25 | T066 | Builds de desarrollo en modo batch con `BuildPipeline.BuildPlayer` y las escenas de la build (script de editor temporal, no versionado) | Android: correcta, 0 errores, `Builds/Android/Ecosystem-dev.apk`. iOS: correcta, 0 errores, proyecto Xcode en `Builds/iOS/`. Las dos con `Bootstrap` y `Territory`. Ningún archivo versionado cambió. iOS queda como plataforma activa del editor (`Library/`, no versionado) |
 | 2026-11-25 | T068 | Push y PR con la autorización del responsable | PR #5 (https://github.com/enriqueazo/ecosystem/pull/5) hacia `main`. CI en verde: `repo`, `server` y `backend`. Las pruebas de Unity no corren en la CI (ADR-0007). La revisión visual (T057 y T064) sigue pendiente de registrar |
+| 2026-11-25 | T057, T064 | Revisión visual manual en el editor por el responsable (quickstart C, C1–C13, *Simulator* con muesca, B2 y B3) | Todo ✅, según el responsable. Registrada en spec.md → *Revisión visual*. No se indicó el tiempo empleado (SC-009) |
+| 2026-11-25 | T067 | Commits de documentación | `680caaa` (README), `94b2b39` (registro de pruebas y builds) y este, con la revisión visual |

@@ -585,7 +585,7 @@ Revisión manual de [quickstart.md → C](quickstart.md#c-revisión-visual-manua
 editor de Unity con las 6 proporciones y la vista *Simulator* con muesca. La hace el responsable; un ❌
 bloquea la entrega. Incluye los pasos B2 y B3 de quickstart.md, que necesitan el editor con interfaz.
 
-**Estado**: pendiente (T064).
+**Estado**: **aprobada** por el responsable el 2026-11-25 (T057 y T064): todos los criterios ✅.
 
 Comprobado antes con capturas en *Play* (registro de tasks.md, T020, T037 y T053), sin sustituir la
 revisión del responsable:
@@ -597,4 +597,4 @@ revisión del responsable:
 
 | Fecha | Persona | Criterios | Resultado | Tiempo |
 |-------|---------|-----------|-----------|--------|
-| | | C1–C13, B2 y B3 | | |
+| 2026-11-25 | Responsable del proyecto | C1–C13 en las 6 proporciones y en *Simulator* con muesca, B2 y B3 | Todo ✅ | — (no indicado) |
