@@ -19,8 +19,11 @@ Comportamiento observable que verifican las pruebas PlayMode e integración y la
 | `Directional Light` | Rotación aprobada, `shadows = None` |
 | `RenderSettings` | `skybox = null`, `fog = false`, `ambientMode = Flat` con el color ambiente aprobado |
 
-Además, la escena MUST NOT contener `Animator`, `Animation`, `ParticleSystem`, `Volume`,
-`AudioSource` ni ningún componente de conexión.
+Además, la escena solo puede contener estos componentes (lista cerrada): `Transform`, `Camera`,
+`UniversalAdditionalCameraData`, `Light`, `UniversalAdditionalLightData`, `TerritoryView`,
+`TerritoryCamera`, `MeshFilter` y `MeshRenderer`. Así quedan fuera animación, partículas, audio,
+volúmenes de posprocesado y componentes de conexión. Los módulos de animación, partículas y audio ni
+siquiera están en el proyecto (`Packages/manifest.json`).
 
 ## Invariantes en reproducción (PlayMode, sin servidor)
 

@@ -129,7 +129,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T011 [P] [US1] Escribir `_Project/Tests/PlayMode/TerritorySceneTests.cs` con las invariantes 1, 2 y 4 y la composición de [contracts/territory-scene.md](contracts/territory-scene.md):
+- [X] T011 [P] [US1] Escribir `_Project/Tests/PlayMode/TerritorySceneTests.cs` con las invariantes 1, 2 y 4 y la composición de [contracts/territory-scene.md](contracts/territory-scene.md):
   - la escena carga con `LogAssert.NoUnexpectedReceived`;
   - hay exactamente 16 piezas, en las posiciones `HexMetrics.Center` de las celdas de `InitialTerritory`;
   - la cámara es ortográfica, con rotación `(θ, 0, 0)`, `SolidColor`, `renderPostProcessing == false` y fondo = constante `ApprovedBackground` (valor de partida `#8E9BAA`);
@@ -139,7 +139,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - la cámara no cambia entre los fotogramas 1 y 120.
 
   Carga la escena por ruta con `EditorSceneManager.LoadSceneAsyncInPlayMode`, bajo `#if UNITY_EDITOR`, porque aún no está en la build. Cuando T031 la añada, se puede cargar con `SceneManager`.
-- [ ] T012 [P] [US1] Escribir dos pruebas EditMode:
+- [X] T012 [P] [US1] Escribir dos pruebas EditMode:
   - `_Project/Tests/EditMode/Territory/TerritorySceneAssetTests.cs` comprueba que las piezas no se serializan en la escena (research.md R-7). En el YAML de `_Project/Scenes/Territory.unity`:
     - no hay bloques `PrefabInstance` (`--- !u!1001`) cuyo `m_SourcePrefab` sea el GUID de `HexTile.prefab`;
     - ningún `MeshFilter` referencia el GUID de `HexTile.asset`.
@@ -151,11 +151,11 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Crear los materiales y el prefab:
+- [X] T013 [P] [US1] Crear los materiales y el prefab:
   - `_Project/Art/Territory/Materials/M_Grass_Top.mat` y `M_Earth_Side.mat`: `Universal Render Pipeline/Simple Lit`, *Specular Highlights* desactivado, *Receive Shadows* desactivado y color base de partida (`#6FA34A`, `#8A5A3B`; research.md R-5). Las texturas llegan en US2;
   - `_Project/Art/Territory/Prefabs/HexTile.prefab`: `MeshFilter(HexTile.asset)` y `MeshRenderer` con los materiales en el orden de las submallas, `Cast Shadows = Off`.
-- [ ] T014 [P] [US1] Implementar `_Project/Scripts/Territory.View/TerritoryLayoutAsset.cs`, un ScriptableObject con `data-model.md` → `TerritoryLayoutAsset.cells` (`{column,row}`) y `ToLayout()` que delega en `TerritoryLayout.Create`. Crear `_Project/Data/Territory/InitialTerritory.asset` con las 16 celdas `{0..3}×{0..3}` de `data-model.md` → `TerritoryLayout.Cells` (disposición inicial). `TerritoryLayoutAssetTests` (T012) en verde.
-- [ ] T015 [US1] Implementar `_Project/Scripts/Territory.View/TerritoryView.cs` según `data-model.md` → *Componentes de escena* → `TerritoryView` y research.md R-7:
+- [X] T014 [P] [US1] Implementar `_Project/Scripts/Territory.View/TerritoryLayoutAsset.cs`, un ScriptableObject con `data-model.md` → `TerritoryLayoutAsset.cells` (`{column,row}`) y `ToLayout()` que delega en `TerritoryLayout.Create`. Crear `_Project/Data/Territory/InitialTerritory.asset` con las 16 celdas `{0..3}×{0..3}` de `data-model.md` → `TerritoryLayout.Cells` (disposición inicial). `TerritoryLayoutAssetTests` (T012) en verde.
+- [X] T015 [US1] Implementar `_Project/Scripts/Territory.View/TerritoryView.cs` según `data-model.md` → *Componentes de escena* → `TerritoryView` y research.md R-7:
   - `[ExecuteAlways]`;
   - en `OnEnable`, instancia `tilePrefab` en `HexMetrics.Center` por celda;
   - `HideFlags.DontSave` fuera de *Play*;
@@ -164,14 +164,14 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - expone `Bounds` para el encuadre.
 
   Los errores de disposición quedan para US5 (T034).
-- [ ] T016 [US1] Crear `_Project/Scenes/Territory.unity` con la composición de [contracts/territory-scene.md](contracts/territory-scene.md):
+- [X] T016 [US1] Crear `_Project/Scenes/Territory.unity` con la composición de [contracts/territory-scene.md](contracts/territory-scene.md):
   - `Territory`, con `TerritoryView`, `InitialTerritory` y `HexTile.prefab`;
   - `Main Camera`: ortográfica, rotación (35°, 0, 0), `SolidColor` `#8E9BAA` y *Post Processing* desactivado, con un `orthographicSize` fijo provisional que encuadre en 16:9 (el encuadre adaptativo llega en US3);
   - `Directional Light`: rotación (50°, −30°, 0°) y `Shadows = None`;
   - *Lighting*: sin *skybox*, sin niebla y ambiente plano, sin hornear.
 
   T011 y T012 en verde.
-- [ ] T017 [US1] Validar a mano quickstart A3 (se ve sin *Play* y la escena no queda modificada) y A4 (10 *Play* sin errores ni avisos). Anotarlo en el registro.
+- [X] T017 [US1] Validar a mano quickstart A3 (se ve sin *Play* y la escena no queda modificada) y A4 (10 *Play* sin errores ni avisos). Anotarlo en el registro.
 
 **Checkpoint**: MVP visible. Commit `feat(client): add the territory scene …` (T011–T017).
 
@@ -418,3 +418,10 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T007–T009 | A1 (Green) | Salida 0 · 151/151 (113 previas + 38 nuevas) |
 | 2026-11-25 | T010 | A1 con `HexTileMeshAssetTests` y sin el asset (Red) | Salida 2 · 151/152, falla `SavedMesh_MatchesTheGeneratorOutput` (falta la malla) |
 | 2026-11-25 | T010 | `-executeMethod Ecosystem.Territory.Editor.HexTileMeshMenu.Regenerate`, y A1 | Malla guardada (6,7 KB, texto YAML). Salida 0 · 152/152. Regenerar otra vez da un archivo idéntico |
+| 2026-11-25 | T011–T012 | A1 y A2 con las pruebas de US1 y sin la vista (Red) | Salida 1 en los dos: faltan `TerritoryView` y `Ecosystem.Territory.View.TerritoryLayoutAsset` |
+| 2026-11-25 | T013–T016 | Materiales, prefab, `InitialTerritory.asset` y `Territory.unity` creados con un script de editor temporal (borrado, no se versiona) | Simple Lit con `_SpecularHighlights = 1` (sin especular) y `_RECEIVE_SHADOWS_OFF`. La escena no guarda piezas (`grep "Tile ("` → 0) |
+| 2026-11-25 | T011, T016 | Ajuste de la prueba de composición | En lugar de buscar `Animator`, `ParticleSystem` y `AudioSource` (sus módulos no están en el proyecto y no compila), la prueba exige una **lista cerrada** de componentes. Se actualiza `contracts/territory-scene.md` |
+| 2026-11-25 | T011–T016 | A1 y A2 (Green) | EditMode: salida 0 · 155/155. PlayMode: salida 0 · 9/9 |
+| 2026-11-25 | T017 | A3, automatizado en `TerritorySceneAssetTests.TerritoryScene_OpenedInTheEditor_ShowsSixteenPiecesAndStaysClean` | Abierta sin *Play*: 16 piezas `DontSave` y `scene.isDirty == false` |
+| 2026-11-25 | T017 | A4: 10 ejecuciones seguidas de `TerritorySceneTests` en modo batch (incluye `LogAssert.NoUnexpectedReceived`) | 10/10 sin errores ni avisos. `-repeat 10` del Test Framework no repite la prueba, así que se lanzan 10 procesos |
+| 2026-11-25 | T017 | Captura en *Play* (prueba temporal, no versionada), 16:9 y 9:19.5 | 16 prismas con césped verde arriba y tierra en los laterales frontales, sin huecos ni parpadeo visibles. Sin borde en la textura, las caras superiores se leen como una sola superficie (riesgo previsto, se resuelve en US2). En 9:19.5 el tablero se recorta con el tamaño fijo provisional (se resuelve en US3). Nota: con `camera.Render()` desde el editor, la cara superior sale con el material de tierra; en *Play* es correcta, así que las capturas se hacen siempre en *Play* |

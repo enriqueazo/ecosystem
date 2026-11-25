@@ -6,6 +6,8 @@
     "Ecosystem.Presentation",
     "Ecosystem.Territory",
     "Ecosystem.Territory.View",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
     "UnityEditor.TestRunner",
     "UnityEngine.TestRunner"
   ],
