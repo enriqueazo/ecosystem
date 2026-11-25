@@ -333,21 +333,21 @@ escenarios de [quickstart.md](quickstart.md).
   - quitar de `client-unity/Packages/manifest.json` los paquetes sin uso, incluido Input System
     si no se usa; dejar URP, Test Framework y sus dependencias obligatorias;
   - reabrir el editor y confirmar que se regenera `client-unity/Packages/packages-lock.json`.
-- [ ] T028 [US2] Comprobar en la documentación de la versión fijada los nombres exactos de las
+- [X] T028 [US2] Comprobar en la documentación de la versión fijada los nombres exactos de las
   API que usarán las pruebas (research.md R-8: `PlayerSettings`, `NamedBuildTarget`,
   `EditorBuildSettings`, `EditorSettings` y `GraphicsSettings`/URP) y anotarlos en
   `client-unity/README.md` → sección *Pruebas*.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T029 [P] [US2] Crear `client-unity/Assets/_Project/Tests/EditMode/`:
+- [X] T029 [P] [US2] Crear `client-unity/Assets/_Project/Tests/EditMode/`:
   - definición de ensamblado `Ecosystem.Tests.EditMode.asmdef` (solo Editor; referencias a
     Unity Test Framework y URP);
   - `ProjectConfigurationTests.cs` con las seis aserciones de research.md R-8 (escena única en
     índice 0 con ruta `Assets/_Project/Scenes/Bootstrap.unity`, IL2CPP en Android e iOS, solo
     ARM64, Force Text, pipeline URP activo, identificador de aplicación provisional definido);
   - ejecutarlas y confirmar que **fallan** con la configuración de la plantilla.
-- [ ] T030 [P] [US2] Crear `client-unity/Assets/_Project/Tests/PlayMode/`:
+- [X] T030 [P] [US2] Crear `client-unity/Assets/_Project/Tests/PlayMode/`:
   - `Ecosystem.Tests.PlayMode.asmdef`;
   - `BootstrapSceneTests.cs`, que carga la escena `Bootstrap`, espera un fotograma y comprueba
     con `LogAssert.NoUnexpectedReceived()` que no hay errores ni excepciones;
@@ -547,3 +547,6 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | T025 / D-02 | 2026-11-25 | ✅ | Confirmada por el responsable: Unity 6.3 LTS. Instalado `6000.3.29f1` con AndroidPlayer (OpenJDK, SDK, NDK) e iOSSupport. Registrada como ADR-0005: la tabla aportada proponía ADR-0004, pero ese número ya está asignado (conectividad sin SDK) y los números no se reutilizan |
 | T026 | 2026-11-25 | ✅ | Proyecto creado en modo batch (licencia Personal activa en Hub) con `-createProject client-unity -cloneFromTemplate com.unity.template.3d-cross-platform-17.0.14.tgz`: en Unity 6.3 la plantilla *Universal 3D* se llama «3D URP». `ProjectVersion.txt` = `6000.3.29f1 (96d2fe17529c)`. Git no ve `Library/`, `Temp/`, `Logs/`, `UserSettings/` ni `.csproj`; **sí** veía `client-unity.slnx` (nuevo formato de solución) → añadido `/client-unity/*.slnx` a `.gitignore` |
 | T027 | 2026-11-25 | ✅ | Eliminados `TutorialInfo`, `Readme`, `SampleScene`, `InputSystem_Actions`, `PC_RPAsset`, `PC_Renderer` y `SampleSceneProfile`. Movidos con sus `.meta` (GUID conservados) a `Assets/_Project/Settings/`: `Mobile_RPAsset`, `Mobile_Renderer`, `UniversalRenderPipelineGlobalSettings` y `DefaultVolumeProfile`. `GraphicsSettings` apunta a `Mobile_RPAsset`; un único nivel de calidad «Mobile» sin exclusiones; `EditorBuildSettings` sin escenas; `activeInputHandler: 0` (Input System retirado). Manifiesto: URP, Test Framework y las integraciones de Rider y Visual Studio; el resto de paquetes y módulos de la plantilla se han retirado y el lockfile resuelve 20 dependencias. Reimportación en modo batch: 0 errores de ensamblado |
+| T028 | 2026-11-25 | ✅ | Las API (`NamedBuildTarget`, `PlayerSettings.GetScriptingBackend`/`GetApplicationIdentifier`, `PlayerSettings.Android.targetArchitectures`, `EditorSettings.serializationMode`, `VersionControlSettings.mode`, `GraphicsSettings.defaultRenderPipeline`, `QualitySettings.GetRenderPipelineAssetAt`, `EditorBuildSettings.scenes`, `SceneManager.LoadSceneAsync`, `Object.FindAnyObjectByType`, `LogAssert.NoUnexpectedReceived`) compilan en 6000.3.29f1 sin errores ni avisos CS0618/CS0612 |
+| T029 Red | 2026-11-25 | ✅ | EditMode (batch): 10 casos, 7 pasan y 3 fallan (escena de la build vacía; identificador de la plantilla en Android e iOS). Las 7 que pasan son ajustes que ya trae la plantilla (IL2CPP, ARM64, Force Text, `.meta` visibles) o que dejó T027 (URP Mobile como pipeline) |
+| T030 Red | 2026-11-25 | ✅ | PlayMode (batch): 1 caso, falla: «Scene 'Assets/_Project/Scenes/Bootstrap.unity' couldn't be loaded because it has not been added to the active build profile or shared scene list» |
