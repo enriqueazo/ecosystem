@@ -50,16 +50,67 @@ namespace Ecosystem.Connection
                 return;
             }
 
-            var authenticated = await _deps.Authenticator.AuthenticateAsync(cancellationToken);
-            if (!authenticated.IsSuccess)
+            var session = await EstablishSessionAsync(cancellationToken);
+            if (!session.IsSuccess)
             {
-                FailWith(authenticated.Failure);
+                FailWith(session.Failure);
                 return;
             }
 
-            Session = authenticated.Value;
-            _deps.Sessions.Save(Session.Tokens);
+            Session = session.Value;
             SetState(ConnectionState.Connected);
+        }
+
+        // Margen de validez local (data-model.md → Sesión.Validez local): si el servidor rechaza la
+        // sesión antes, prevalece el servidor.
+        private static readonly TimeSpan ExpiryMargin = TimeSpan.FromSeconds(60);
+
+        private bool IsExpired(DateTime expiresAtUtc) => _deps.Clock.UtcNow >= expiresAtUtc - ExpiryMargin;
+
+        /// <summary>
+        /// FR-006: sesión guardada vigente → se usa; caducada → se refresca; no renovable o ilegible →
+        /// reautenticación de invitado con la misma instalación (la misma cuenta).
+        /// </summary>
+        private async Task<ServerResult<AuthenticatedSession>> EstablishSessionAsync(CancellationToken cancellationToken)
+        {
+            var stored = _deps.Sessions.Load();
+            if (stored != null)
+            {
+                var restored = _deps.Server.Restore(stored);
+                if (!restored.IsSuccess)
+                {
+                    _deps.Sessions.Clear();
+                }
+                else if (!IsExpired(restored.Value.ExpiresAtUtc))
+                {
+                    return restored;
+                }
+                else if (!IsExpired(restored.Value.RefreshExpiresAtUtc))
+                {
+                    var refreshed = await _deps.Server.RefreshAsync(restored.Value, cancellationToken);
+                    if (refreshed.IsSuccess)
+                    {
+                        _deps.Sessions.Save(refreshed.Value.Tokens);
+                        return refreshed;
+                    }
+                    if (refreshed.Failure != FailureKind.SessionRejected)
+                    {
+                        return refreshed;
+                    }
+                }
+            }
+
+            return await AuthenticateAsync(cancellationToken);
+        }
+
+        private async Task<ServerResult<AuthenticatedSession>> AuthenticateAsync(CancellationToken cancellationToken)
+        {
+            var authenticated = await _deps.Authenticator.AuthenticateAsync(cancellationToken);
+            if (authenticated.IsSuccess)
+            {
+                _deps.Sessions.Save(authenticated.Value.Tokens);
+            }
+            return authenticated;
         }
 
         private void FailWith(FailureKind failure)
