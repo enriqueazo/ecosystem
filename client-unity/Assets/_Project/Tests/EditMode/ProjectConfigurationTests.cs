@@ -15,6 +15,7 @@ namespace Ecosystem.Tests.EditMode
     public sealed class ProjectConfigurationTests
     {
         private const string BootstrapScenePath = "Assets/_Project/Scenes/Bootstrap.unity";
+        private const string TerritoryScenePath = "Assets/_Project/Scenes/Territory.unity";
 
         // Identificador provisional hasta resolver D-06 (docs/decisions/pendientes.md).
         private const string ProvisionalApplicationIdentifier = "com.ecosystem.dev";
@@ -25,12 +26,16 @@ namespace Ecosystem.Tests.EditMode
             new TestCaseData(NamedBuildTarget.iOS).SetName("{m}(iOS)")
         };
 
+        /// <summary>
+        /// Bootstrap sigue en el índice 0 y el territorio va detrás (spec 004 FR-021). Sustituye a la
+        /// prueba que exigía Bootstrap como única escena, tal como preveía la spec 003 (FR-027).
+        /// </summary>
         [Test]
-        public void BuildScenes_ContainOnlyBootstrapSceneAtIndexZero()
+        public void BuildScenes_AreBootstrapThenTerritory()
         {
             var enabledScenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).ToArray();
 
-            Assert.That(enabledScenes.Select(scene => scene.path), Is.EqualTo(new[] { BootstrapScenePath }));
+            Assert.That(enabledScenes.Select(scene => scene.path), Is.EqualTo(new[] { BootstrapScenePath, TerritoryScenePath }));
         }
 
         [TestCaseSource(nameof(MobileTargets))]

@@ -183,7 +183,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 **Independent Test**: quickstart C (criterios C3, C4, C5, C6, C8, C9 y C11) en 16:9.
 
-- [ ] T018 [US2] Crear la dirección visual con Claude Design:
+- [X] T018 [US2] Crear la dirección visual con Claude Design:
   - llamar a la herramienta de artefactos con `action: "quickstart"` e `intent: "design"`, y cargar los skills que indique (`artifact-design`; `artifact-capabilities` para el botón de descarga);
   - el artefacto incluye todo lo de [contracts/visual-direction.md](contracts/visual-direction.md) §1: paleta, pieza, cámara y luz, referencias 16:9 y 9:19.5, notas de estilo, y `T_Grass_Top` y `T_Earth_Side` con su botón «Descargar PNG» de 512 × 512;
   - los requisitos de las texturas de §1 son obligatorios: banda de borde hexagonal alineada con el mapeo planar de `data-model.md` → *HexPrismMesh*, tierra que se repite sin costura en horizontal y borde de césped en la banda alta.
@@ -244,9 +244,9 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T028 [P] [US4] En `_Project/Tests/EditMode/ProjectConfigurationTests.cs`, sustituir `BuildScenes_ContainOnlyBootstrapSceneAtIndexZero` por `BuildScenes_AreBootstrapThenTerritory`, con la lista exacta `[Bootstrap, Territory]` (FR-021). Justificarlo en un comentario que cite la spec 004 FR-021 y la spec 003 FR-027.
-- [ ] T029 [P] [US4] En `_Project/Tests/PlayMode/BootstrapSceneTests.cs`, añadir `WithoutConfiguration_DoesNotLoadTerritory`: con `ECOSYSTEM_NAKAMA_CONFIG=none`, tras 60 fotogramas la escena activa sigue siendo `Bootstrap` y no hay ninguna `TerritoryView`.
-- [ ] T030 [P] [US4] En `_Project/Tests/Integration/BootstrapSceneIntegrationTests.cs`, añadir `Connected_LoadsTerritoryOnce`:
+- [X] T028 [P] [US4] En `_Project/Tests/EditMode/ProjectConfigurationTests.cs`, sustituir `BuildScenes_ContainOnlyBootstrapSceneAtIndexZero` por `BuildScenes_AreBootstrapThenTerritory`, con la lista exacta `[Bootstrap, Territory]` (FR-021). Justificarlo en un comentario que cite la spec 004 FR-021 y la spec 003 FR-027.
+- [X] T029 [P] [US4] En `_Project/Tests/PlayMode/BootstrapSceneTests.cs`, añadir `WithoutConfiguration_DoesNotLoadTerritory`: con `ECOSYSTEM_NAKAMA_CONFIG=none`, tras 60 fotogramas la escena activa sigue siendo `Bootstrap` y no hay ninguna `TerritoryView`.
+- [X] T030 [P] [US4] En `_Project/Tests/Integration/BootstrapSceneIntegrationTests.cs`, añadir `Connected_LoadsTerritoryOnce`:
   - con el entorno local, al llegar a `Connected` la escena activa pasa a `Territory.unity` en ≤ 2 s;
   - hay 16 piezas;
   - durante 2 s más, `sceneLoaded` se dispara una sola vez para esa escena;
@@ -256,15 +256,15 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Implementation for User Story 4
 
-- [ ] T031 [US4] Añadir `_Project/Scenes/Territory.unity` en el índice 1 de `client-unity/ProjectSettings/EditorBuildSettings.asset`, con `Bootstrap` en el 0. T028 en verde.
-- [ ] T032 [US4] Modificar `_Project/Scripts/Presentation/ConnectionScreen.cs` según `data-model.md` → *Componentes de escena* → `ConnectionScreen` y [contracts/territory-scene.md](contracts/territory-scene.md) → *Paso desde Bootstrap*:
+- [X] T031 [US4] Añadir `_Project/Scenes/Territory.unity` en el índice 1 de `client-unity/ProjectSettings/EditorBuildSettings.asset`, con `Bootstrap` en el 0. T028 en verde.
+- [X] T032 [US4] Modificar `_Project/Scripts/Presentation/ConnectionScreen.cs` según `data-model.md` → *Componentes de escena* → `ConnectionScreen` y [contracts/territory-scene.md](contracts/territory-scene.md) → *Paso desde Bootstrap*:
   - `[SerializeField] string sceneOnConnected` y bandera `_navigated`;
   - cuando `Run()` termina con `State == Connected` y `!_navigated`, carga en `Single`;
   - si la escena está vacía o no está en la build (`SceneUtility.GetBuildIndexByScenePath < 0`), registra `[Conexión] Escena tras conectar no disponible: …` como error y se queda en `Bootstrap`;
   - sin referencias a `Ecosystem.Territory*`.
 
   Asignar `sceneOnConnected = Assets/_Project/Scenes/Territory.unity` en `_Project/Scenes/Bootstrap.unity`. T030 en verde, y las pruebas de la spec 003 siguen en verde.
-- [ ] T033 [US4] Validar a mano quickstart B2 (≤ 2 s) y B3 («Reintentar» tras «Sin conexión» carga el territorio una vez). Registrarlo.
+- [ ] T033 [US4] *(B2 verificado por `Connected_LoadsTerritoryOnce`; B3 pendiente del responsable: necesita parar Nakama y pulsar «Reintentar» en el editor)* Validar a mano quickstart B2 (≤ 2 s) y B3 («Reintentar» tras «Sin conexión» carga el territorio una vez). Registrarlo.
 
 **Checkpoint**: commit `feat(client): show the territory after a guest connection …` (T028–T033).
 
@@ -428,3 +428,7 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T023–T024 | A1 con `TerritoryFramingTests` y A2 con el encuadre por aspecto (Red) | Salida 1: faltan `TerritoryFramingResult`, `TerritoryFraming` y `TerritoryCamera` |
 | 2026-11-25 | T025–T026 | A1 y A2 (Green), con `TerritoryCamera` añadido a `Main Camera` mediante un script de editor temporal (no versionado) | EditMode: salida 0 · 164/164 (6 proporciones a pantalla completa, muesca en vertical, muescas laterales en horizontal, proyección). PlayMode: 15/15 de las pruebas del proyecto (incluidas las 6 proporciones con `WorldToViewportPoint ∈ [0,06; 0,94]`) |
 | 2026-11-25 | T027 | Captura en *Play* a 9:19.5 tras el encuadre | Tablero entero, centrado, con el margen del 6 % a los lados (88 % del ancho). Quedan pendientes para el responsable la vista *Simulator* con muesca (C7) y el cambio de proporción durante *Play* (C10) |
+| 2026-11-25 | T018 | Artefacto de Claude Design creado: https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V (privado) | Tres artboards: dirección y valores (paleta, pieza, cámara y luz, lo que se evita), texturas y referencias en Unity (16:9 y 9:19.5, render real en *Play*). Desviaciones: (1) las texturas se pintan con un script determinista (Python sin dependencias, fuera del repositorio), porque no hay rasterizador de SVG en el equipo; se suben al artefacto y son **los mismos bytes** que se importarán en Unity; (2) sin botón «Descargar PNG», porque el visor de artefactos bloquea las descargas iniciadas por la página; (3) las referencias se renderizaron con una importación temporal de las texturas, revertida y no confirmada. No se usó el sistema de diseño «Vocablo» (es de otro producto) |
+| 2026-11-25 | T028–T030 | A1 e integración (B1) con las pruebas nuevas (Red) | EditMode: 163/164, falla `BuildScenes_AreBootstrapThenTerritory`. Integración: 13/14, falla `Connected_LoadsTerritoryOnce` (no se muestra el territorio). `WithoutConfiguration_DoesNotLoadTerritory` pasa ya (prueba de no regresión) |
+| 2026-11-25 | T031–T032 | A1, A2 y B1 (Green), con el backend local en marcha (`tools/check-backend.sh --module` → 0) | EditMode: 164/164. PlayMode: 16/16 de las pruebas del proyecto. Integración: 14/14, con el territorio visible **0,08 s** después de conectar, cargado una vez y sin errores ni avisos |
+| 2026-11-25 | T033 | B2 | Cubierto por `Connected_LoadsTerritoryOnce` sobre la escena real. B3 (parar Nakama, «Reintentar») queda para el responsable |

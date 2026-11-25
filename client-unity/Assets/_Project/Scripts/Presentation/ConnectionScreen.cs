@@ -5,6 +5,7 @@ using Ecosystem.Connection;
 using Ecosystem.Connection.Nakama;
 using Ecosystem.Contracts;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Ecosystem.Presentation
 {
@@ -15,8 +16,15 @@ namespace Ecosystem.Presentation
     /// </summary>
     public sealed class ConnectionScreen : MonoBehaviour
     {
+        /// <summary>
+        /// Escena que se carga al llegar a «conectado» (spec 004 FR-020). Solo es una ruta de la
+        /// build: la conexión no conoce nada del territorio (FR-017).
+        /// </summary>
+        [SerializeField] private string sceneOnConnected = string.Empty;
+
         private ConnectionFlow _flow;
         private bool _running;
+        private bool _navigated;
 
         public ConnectionState State => _flow?.State ?? ConnectionState.Connecting;
 
@@ -54,6 +62,25 @@ namespace Ecosystem.Presentation
             {
                 _running = false;
             }
+
+            if (this != null && _flow.State == ConnectionState.Connected) ShowSceneOnConnected();
+        }
+
+        /// <summary>
+        /// Carga la escena tras conectar una sola vez por apertura (spec 004 FR-020, FR-021). El flujo
+        /// ya terminó, así que no queda ninguna operación de conexión pendiente.
+        /// </summary>
+        private void ShowSceneOnConnected()
+        {
+            if (_navigated) return;
+            if (string.IsNullOrEmpty(sceneOnConnected) || SceneUtility.GetBuildIndexByScenePath(sceneOnConnected) < 0)
+            {
+                Debug.LogError($"[Conexión] Escena tras conectar no disponible: «{sceneOnConnected}» no está en la build.");
+                return;
+            }
+
+            _navigated = true;
+            SceneManager.LoadSceneAsync(sceneOnConnected, LoadSceneMode.Single);
         }
 
         private void LogState(ConnectionState state)

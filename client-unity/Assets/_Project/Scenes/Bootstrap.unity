@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bff2f2fb59e13495faf40be551a99278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ecosystem.Presentation::Ecosystem.Presentation.ConnectionScreen
+  sceneOnConnected: Assets/_Project/Scenes/Territory.unity
 --- !u!4 &990629655
 Transform:
   m_ObjectHideFlags: 0
