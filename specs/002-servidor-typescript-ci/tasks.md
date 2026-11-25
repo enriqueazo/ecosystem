@@ -318,7 +318,7 @@ dependen de `generate`) y US2 los necesitan.
   - los procedimientos del servidor, entorno local, contratos y CI aparecen en un solo documento cada uno;
   - las D-NN solo se definen en `docs/decisions/pendientes.md`.
 - [X] T048 [P] Auditar secretos: `tools/check-repo.sh` y `git log -p main..HEAD`, sin valores reales de `deploy/local/.env`; registros de CI sin claves (SC-005).
-- [ ] T049 Ejecutar la validación completa de quickstart.md (A–E). Medir SC-001 con un clon limpio en el *scratchpad* (instalar, comprobar y construir ≤ 10 min sin descargas). Anotar lo no verificado y su motivo.
+- [X] T049 Ejecutar la validación completa de quickstart.md (A–E). Medir SC-001 con un clon limpio en el *scratchpad* (instalar, comprobar y construir ≤ 10 min sin descargas). Anotar lo no verificado y su motivo.
 
 ---
 
@@ -448,3 +448,5 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T046 / D2 / SC-003 | 2026-11-25 | ✅ | Ejecución `45616803916` con 3 commits temporales: `repo` falla con «✘ [secrets] … deploy/local/.env.fallo-ci»; `server` con «error TS2322 … src/payload.ts(42,14)»; `backend` con «módulo no cargado (… HTTP 404)», código 4. En `backend` se ejecutaron «Registros de los servicios» (por el fallo) y «Limpiar el entorno» (siempre). Los 3 commits se revirtieron (`e640ab3`, `0fef282`, `51584f6`), con diferencia neta vacía |
 | D3 / SC-005 / SC-006 | 2026-11-25 | ✅ | En los registros de la CI, los valores del `.env` aparecen como `***` (8 máscaras). El único hash de 64 caracteres sin enmascarar es la clave de caché de npm (hash del lockfile), no un secreto. Acciones fijadas por commit y sin `secrets.` |
 | D4 | 2026-11-25 | ✅ | README raíz: CI **configurada** (validada en el PR #2), qué ejecuta cada trabajo, cuándo, cómo reproducirlo, que no cubre Unity y el paso manual de protección de rama. ADR-0007 registra la validación |
+| T049 / E1 | 2026-11-25 | ✅ | Validación completa: A1–A7, B1–B4, C1–C6, D1–D4 y E1 superados (ver filas anteriores). ADR 0006, 0007 y 0008 aceptados; D-01, D-04 y D-05 en *Resueltas* de `pendientes.md` y en el índice. Ejecución final de la CI sobre `e0b9b98`, tras los reverts: los tres trabajos en verde |
+| No verificado | 2026-11-25 | — | **Protección de rama**: depende del responsable (paso manual en GitHub). **PR desde un fork**: no se probó; queda cubierto por diseño (sin secretos y con token de solo lectura). **SC-001 con una persona ajena**: medido solo por Claude (5 s desde un clon limpio) |
