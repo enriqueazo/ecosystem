@@ -314,10 +314,10 @@ dependen de `generate`) y US2 los necesitan.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T047 [P] Revisar la fuente única (FR-030):
+- [X] T047 [P] Revisar la fuente única (FR-030):
   - los procedimientos del servidor, entorno local, contratos y CI aparecen en un solo documento cada uno;
   - las D-NN solo se definen en `docs/decisions/pendientes.md`.
-- [ ] T048 [P] Auditar secretos: `tools/check-repo.sh` y `git log -p main..HEAD`, sin valores reales de `deploy/local/.env`; registros de CI sin claves (SC-005).
+- [X] T048 [P] Auditar secretos: `tools/check-repo.sh` y `git log -p main..HEAD`, sin valores reales de `deploy/local/.env`; registros de CI sin claves (SC-005).
 - [ ] T049 Ejecutar la validación completa de quickstart.md (A–E). Medir SC-001 con un clon limpio en el *scratchpad* (instalar, comprobar y construir ≤ 10 min sin descargas). Anotar lo no verificado y su motivo.
 
 ---
@@ -440,3 +440,7 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T041 / T042 | 2026-11-25 | ✅ | `.github/workflows/ci.yml` con los trabajos `repo`, `server` y `backend`. `actionlint` 1.7.12 (imagen Docker, local, con `shellcheck` integrado) → 0 problemas. Acciones fijadas por commit con comentario de versión; 0 referencias a `secrets.`; `permissions: contents: read`; `persist-credentials: false`; `.env` efímero con `openssl rand` y `::add-mask::` |
 | T043 | 2026-11-25 | ✅ | README raíz: sección *CI* (qué ejecuta cada trabajo, cuándo, cómo reproducirlo, que no cubre Unity y el paso manual de protección de rama), con el estado **«en validación»** hasta T046 (FR-028). Además, el inicio rápido incluye la construcción del módulo (sin ella Nakama no arranca) y `--module`, y los requisitos incluyen Node 26 / npm 11 |
 | T044 | 2026-11-25 | ✅ (decisión) | ADR-0007 aceptado; D-04 pasa a *Resueltas*; D-09 ya no depende de D-04 (la CI no ejecuta Unity). La validación de la CI queda pendiente de T045–T046 |
+| T047 / SC-007 | 2026-11-25 | ✅ | Las D-NN solo se definen en `pendientes.md` (D-01, D-04 y D-05 en *Resueltas*). Los comandos de `docker compose` solo están detallados en `deploy/local/README.md`, salvo las 4 líneas de inicio rápido del README raíz. Servidor, contratos y CI tienen cada uno un documento propio |
+| T048 / SC-005 (local) | 2026-11-25 | ✅ | `check-repo.sh --only secrets` → 0; ningún valor real de `deploy/local/.env` en `git log -p main..HEAD` ni en el árbol. Los registros de la CI se comprueban en T046 |
+| SC-001 (1.ª ejecución) | 2026-11-25 | ❌ → corregido | Desde un clon limpio, `npm run check` fallaba en `format:check`: **Biome 2.6 también formatea Markdown** y rellenaba las tablas de `server-nakama/README.md` (cambiado después de la última comprobación local). Corregido excluyendo `**/*.md` de Biome (`3adb5b5`) |
+| SC-001 | 2026-11-25 | ✅ | Clon limpio → `npm ci` → `npm run check` en 5 s (≤ 10 min). Inicio rápido del README hasta `npm run test:integration` 13/13 en 15 s (imágenes ya descargadas). En el clon, `tools/tests/run.sh` 33/33, `check-repo.sh` OK y `git status` limpio |
