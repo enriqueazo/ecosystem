@@ -187,19 +187,19 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - llamar a la herramienta de artefactos con `action: "quickstart"` e `intent: "design"`, y cargar los skills que indique (`artifact-design`; `artifact-capabilities` para el botón de descarga);
   - el artefacto incluye todo lo de [contracts/visual-direction.md](contracts/visual-direction.md) §1: paleta, pieza, cámara y luz, referencias 16:9 y 9:19.5, notas de estilo, y `T_Grass_Top` y `T_Earth_Side` con su botón «Descargar PNG» de 512 × 512;
   - los requisitos de las texturas de §1 son obligatorios: banda de borde hexagonal alineada con el mapeo planar de `data-model.md` → *HexPrismMesh*, tierra que se repite sin costura en horizontal y borde de césped en la banda alta.
-- [ ] T019 [US2] **Bloqueante, lo hace el responsable**: revisar y aprobar el artefacto. Puede iterar en T018. Anotar en [contracts/visual-direction.md](contracts/visual-direction.md) §2 los valores aprobados, el enlace y la fecha, y cambiar el *Estado* a «aprobado».
-- [ ] T020 [P] [US2] Exportar los dos PNG desde el artefacto a `_Project/Art/Territory/Textures/T_Grass_Top.png` y `T_Earth_Side.png`:
+- [X] T019 [US2] **Bloqueante, lo hace el responsable**: revisar y aprobar el artefacto. Puede iterar en T018. Anotar en [contracts/visual-direction.md](contracts/visual-direction.md) §2 los valores aprobados, el enlace y la fecha, y cambiar el *Estado* a «aprobado».
+- [X] T020 [P] [US2] Exportar los dos PNG desde el artefacto a `_Project/Art/Territory/Textures/T_Grass_Top.png` y `T_Earth_Side.png`:
   - importación según [contracts/visual-direction.md](contracts/visual-direction.md) §3: 512, sRGB, *mipmaps*, trilineal, *wrap* por textura y *override* ASTC 6×6 en Android e iOS;
   - comprobar en el inspector que miden 512 × 512;
   - `git status` no muestra SVG, capturas ni temporales.
-- [ ] T021 [US2] Aplicar los valores aprobados, empezando por las pruebas:
+- [X] T021 [US2] Aplicar los valores aprobados, empezando por las pruebas:
   - actualizar `ApprovedBackground` en `TerritorySceneTests.cs` y la inclinación esperada (Red si cambian);
   - después, asignar las texturas a `M_Grass_Top` y `M_Earth_Side` y ajustar su color base;
   - ajustar fondo, ambiente, luz e inclinación en `Territory.unity`;
   - si cambia la altura, actualizar `data-model.md` → `HexMetrics.Height` en `HexMetrics.Default`, regenerar con el menú y comprobar que `HexTileMeshAssetTests` pasa.
 
   A1 y A2 en verde.
-- [ ] T022 [US2] Revisión manual quickstart C en 16:9: criterios C2 a C6, C8, C9 y C11. Si C2 detecta líneas en las aristas, aplicar el solape documentado de plan.md → *Riesgos*, ≤ 0,1 % del ancho, y anotarlo. Registrar el resultado.
+- [X] T022 [US2] Revisión manual quickstart C en 16:9: criterios C2 a C6, C8, C9 y C11. Si C2 detecta líneas en las aristas, aplicar el solape documentado de plan.md → *Riesgos*, ≤ 0,1 % del ancho, y anotarlo. Registrar el resultado.
 
 **Checkpoint**: commit `feat(client): add the approved territory art …` (T020–T022, con `contracts/visual-direction.md`).
 
@@ -435,3 +435,8 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T034–T035 | A1 y A2 con los casos de US5 (Red) | EditMode: 167/167 (los casos del asset ya pasan porque la validación vive en el núcleo desde la fase 2; se anotan como no regresión). PlayMode: fallan los tres casos de error (vacía, repetida, sin disposición), porque la vista no registra nada |
 | 2026-11-25 | T036 | A1 y A2 (Green) | EditMode: 167/167. PlayMode: 20/20 de las pruebas del proyecto: 15 celdas → 15 piezas; vacía, repetida o nula → `[Territorio] …` como error y 0 piezas |
 | 2026-11-25 | T037 | A5 | Comportamiento verificado por las pruebas anteriores con `SetLayout`. La edición en el inspector queda para el responsable |
+| 2026-11-25 | T019 | Aprobación del responsable («apruebo el diseño») | Aprobado sin cambios. Valores y fecha en `contracts/visual-direction.md` §2 |
+| 2026-11-25 | T020–T021 | A1 con `TerritoryArtAssetTests` antes de importar (Red) | Salida 2 · 167/171: faltan las texturas y los materiales no las usan |
+| 2026-11-25 | T020 | Importación de los PNG aprobados (`cmp`: idénticos a los del artefacto), con un script de editor temporal (no versionado) | 512 × 512, sRGB, *mipmaps*, trilineal, césped *Clamp*, tierra *Repeat U / Clamp V*, *override* ASTC 6×6 y máx. 512 en Android e iOS. `git status` sin SVG, capturas ni temporales |
+| 2026-11-25 | T021 | A1 y A2 (Green) | EditMode: 171/171. PlayMode: 20/20. Los valores aprobados coinciden con los de partida, así que no cambian `ApprovedBackground`, la inclinación ni `HexMetrics.Default` (la malla sigue al día) |
+| 2026-11-25 | T022 | Captura en *Play* a 16:9 del estado confirmado (prueba temporal, no versionada) | C2–C6, C9 y C11 conformes por inspección de la captura: 16 piezas que se distinguen por su borde, césped arriba, tierra con borde de hierba en los laterales, sin huecos ni líneas en las aristas (no hace falta el solape de plan.md → *Riesgos*), vista inclinada sin giro y sin perspectiva, fondo liso y coincidente con la referencia aprobada. C8 (30 s sin cambios) lo cubre `Camera_DoesNotMoveOverTime` y la escena no tiene nada animado. La confirmación en el editor queda dentro de T043 |

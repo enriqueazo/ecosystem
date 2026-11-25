@@ -3,9 +3,9 @@
 Qué tiene que entregar el diseño con Claude Design (FR-011), cómo entra en Unity (FR-012 a
 FR-014) y dónde quedan registrados los valores aprobados.
 
-> **Estado**: **propuesta, pendiente de aprobación del responsable (T019)**. Artefacto de diseño:
-> <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> (privado: solo lo abre su propietario hasta que
-> se comparta). Las celdas «Aprobado» se rellenan al aprobar, con la fecha.
+> **Estado**: **aprobado por el responsable el 2026-11-25** (T019), sin cambios sobre la propuesta.
+> Artefacto de diseño: <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> (privado: solo lo abre su
+> propietario hasta que se comparta).
 
 ## 1. Artefacto de diseño (Claude Design)
 
@@ -50,18 +50,18 @@ temporal de las texturas que se revirtió sin confirmar.
 
 | Parámetro | Valor de partida (research.md R-5) | Aprobado |
 |-----------|-------------------------------------|----------|
-| Césped base | `#6FA34A` | — |
-| Tierra base | `#8A5A3B` | — |
-| Fondo | `#8E9BAA` | — |
-| Color ambiente | `#8A929C` (propuesto en el diseño) | — |
-| Altura `h` (con `R = 0,5`) | 0,35 | — |
-| Borde de césped en el lateral | 20 % | — |
-| Inclinación de la cámara `θ` | 35° | — |
-| Luz direccional (rotación, intensidad, color) | (50°, −30°, 0°), 1, blanco cálido | — |
-| Paleta de la textura de césped | luz `#86B858`, sombra `#5B8C3C`, borde de pieza `#4E7A34` (propuesta) | — |
-| Paleta de la textura de tierra | estrato claro `#9E6C48`, estrato oscuro `#6E452B`, guijarro `#A88A6E` (propuesta) | — |
-| Banda de borde de la cara superior | 0,045 u (propuesta) | — |
-| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> | — |
+| Césped base | `#6FA34A` | `#6FA34A` |
+| Tierra base | `#8A5A3B` | `#8A5A3B` |
+| Fondo | `#8E9BAA` | `#8E9BAA` |
+| Color ambiente | `#8A929C` (propuesto en el diseño) | `#8A929C` |
+| Altura `h` (con `R = 0,5`) | 0,35 | 0,35 |
+| Borde de césped en el lateral | 20 % | 20 % |
+| Inclinación de la cámara `θ` | 35° | 35° |
+| Luz direccional (rotación, intensidad, color) | (50°, −30°, 0°), 1, blanco cálido | (50°, −30°, 0°), 1, `#FFF4E5` |
+| Paleta de la textura de césped | luz `#86B858`, sombra `#5B8C3C`, borde de pieza `#4E7A34` (propuesta) | Igual |
+| Paleta de la textura de tierra | estrato claro `#9E6C48`, estrato oscuro `#6E452B`, guijarro `#A88A6E` (propuesta) | Igual |
+| Banda de borde de la cara superior | 0,045 u (propuesta) | 0,045 u |
+| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> | 2026-11-25 |
 
 El **fondo** MUST ser gris azulado (con el azul como canal dominante, por poco), de luminosidad
 media o clara y saturación baja. El revisor comprueba en la revisión manual que no se lee como
