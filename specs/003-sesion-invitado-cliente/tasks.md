@@ -307,11 +307,11 @@ carga, con PlayMode.
   - el mapa (`client-unity` conecta con Nakama);
   - los primeros pasos del cliente (configuración local);
   - la tabla de comprobaciones (grupos de Unity, solo en local).
-- [ ] T040 Validar quickstart.md C3:
+- [X] T040 Validar quickstart.md C3:
   - build de desarrollo de Android y exportación de iOS con los paquetes nuevos (IL2CPP), con 0 errores;
   - las pruebas de configuración de la spec 001 siguen en verde;
   - C5: `git status` limpio tras cerrar el editor y tras las builds. Si el SDK o las builds tocan ajustes de primera vez, se versionan aparte, como en la spec 001.
-- [ ] T041 [P] Auditar secretos y registros (SC-005, B10):
+- [X] T041 [P] Auditar secretos y registros (SC-005, B10):
   - `tools/check-repo.sh`;
   - `git log -p main..HEAD` sin claves reales;
   - la consola del editor y `Editor.log` de una sesión completa sin tokens, sin la clave y sin el identificador completo.
@@ -431,3 +431,5 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T037 | 2026-11-25 | ✅ | ADR-0009 (SDK 3.23.0 fijado por commit, identidad = `userId`, `IAuthenticator`, sesión en `PlayerPrefs` con revisión obligatoria al añadir cuentas, caducidades 2 h / 7 días, códigos HTTP verificados). ADR-0004 pasa a «sustituida por 0009»; índice actualizado |
 | T038 | 2026-11-25 | ✅ | ADR-0010 (alternativas descartadas, subconjunto admitido, equivalencia con Ajv en 42 ejemplos). ADR-0008 enlaza a 0010; `shared/README.md` describe la generación C# y la comprobación de desactualización |
 | T039 | 2026-11-25 | ✅ | README raíz: estado (specs 001–003), mapa (`client-unity` entra como invitado; ADR-0009 y 0010), primeros pasos con la configuración local y tabla de comprobaciones con los tres grupos de Unity (solo en local) y la comprobación del C# generado |
+| T040 / C3 / C5 | 2026-11-25 | ✅ | En modo batch, con un script de editor temporal (borrado después): build de desarrollo de Android (APK de 62,8 MB) y exportación de iOS (proyecto de Xcode) con IL2CPP, el SDK y Newtonsoft; **0 errores, 0 avisos**. EditMode (incluidas las pruebas de configuración de la spec 001) 113/113. `git status` limpio después de las builds: no hay ajustes de primera vez que versionar |
+| T041 / SC-005 / B10 | 2026-11-25 | ✅ | `check-repo` 0. `git log -p main..HEAD`: 0 apariciones de la clave de servidor, la `http_key` o la contraseña de PostgreSQL del `.env` local, y 0 JWT. 81 registros y XML de Unity de la sesión, más `Editor.log`: 0 claves y 0 JWT. Las líneas `[Conexión]` no contienen ningún identificador de 32 caracteres. Se encontró **un** XML local antiguo (fuera del repositorio) con un JWT de la versión inicial de la prueba de refresco, corregida antes de hacer commit (16:11 frente a 16:13); se ha borrado |
