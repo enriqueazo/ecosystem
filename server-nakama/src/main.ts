@@ -31,7 +31,7 @@ function InitModule(
   initializer: nkruntime.Initializer,
 ): void {
   // Debe coincidir con el id del contrato shared/contracts/rpc/protocol_version.json.
-  initializer.registerRpc("protocol_version", rpcProtocolVersion);
+  initializer.registerRpc("protocol_version_roto", rpcProtocolVersion);
   logger.info("ecosystem-server %s cargado: RPC protocol_version registrado", MODULE_VERSION);
 }
 
