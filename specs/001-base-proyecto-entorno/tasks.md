@@ -322,11 +322,11 @@ escenarios de [quickstart.md](quickstart.md).
   - sustituir la entrada D-02 de `docs/decisions/pendientes.md` por un enlace al ADR y añadirlo
     a `docs/decisions/README.md`, todo en el mismo commit (`data-model.md` →
     *Decisión pendiente*, transición).
-- [ ] T026 [US2] Crear el proyecto con la plantilla **Universal 3D** de Unity Hub de modo que
+- [X] T026 [US2] Crear el proyecto con la plantilla **Universal 3D** de Unity Hub de modo que
   `client-unity/` sea la raíz del proyecto (`client-unity/Assets`, `client-unity/Packages` y
   `client-unity/ProjectSettings`). Cerrar el editor y confirmar con `git status` que no aparecen
   `Library/`, `Temp/`, `Logs/`, `UserSettings/` ni `.csproj`.
-- [ ] T027 [US2] Limpiar la plantilla según research.md R-9:
+- [X] T027 [US2] Limpiar la plantilla según research.md R-9:
   - eliminar escena de ejemplo, materiales, texturas, `TutorialInfo` y `Readme`;
   - mover los assets de pipeline y renderer URP a `client-unity/Assets/_Project/Settings/`
     (desde el editor, para conservar los GUID);
@@ -545,3 +545,5 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | C1–C6 / US2 | 2026-11-25 | no verificado | Bloqueada por D-02: versión de Unity sin confirmar y Unity Hub/editor no instalados en la máquina. T025–T035 sin ejecutar |
 | T040 | 2026-11-25 | no ejecutada | `/speckit-implement` trata los archivos de `checklists/` como solo lectura; el estado final de los bloqueos queda en este registro (D-02 pendiente → US2 sin verificar; D-04 pendiente → CI no configurada) |
 | T025 / D-02 | 2026-11-25 | ✅ | Confirmada por el responsable: Unity 6.3 LTS. Instalado `6000.3.29f1` con AndroidPlayer (OpenJDK, SDK, NDK) e iOSSupport. Registrada como ADR-0005: la tabla aportada proponía ADR-0004, pero ese número ya está asignado (conectividad sin SDK) y los números no se reutilizan |
+| T026 | 2026-11-25 | ✅ | Proyecto creado en modo batch (licencia Personal activa en Hub) con `-createProject client-unity -cloneFromTemplate com.unity.template.3d-cross-platform-17.0.14.tgz`: en Unity 6.3 la plantilla *Universal 3D* se llama «3D URP». `ProjectVersion.txt` = `6000.3.29f1 (96d2fe17529c)`. Git no ve `Library/`, `Temp/`, `Logs/`, `UserSettings/` ni `.csproj`; **sí** veía `client-unity.slnx` (nuevo formato de solución) → añadido `/client-unity/*.slnx` a `.gitignore` |
+| T027 | 2026-11-25 | ✅ | Eliminados `TutorialInfo`, `Readme`, `SampleScene`, `InputSystem_Actions`, `PC_RPAsset`, `PC_Renderer` y `SampleSceneProfile`. Movidos con sus `.meta` (GUID conservados) a `Assets/_Project/Settings/`: `Mobile_RPAsset`, `Mobile_Renderer`, `UniversalRenderPipelineGlobalSettings` y `DefaultVolumeProfile`. `GraphicsSettings` apunta a `Mobile_RPAsset`; un único nivel de calidad «Mobile» sin exclusiones; `EditorBuildSettings` sin escenas; `activeInputHandler: 0` (Input System retirado). Manifiesto: URP, Test Framework y las integraciones de Rider y Visual Studio; el resto de paquetes y módulos de la plantilla se han retirado y el lockfile resuelve 20 dependencias. Reimportación en modo batch: 0 errores de ensamblado |

@@ -13,6 +13,7 @@
 # Proyectos y soluciones que genera el IDE a partir del proyecto Unity
 /client-unity/*.csproj
 /client-unity/*.sln
+/client-unity/*.slnx
 /client-unity/*.suo
 /client-unity/*.user
 /client-unity/*.userprefs
