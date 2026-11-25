@@ -1,0 +1,14 @@
+{
+  "name": "Ecosystem.Territory.Editor",
+  "rootNamespace": "Ecosystem.Territory.Editor",
+  "references": ["Ecosystem.Territory", "Ecosystem.Territory.View"],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -6,6 +6,8 @@
     "Ecosystem.Connection.Nakama",
     "Ecosystem.Contracts",
     "Ecosystem.Presentation",
+    "Ecosystem.Territory",
+    "Ecosystem.Territory.View",
     "UnityEditor.TestRunner",
     "UnityEngine.TestRunner"
   ],

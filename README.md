@@ -4,8 +4,9 @@ Juego móvil multiplataforma (Android e iOS) de estrategia: cliente en Unity y b
 autoritativo en Nakama con PostgreSQL. Este repositorio es un monorepo con todas las piezas.
 
 > Estado: base del proyecto ([001](specs/001-base-proyecto-entorno/spec.md)), servidor y contratos
-> ([002](specs/002-servidor-typescript-ci/spec.md)) y sesión de invitado del cliente
-> ([003](specs/003-sesion-invitado-cliente/spec.md)). Todavía no hay mecánicas de juego.
+> ([002](specs/002-servidor-typescript-ci/spec.md)), sesión de invitado del cliente
+> ([003](specs/003-sesion-invitado-cliente/spec.md)) y primer territorio hexagonal visible
+> ([004](specs/004-territorio-hexagonal/spec.md)). Todavía no hay mecánicas de juego.
 
 ## Mapa del repositorio
 
@@ -61,8 +62,8 @@ a `connection.local.json` (no se versiona) y pon en `serverKey` el `NAKAMA_SERVE
 | `cd server-nakama && npm run check` | Formato, análisis, imports, tipos, pruebas unitarias, contratos (incluido que el C# generado del cliente esté al día) y construcción del servidor | Node 26 y npm 11 ([server-nakama/README.md](server-nakama/README.md)) |
 | `tools/check-backend.sh --module` | Que el backend local responde y tiene cargado el módulo de servidor | bash, curl; el entorno arrancado |
 | `cd server-nakama && npm run test:integration` | El RPC contra el Nakama local | El entorno arrancado con el módulo construido |
-| Unity EditMode y PlayMode (`Ecosystem.Tests.EditMode`, `Ecosystem.Tests.PlayMode`) | Configuración del proyecto, lógica de conexión con dobles, validadores C# frente a los ejemplos de los contratos, escena inicial | Unity 6000.3.29f1; **solo en local** ([comandos](client-unity/README.md#pruebas)) |
-| Unity integración (`Ecosystem.Tests.Integration`) | Sesión de invitado, versión de protocolo y resiliencia contra el Nakama local | Lo anterior, el entorno arrancado y la configuración local del cliente; **solo en local** |
+| Unity EditMode y PlayMode (`Ecosystem.Tests.EditMode`, `Ecosystem.Tests.PlayMode`) | Configuración del proyecto, lógica de conexión con dobles, validadores C# frente a los ejemplos de los contratos, escena inicial, territorio (disposición, malla, encuadre y escena) | Unity 6000.3.29f1; **solo en local** ([comandos](client-unity/README.md#pruebas)) |
+| Unity integración (`Ecosystem.Tests.Integration`) | Sesión de invitado, versión de protocolo, resiliencia y paso al territorio contra el Nakama local | Lo anterior, el entorno arrancado y la configuración local del cliente; **solo en local** |
 
 `tools/check-repo.sh --only <compose|secrets|ignored>` ejecuta una sola comprobación. Los códigos
 de salida de los scripts están en su

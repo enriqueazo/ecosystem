@@ -18,6 +18,7 @@ consideradas, la decisión y sus consecuencias, como exige la constitución del 
 | [0008](0008-contratos-json-versionados.md) | Formato de los contratos cliente-servidor: JSON versionado | aceptada |
 | [0009](0009-sdk-nakama-unity.md) | SDK de Nakama en el cliente Unity y sesión de invitado | aceptada |
 | [0010](0010-validadores-csharp-generados.md) | Validadores C# generados desde los contratos | aceptada |
+| [0011](0011-sin-git-lfs.md) | Binarios de arte sin Git LFS, con umbral de revisión | aceptada |
 
 Las decisiones todavía abiertas están en [pendientes.md](pendientes.md).
 

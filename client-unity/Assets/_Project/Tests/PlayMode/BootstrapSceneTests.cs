@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Ecosystem.Connection;
 using Ecosystem.Presentation;
+using Ecosystem.Territory.View;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -67,6 +68,19 @@ namespace Ecosystem.Tests.PlayMode
             var screen = UnityEngine.Object.FindAnyObjectByType<ConnectionScreen>();
             Assert.That(screen, Is.Not.Null, "Bootstrap debe contener la pantalla de conexión.");
             Assert.That(screen.State, Is.EqualTo(ConnectionState.ConfigurationError));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        /// <summary>Sin llegar a «conectado» no se pasa al territorio (spec 004 FR-020, US4 escenario 2).</summary>
+        [UnityTest]
+        public IEnumerator WithoutConfiguration_DoesNotLoadTerritory()
+        {
+            ExpectConnectionLogs();
+            yield return SceneManager.LoadSceneAsync(BootstrapScenePath, LoadSceneMode.Single);
+            for (var frame = 0; frame < 60; frame++) yield return null;
+
+            Assert.That(SceneManager.GetActiveScene().path, Is.EqualTo(BootstrapScenePath));
+            Assert.That(UnityEngine.Object.FindAnyObjectByType<TerritoryView>(), Is.Null);
             LogAssert.NoUnexpectedReceived();
         }
     }
