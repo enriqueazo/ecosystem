@@ -283,21 +283,21 @@ dependen de `generate`) y US2 los necesitan.
 
 **Independent Test**: quickstart.md, escenarios D1–D4.
 
-- [ ] T041 [US3] Crear `.github/workflows/ci.yml` según contracts/ci-workflow.md:
+- [X] T041 [US3] Crear `.github/workflows/ci.yml` según contracts/ci-workflow.md:
   - nombres de trabajos `repo`, `server` y `backend` (`data-model.md` → `Trabajo de CI.Nombre`);
   - disparadores (`Trabajo de CI.Disparadores`), límites (`Trabajo de CI.Límite`), `permissions: contents: read` (`Trabajo de CI.Permisos`) y sin `secrets.` (`Trabajo de CI.Secretos`);
   - acciones por commit con comentario de versión;
   - `ubuntu-24.04`;
   - paso de generación del `.env` con `openssl rand` sin `echo` de valores;
   - `docker compose logs` si hay fallo y `down -v` siempre.
-- [ ] T042 [US3] Validar la sintaxis del flujo en local, con `actionlint` vía `docker run` si está disponible (sin añadirlo al repositorio); si no, con una revisión manual anotada. Comprobar con `git grep` que el flujo no referencia `secrets.` ni acciones sin commit (SC-006).
-- [ ] T043 [US3] Actualizar el README raíz (FR-027):
+- [X] T042 [US3] Validar la sintaxis del flujo en local, con `actionlint` vía `docker run` si está disponible (sin añadirlo al repositorio); si no, con una revisión manual anotada. Comprobar con `git grep` que el flujo no referencia `secrets.` ni acciones sin commit (SC-006).
+- [X] T043 [US3] Actualizar el README raíz (FR-027):
   - sección *CI*: qué ejecuta cada trabajo, cuándo y cómo reproducirlo (enlace a contracts/ci-workflow.md → *Reproducción local*);
   - que no ejecuta Unity;
   - el paso manual de protección de rama.
 
   Actualizar también la tabla de comprobaciones (`--module`, `npm run check`).
-- [ ] T044 [US3] Crear `docs/decisions/0007-ci-github-actions.md` (aceptada, research.md R-9). Mover D-04 a *Resueltas* en `docs/decisions/pendientes.md` y actualizar el índice. **No** se considera hecho hasta completar T046 (FR-028).
+- [X] T044 [US3] Crear `docs/decisions/0007-ci-github-actions.md` (aceptada, research.md R-9). Mover D-04 a *Resueltas* en `docs/decisions/pendientes.md` y actualizar el índice. **No** se considera hecho hasta completar T046 (FR-028).
 - [ ] T045 [US3] Con autorización explícita del responsable para hacer push y abrir el PR:
   - subir la rama y abrir el PR hacia `main`;
   - validar D1: los tres trabajos en verde y la duración total ≤ 15 min, anotada.
@@ -437,3 +437,6 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T037 | 2026-11-25 | ✅ | `server-nakama/README.md` reescrito: requisitos, instalación, comandos, estructura, restricciones de la VM (con cómo se impone cada una), pruebas y cómo añadir un RPC. Sustituye «Qué se añadirá al resolver D-01» |
 | T038 / T039 | 2026-11-25 | ✅ | ADR-0006 (TypeScript, con las diferencias Node ↔ Nakama y la limitación del `stackTrace`) y ADR-0008 (JSON versionado: sin dependencias de ejecución, validadores sin estado y comprobación ES5 solo de sintaxis), ambos aceptados |
 | E1 (D-01, D-05) | 2026-11-25 | ✅ | `pendientes.md`: D-01 y D-05 pasan a *Resueltas* con enlace a ADR-0006 y ADR-0008; índice actualizado; el README raíz enlaza los ADR en el mapa. Las menciones a D-01 en los ADR 0001 y 0002 se mantienen porque son contexto histórico de decisiones aceptadas |
+| T041 / T042 | 2026-11-25 | ✅ | `.github/workflows/ci.yml` con los trabajos `repo`, `server` y `backend`. `actionlint` 1.7.12 (imagen Docker, local, con `shellcheck` integrado) → 0 problemas. Acciones fijadas por commit con comentario de versión; 0 referencias a `secrets.`; `permissions: contents: read`; `persist-credentials: false`; `.env` efímero con `openssl rand` y `::add-mask::` |
+| T043 | 2026-11-25 | ✅ | README raíz: sección *CI* (qué ejecuta cada trabajo, cuándo, cómo reproducirlo, que no cubre Unity y el paso manual de protección de rama), con el estado **«en validación»** hasta T046 (FR-028). Además, el inicio rápido incluye la construcción del módulo (sin ella Nakama no arranca) y `--module`, y los requisitos incluyen Node 26 / npm 11 |
+| T044 | 2026-11-25 | ✅ (decisión) | ADR-0007 aceptado; D-04 pasa a *Resueltas*; D-09 ya no depende de D-04 (la CI no ejecuta Unity). La validación de la CI queda pendiente de T045–T046 |

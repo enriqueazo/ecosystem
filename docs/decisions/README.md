@@ -14,6 +14,7 @@ consideradas, la decisión y sus consecuencias, como exige la constitución del 
 | [0004](0004-conectividad-sin-sdk-cliente.md) | Verificar la conectividad del backend sin SDK en el cliente | aceptada |
 | [0005](0005-unity-63-lts.md) | Versión de Unity: 6.3 LTS | aceptada |
 | [0006](0006-runtime-nakama-typescript.md) | Runtime de los módulos de Nakama: TypeScript | aceptada |
+| [0007](0007-ci-github-actions.md) | Proveedor de CI: GitHub Actions | aceptada |
 | [0008](0008-contratos-json-versionados.md) | Formato de los contratos cliente-servidor: JSON versionado | aceptada |
 
 Las decisiones todavía abiertas están en [pendientes.md](pendientes.md).

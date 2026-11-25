@@ -6,16 +6,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 
 ## Abiertas
 
-### D-04 · Proveedor de CI
-
-- **Opciones**: GitHub Actions (el remoto actual está en GitHub) u otro proveedor.
-- **Bloquea**: el flujo de CI. Hasta resolverla, la CI **no está configurada**.
-- **Información necesaria**: confirmación del responsable, coste de minutos de ejecución y cómo
-  se gestionará la licencia de Unity en CI.
-- **Límite**: antes de depender de la CI para integrar cambios. Flujo mínimo previsto: ejecutar
-  `tools/tests/run.sh` y `tools/check-repo.sh` en cada PR, con versiones de acciones o imágenes
-  fijadas.
-
 ### D-06 · Nombre de producto e identificador de aplicación definitivos
 
 - **Opciones**: por decidir. Mientras tanto se usan valores provisionales documentados en el
@@ -38,10 +28,12 @@ se sustituye por un enlace en la sección *Resueltas*.
   fijada (p. ej. `dotnet format` sobre los `.csproj` generados).
 - **Motivo del aplazamiento**: esas herramientas necesitan los `.csproj` que genera el editor de
   Unity, que no están versionados. En CI requerirían ejecutar Unity en modo batch, que depende de
-  la licencia (D-04). Además, de momento solo hay código de pruebas. Entretanto, el formato se
+  la licencia; la CI de GitHub Actions (ADR-0007) no ejecuta Unity. Además, de momento solo hay
+  código de pruebas. Entretanto, el formato se
   aplica con `.editorconfig` en el IDE.
 - **Bloquea**: solo la comprobación automática de formato de C#.
-- **Límite**: al resolver D-04 o cuando exista código de ejecución en el cliente.
+- **Límite**: cuando se decida ejecutar Unity en la CI o cuando exista código de ejecución en el
+  cliente.
 
 ## Resueltas
 
@@ -50,5 +42,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 | D-01 | Runtime de los módulos de Nakama: TypeScript transpilado a ES5 para la VM JavaScript | [ADR-0006](0006-runtime-nakama-typescript.md) |
 | D-02 | Unity 6.3 LTS (rama `6000.3`); la revisión exacta queda fijada en `ProjectSettings/ProjectVersion.txt` | [ADR-0005](0005-unity-63-lts.md) |
 | D-03 | Versiones de Nakama y PostgreSQL: 3.42.0 y 16.16 | [ADR-0002](0002-entorno-local-nakama-postgresql.md) |
+| D-04 | Proveedor de CI: GitHub Actions (repositorio, servidor y backend; sin Unity) | [ADR-0007](0007-ci-github-actions.md) |
 | D-05 | Formato de contratos: JSON versionado con JSON Schema 2020-12 | [ADR-0008](0008-contratos-json-versionados.md) |
 | D-07 | Pipeline de render del cliente: URP | [ADR-0003](0003-pipeline-render-urp.md) |

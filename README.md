@@ -27,6 +27,7 @@ Cliente y servidor no dependen el uno del otro: solo comparten los contratos de 
 |------|-------------|---------|
 | Todo | Git, bash | — |
 | Backend local | Docker Engine + Docker Compose v2 o posterior | Referencia verificada: Docker 29.2.1 y Compose v5.0.2 |
+| Servidor | Node + npm | Node 26 (26.13.1 o posterior en la 26) y npm 11 ([server-nakama/README.md](server-nakama/README.md)) |
 | Comprobaciones | `curl` | — |
 | Cliente | Unity Hub + editor con *Android Build Support* e *iOS Build Support*; Xcode en macOS para iOS | Unity **6000.3.29f1** (6.3 LTS) ([ADR-0005](docs/decisions/0005-unity-63-lts.md)) |
 
@@ -35,9 +36,10 @@ Cliente y servidor no dependen el uno del otro: solo comparten los contratos de 
 **Backend local**: sigue [deploy/local/README.md](deploy/local/README.md). Resumen:
 
 ```sh
-cd deploy/local && cp .env.example .env   # y edita los valores
+(cd server-nakama && npm ci && npm run build)   # Nakama no arranca sin el módulo
+cd deploy/local && cp .env.example .env         # y edita los valores
 docker compose up -d --wait
-../../tools/check-backend.sh
+../../tools/check-backend.sh --module
 ```
 
 ¿Algo falla (falta `.env`, Docker detenido, puerto ocupado…)? Consulta la
@@ -53,18 +55,43 @@ desarrollo de Android e iOS.
 |---------|---------------|----------|
 | `tools/tests/run.sh` | Pruebas de los scripts de `tools/` | bash, git; el CLI de Docker para los casos de Compose (si falta, se marcan como omitidos) |
 | `tools/check-repo.sh` | Configuración de Compose válida, ningún `.env` ni dato local en Git, ningún archivo imprescindible ignorado | bash, git, CLI de Docker (no el demonio) |
-| `tools/check-backend.sh` | Que el backend local responde | bash, curl; el entorno arrancado |
+| `cd server-nakama && npm run check` | Formato, análisis, imports, tipos, pruebas unitarias, contratos y construcción del servidor | Node 26 y npm 11 ([server-nakama/README.md](server-nakama/README.md)) |
+| `tools/check-backend.sh --module` | Que el backend local responde y tiene cargado el módulo de servidor | bash, curl; el entorno arrancado |
+| `cd server-nakama && npm run test:integration` | El RPC contra el Nakama local | El entorno arrancado con el módulo construido |
 
-Ejecuta `tools/tests/run.sh` y `tools/check-repo.sh` antes de cada PR. `tools/check-repo.sh --only
-<compose|secrets|ignored>` ejecuta una sola comprobación. Los códigos de salida de cada script
-están en su [contrato](specs/001-base-proyecto-entorno/contracts/tooling-cli.md).
+`tools/check-repo.sh --only <compose|secrets|ignored>` ejecuta una sola comprobación. Los códigos
+de salida de los scripts están en su
+[contrato](specs/001-base-proyecto-entorno/contracts/tooling-cli.md).
 
 **Formato de C#**: lo aplica el IDE con [`.editorconfig`](.editorconfig). La comprobación
 automática está aplazada ([D-09](docs/decisions/pendientes.md#d-09--comprobación-automática-de-formato-y-análisis-de-c)).
 
-**Estado de la CI: no configurada.** El proveedor está pendiente de decidir
-([D-04](docs/decisions/pendientes.md#d-04--proveedor-de-ci)). Cuando se decida, el flujo mínimo
-ejecutará `tools/tests/run.sh` y `tools/check-repo.sh` en cada PR.
+## CI
+
+GitHub Actions ([ADR-0007](docs/decisions/0007-ci-github-actions.md)), definida en
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+**Estado: en validación.** El flujo existe, pero no se da por configurado hasta verlo funcionar en
+un PR real.
+
+- **Cuándo**: en cada PR hacia `main` y en cada integración en `main`.
+- **Cómo**: sin secretos del repositorio, con permisos de solo lectura y con las acciones fijadas
+  por commit.
+- **Qué ejecuta**, en tres trabajos en paralelo:
+
+| Trabajo | Qué ejecuta | Cómo reproducirlo en local |
+|---------|-------------|----------------------------|
+| `repo` | `tools/tests/run.sh` y `tools/check-repo.sh` | Los mismos comandos desde la raíz |
+| `server` | `npm ci` y `npm run check` en `server-nakama/` | `cd server-nakama && npm ci && npm run check` |
+| `backend` | Construye el módulo, arranca el entorno local con un `.env` de valores aleatorios, `tools/check-backend.sh --module` y `npm run test:integration` | [deploy/local/README.md](deploy/local/README.md) y los dos comandos anteriores |
+
+**Qué no cubre**: Unity. Las pruebas del cliente se ejecutan en local
+([client-unity/README.md](client-unity/README.md)).
+
+**Para que la CI bloquee la integración**, el responsable del repositorio tiene que configurar en
+GitHub una regla de protección para `main` (*Settings → Branches* o *Rules*) que exija los
+trabajos `repo`, `server` y `backend`. Sin esa regla, la CI informa del resultado pero no impide
+integrar.
 
 ## Decisiones
 
