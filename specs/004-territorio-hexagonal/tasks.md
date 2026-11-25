@@ -53,7 +53,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - crear `docs/decisions/0011-sin-git-lfs.md` con la plantilla `0000-plantilla.md`: contexto, opciones (LFS ahora, sin LFS), decisión y consecuencias, incluido el **umbral de revisión** (5 MB por archivo, primer audio o vídeo, 50 MB en total);
   - añadirlo al índice `docs/decisions/README.md`;
   - en `docs/decisions/pendientes.md`, sustituir la entrada D-08 por una fila en *Resueltas*.
-- [ ] T003 Crear los ensamblados y carpetas (plan.md → *Project Structure*, research.md R-8):
+- [X] T003 Crear los ensamblados y carpetas (plan.md → *Project Structure*, research.md R-8):
   - `_Project/Scripts/Territory/Ecosystem.Territory.asmdef`: `noEngineReferences: true`, sin referencias, `autoReferenced: false`;
   - `_Project/Scripts/Territory.View/Ecosystem.Territory.View.asmdef`: referencia a `Ecosystem.Territory`;
   - `_Project/Scripts/Territory.Editor/Ecosystem.Territory.Editor.asmdef`: `includePlatforms: ["Editor"]`, referencias a `Ecosystem.Territory` y `Ecosystem.Territory.View`;
@@ -413,3 +413,4 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T001 | A2 (PlayMode, línea base) | Salida 0 · 2/2 |
 | 2026-11-25 | T001 | `tools/check-repo.sh` | Salida 0 (compose, secrets, ignored) |
 | 2026-11-25 | T002 | ADR-0011, índice y `pendientes.md` | D-08 en *Resueltas*. Sin otras referencias vivas que actualizar (las de la spec 001 son históricas) |
+| 2026-11-25 | T003 | Apertura en modo batch tras crear los tres asmdef y referenciarlos en las pruebas | Salida 0, 0 errores de compilación (solo el aviso esperado de «asmdef sin scripts»). Desviación: las carpetas `Art/Territory/*`, `Data/Territory` y `Tests/EditMode/Territory` se crean con su primer archivo y no vacías, porque Git no versiona carpetas vacías y un `.meta` de carpeta sin la carpeta haría que Unity lo borrara en cada clon |

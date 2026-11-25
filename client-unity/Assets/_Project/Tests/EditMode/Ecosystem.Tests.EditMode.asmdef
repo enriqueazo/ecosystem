@@ -5,6 +5,8 @@
     "Ecosystem.Connection",
     "Ecosystem.Contracts",
     "Unity.RenderPipelines.Universal.Runtime",
+    "Ecosystem.Territory",
+    "Ecosystem.Territory.View",
     "UnityEditor.TestRunner",
     "UnityEngine.TestRunner"
   ],
