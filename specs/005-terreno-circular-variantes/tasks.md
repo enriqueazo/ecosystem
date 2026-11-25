@@ -347,14 +347,14 @@ quickstart.md.
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T062 [P] Actualizar `client-unity/README.md` (FR-029):
+- [X] T062 [P] Actualizar `client-unity/README.md` (FR-029):
   - estado;
   - estructura: `Data/Territory/TerrainCatalog.asset` y `Art/Territory/Meshes/River/`;
   - sección *Territorio*: disco de 55 celdas, variantes, río, catálogo, cómo cambiar la composición y el comando *Regenerar mallas del territorio* con su línea en modo batch (`TerritoryMeshesMenu.Regenerate`, que sustituye a `HexTileMeshMenu.Regenerate`);
   - pruebas nuevas en la tabla de grupos.
-- [ ] T063 [P] Actualizar la línea de estado de `README.md` (raíz).
+- [X] T063 [P] Actualizar la línea de estado de `README.md` (raíz).
 - [ ] T064 Revisión visual manual completa (quickstart C, C1–C13) por el responsable en las 6 proporciones y el simulador, incluida la prueba SC-003 de 8 celdas y el tiempo (≤ 15 min, SC-009). Registrar los resultados en `specs/005-terreno-circular-variantes/spec.md` → nueva sección *Revisión visual*, con fecha y persona. Un ❌ vuelve a la fase que corresponda.
-- [ ] T065 Higiene (quickstart D, SC-004 y SC-010):
+- [X] T065 Higiene (quickstart D, SC-004 y SC-010):
   - `git diff` vacío en `server-nakama/`, `shared/`, `deploy/`, `.github/`, `ProjectSettings/` y los recursos de hierba;
   - ningún GUID de `.meta` cambiado;
   - todos los recursos con `.meta`;
@@ -362,7 +362,7 @@ quickstart.md.
   - `tools/check-repo.sh` → 0.
 
   Anotarlo en el registro.
-- [ ] T066 Ejecución final de A1, A2 y B1, y builds de desarrollo de Android e iOS que compilan, según `client-unity/README.md` → *Builds de desarrollo*. Anotar los resultados y las salidas en el registro. Si una build no se puede ejecutar, anotar qué falta y por qué.
+- [X] T066 Ejecución final de A1, A2 y B1, y builds de desarrollo de Android e iOS que compilan, según `client-unity/README.md` → *Builds de desarrollo*. Anotar los resultados y las salidas en el registro. Si una build no se puede ejecutar, anotar qué falta y por qué.
 - [ ] T067 Commit `docs: describe the circular territory, terrain variants and rivers in the READMEs` (T062–T063) y commit `docs(spec): log the visual review, tests, builds and repository checks for spec 005` (T064–T066).
 - [ ] T068 Con la autorización explícita del responsable: push y PR hacia `main`. La CI tiene que estar en verde. Anotar el PR y el resultado de la CI en el registro y confirmarlo con `docs(spec): log the PR and CI result for spec 005`.
 
@@ -491,3 +491,7 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T058 | A2 con las pruebas de datos no válidos de contracts/territory-scene.md y una disposición válida de 7 celdas con un río de borde a borde | Salida 2 · 23/28: los errores se registran bien, pero en *Play* las 55 piezas anteriores siguen en la escena durante el fotograma, porque `Destroy` espera al final del fotograma. Ajuste en la prueba: tipar la disposición vacía (`new HexCell[0]`), porque `AssetWith()` pasa a ser ambiguo |
 | 2026-11-25 | T059 | `TerritoryView.Clear`: en *Play* desactiva cada pieza antes de `Destroy`. A2 y A1 | PlayMode: salida 0 · 28/28. EditMode: salida 0 · 427/427. Ninguna pieza visible junto a un error ni junto a las nuevas |
 | 2026-11-25 | T060 | A6: catálogo sin nieve | Comprobado con `View_WithACatalogMissingAUsedVariant_LogsItAndShowsNoPieces` en la escena en *Play*: `[Territorio] El catálogo no tiene recursos para variante nieve.` y 0 piezas visibles. No se repitió a mano en el editor |
+| 2026-11-25 | T062–T063 | `client-unity/README.md` y README raíz | Estado, estructura, sección *Territorio* (disco, variantes, río, catálogo, cómo cambiar la composición y `TerritoryMeshesMenu.Regenerate`) y pruebas. Commit `680caaa` |
+| 2026-11-25 | T065 | Higiene (quickstart D) | Sin cambios en `server-nakama/`, `shared/`, `deploy/`, `.github/` ni `ProjectSettings/`. Recursos de hierba idénticos a `main`. Ningún GUID cambiado: el único `.meta` modificado es el renombrado de `HexTileMeshMenu.cs.meta` a `TerritoryMeshesMenu.cs.meta` (R100, mismo GUID). Todo con `.meta`, carpetas incluidas. Sin temporales en Git. Binarios: 2,6 MB en total, ninguno de más de 5 MB (ADR-0011). `tools/check-repo.sh` → 0 |
+| 2026-11-25 | T066 | Ejecución final: A1, A2 y B1 sobre el código final | EditMode: salida 0 · 427/427. PlayMode: salida 0 · 28/28. Integración: salida 0 · 14/14 |
+| 2026-11-25 | T066 | Builds de desarrollo en modo batch con `BuildPipeline.BuildPlayer` y las escenas de la build (script de editor temporal, no versionado) | Android: correcta, 0 errores, `Builds/Android/Ecosystem-dev.apk`. iOS: correcta, 0 errores, proyecto Xcode en `Builds/iOS/`. Las dos con `Bootstrap` y `Territory`. Ningún archivo versionado cambió. iOS queda como plataforma activa del editor (`Library/`, no versionado) |

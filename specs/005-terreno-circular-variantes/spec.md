@@ -578,3 +578,23 @@ omitir con justificación escrita.
 - Generación procedural, editor de territorios o selección de mapas por el jugador.
 - Cambios en Nakama, PostgreSQL, contratos cliente-servidor, CI u orientación de pantalla.
 - Publicación en tiendas.
+
+## Revisión visual
+
+Revisión manual de [quickstart.md → C](quickstart.md#c-revisión-visual-manual-fr-027) (FR-027), en el
+editor de Unity con las 6 proporciones y la vista *Simulator* con muesca. La hace el responsable; un ❌
+bloquea la entrega. Incluye los pasos B2 y B3 de quickstart.md, que necesitan el editor con interfaz.
+
+**Estado**: pendiente (T064).
+
+Comprobado antes con capturas en *Play* (registro de tasks.md, T020, T037 y T053), sin sustituir la
+revisión del responsable:
+- C1: el contorno es redondo, sin huecos ni piezas sueltas. Las filas 3 y 5 sobresalen media pieza
+  respecto a la 4 a izquierda y derecha, lo que deja una pequeña muesca propia del disco acordado
+  (K = 13).
+- C2–C5, C8 y C13: las variantes y el agua coinciden con las referencias aprobadas.
+- C6 y C7: el cauce es continuo de una pieza a otra, sin escalones ni huecos, y no hay parpadeo.
+
+| Fecha | Persona | Criterios | Resultado | Tiempo |
+|-------|---------|-----------|-----------|--------|
+| | | C1–C13, B2 y B3 | | |
