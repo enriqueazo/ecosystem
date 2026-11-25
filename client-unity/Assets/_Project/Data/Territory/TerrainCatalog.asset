@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec5fc69daeea4ebebc01edc0318857f, type: 3}
+  m_Name: TerrainCatalog
+  m_EditorClassIdentifier: Ecosystem.Territory.View::Ecosystem.Territory.View.TerrainCatalogAsset
+  terrains:
+  - kind: 0
+    prefab: {fileID: 2122814189498614032, guid: 9d8237d1a89ed4edab6f36643c4c90fd, type: 3}
+  - kind: 1
+    prefab: {fileID: 2122814189498614032, guid: 166d711458cd4743bd6c00bcfd3e41fb, type: 3}
+  - kind: 2
+    prefab: {fileID: 2122814189498614032, guid: ac0075fb386241c49f73103c4682b2a3, type: 3}
+  - kind: 3
+    prefab: {fileID: 2122814189498614032, guid: 4944045e38bf4fef9bd79f9a4f4d8114, type: 3}
+  riverPrefab: {fileID: 2122814189498614032, guid: 102e4d16fd3b43148885bfb7dcdfc808, type: 3}
+  riverMeshes:
+  - shape: 1
+    rotation: 0
+    mesh: {fileID: 4300000, guid: f2c6e98946f7e4100a860970c0e77bfd, type: 2}
+  - shape: 1
+    rotation: 1
+    mesh: {fileID: 4300000, guid: 3e394229667ac4aa583dfa80a37c14b0, type: 2}
+  - shape: 1
+    rotation: 2
+    mesh: {fileID: 4300000, guid: 181166f4bbfef4aa89de8f682f540b34, type: 2}
+  - shape: 1
+    rotation: 3
+    mesh: {fileID: 4300000, guid: 9deb2955672814ff0ab87e22f3548c81, type: 2}
+  - shape: 1
+    rotation: 4
+    mesh: {fileID: 4300000, guid: d344b0d311a0c447d8b500d95bce4931, type: 2}
+  - shape: 1
+    rotation: 5
+    mesh: {fileID: 4300000, guid: c04f15b692be14bceb51a3aabfb3cfa9, type: 2}
+  - shape: 2
+    rotation: 0
+    mesh: {fileID: 4300000, guid: 7fc06e7bba66749a18288ff3676b622c, type: 2}
+  - shape: 2
+    rotation: 1
+    mesh: {fileID: 4300000, guid: ed3c341bb70054f739a54d4585a0e194, type: 2}
+  - shape: 2
+    rotation: 2
+    mesh: {fileID: 4300000, guid: 6f283fd6a89134d5ab249b862eda94a9, type: 2}
+  - shape: 3
+    rotation: 0
+    mesh: {fileID: 4300000, guid: 40c94d48534f54fb4b828b7db1d7e40d, type: 2}
+  - shape: 3
+    rotation: 1
+    mesh: {fileID: 4300000, guid: 03429d83ae0bb430ba67fafbc6aba3fb, type: 2}
+  - shape: 3
+    rotation: 2
+    mesh: {fileID: 4300000, guid: c9e7a79e7c1b74b7785d32f05d829dce, type: 2}
+  - shape: 3
+    rotation: 3
+    mesh: {fileID: 4300000, guid: 1e97ff15bad75462db87596749223807, type: 2}
+  - shape: 3
+    rotation: 4
+    mesh: {fileID: 4300000, guid: 85bfb200acbe24421a25592d2bdca8d4, type: 2}
+  - shape: 3
+    rotation: 5
+    mesh: {fileID: 4300000, guid: 2f91a6d43b37440b8a9eec6cc0f5b7ba, type: 2}

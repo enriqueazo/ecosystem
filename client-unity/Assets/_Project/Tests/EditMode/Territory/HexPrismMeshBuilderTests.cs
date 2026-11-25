@@ -122,5 +122,73 @@ namespace Ecosystem.Tests.EditMode.Territory
                 Assert.That(uv.Y, Is.EqualTo(mesh.Vertices[index].Y == 0f ? 0f : 1f));
             }
         }
+
+        // --- Mapeo superior en red para el agua (spec 005: research.md R-4; data-model.md → Mallas generadas) ---
+
+        private static HexMetrics WaterMetrics => new HexMetrics(Metrics.OuterRadius, RiverMetrics.Default.WaterLevel);
+
+        [Test]
+        public void LatticeTopUvs_AreWorldPlanarOverTheHexLattice()
+        {
+            var metrics = WaterMetrics;
+            var mesh = HexPrismMeshBuilder.Build(metrics, TopUv.Lattice);
+            foreach (var index in mesh.TopIndices.Distinct())
+            {
+                var vertex = mesh.Vertices[index];
+                var uv = mesh.Uvs[index];
+                Assert.That(vertex.Y, Is.EqualTo(metrics.Height));
+                Assert.That(uv.X, Is.EqualTo(vertex.X / metrics.Width).Within(1e-6f));
+                Assert.That(uv.Y, Is.EqualTo(vertex.Z / (3f * metrics.OuterRadius)).Within(1e-6f));
+            }
+        }
+
+        [Test]
+        public void LatticeMapping_ChangesOnlyTheTopUvs()
+        {
+            var inscribed = HexPrismMeshBuilder.Build(WaterMetrics);
+            var lattice = HexPrismMeshBuilder.Build(WaterMetrics, TopUv.Lattice);
+
+            Assert.That(lattice.Vertices, Is.EqualTo(inscribed.Vertices));
+            Assert.That(lattice.Normals, Is.EqualTo(inscribed.Normals));
+            Assert.That(lattice.TopIndices, Is.EqualTo(inscribed.TopIndices));
+            Assert.That(lattice.SideIndices, Is.EqualTo(inscribed.SideIndices));
+            foreach (var index in inscribed.SideIndices.Distinct())
+            {
+                Assert.That(lattice.Uvs[index], Is.EqualTo(inscribed.Uvs[index]), "Laterales: v = y/hw.");
+            }
+        }
+
+        [Test]
+        public void DefaultBuild_KeepsTheInscribedMappingOfSpec004()
+        {
+            var byDefault = HexPrismMeshBuilder.Build(Metrics);
+            var inscribed = HexPrismMeshBuilder.Build(Metrics, TopUv.Inscribed);
+
+            Assert.That(byDefault.Uvs, Is.EqualTo(inscribed.Uvs));
+        }
+
+        /// <summary>
+        /// Entre dos celdas vecinas, el desplazamiento de sus centros en coordenadas de textura es
+        /// (±1, 0) o (±½, ±½): con una textura periódica en (1, 0), (0, 1) y (½, ½), el agua no
+        /// tiene costura entre piezas.
+        /// </summary>
+        [Test]
+        public void LatticeMapping_MovesNeighbourCentresByLatticeVectors()
+        {
+            var metrics = WaterMetrics;
+            var cell = new HexCell(4, 4);
+            var center = metrics.Center(cell);
+            foreach (var neighbour in cell.Neighbours().Concat(new HexCell(4, 5).Neighbours()))
+            {
+                var other = metrics.Center(neighbour);
+                var du = (other.X - center.X) / metrics.Width;
+                var dv = (other.Z - center.Z) / (3f * metrics.OuterRadius);
+                var twiceU = du * 2f;
+                var twiceV = dv * 2f;
+                Assert.That(twiceU, Is.EqualTo((float)System.Math.Round(twiceU)).Within(1e-4f), neighbour.ToString());
+                Assert.That(twiceV, Is.EqualTo((float)System.Math.Round(twiceV)).Within(1e-4f), neighbour.ToString());
+                Assert.That(((int)System.Math.Round(twiceU) - (int)System.Math.Round(twiceV)) % 2, Is.EqualTo(0), "u y v son a la vez enteros o a la vez medios.");
+            }
+        }
     }
 }

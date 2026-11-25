@@ -98,7 +98,7 @@ namespace Ecosystem.Tests.Integration
                 Assert.That(toTerritory.Elapsed.TotalSeconds, Is.LessThanOrEqualTo(2), $"Tardó {toTerritory.Elapsed.TotalSeconds:0.00} s");
                 var view = Object.FindAnyObjectByType<TerritoryView>();
                 Assert.That(view, Is.Not.Null);
-                Assert.That(view.Tiles, Has.Count.EqualTo(16));
+                Assert.That(view.Tiles, Has.Count.EqualTo(55));
 
                 var settle = Stopwatch.StartNew();
                 while (settle.Elapsed.TotalSeconds < 2) yield return null;

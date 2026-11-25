@@ -12,7 +12,8 @@ namespace Ecosystem.Tests.EditMode.Territory
 {
     /// <summary>
     /// Las piezas no se serializan en la escena: TerritoryView las crea al habilitarse
-    /// (research.md R-7). La referencia al prefab en el campo tilePrefab sí es válida.
+    /// (research.md R-7). El catálogo de terrenos sí referencia los prefabs, pero la escena no
+    /// guarda instancias.
     /// </summary>
     public sealed class TerritorySceneAssetTests
     {
@@ -38,18 +39,18 @@ namespace Ecosystem.Tests.EditMode.Territory
         }
 
         /// <summary>
-        /// quickstart A3: abierta en el editor sin Play, la escena ya muestra las 16 piezas y no
+        /// quickstart A3: abierta en el editor sin Play, la escena ya muestra las 55 piezas y no
         /// queda marcada como modificada (US1, escenario 3).
         /// </summary>
         [Test]
-        public void TerritoryScene_OpenedInTheEditor_ShowsSixteenPiecesAndStaysClean()
+        public void TerritoryScene_OpenedInTheEditor_ShowsFiftyFivePiecesAndStaysClean()
         {
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
             try
             {
                 var view = scene.GetRootGameObjects().Select(root => root.GetComponentInChildren<TerritoryView>()).Single(v => v != null);
 
-                Assert.That(view.Tiles, Has.Count.EqualTo(16));
+                Assert.That(view.Tiles, Has.Count.EqualTo(55));
                 Assert.That(view.Tiles.All(tile => (tile.gameObject.hideFlags & HideFlags.DontSave) == HideFlags.DontSave), Is.True);
                 Assert.That(scene.isDirty, Is.False, "Las piezas no deben marcar la escena como modificada.");
             }

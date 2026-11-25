@@ -40,6 +40,14 @@ namespace Ecosystem.Territory
             }
         }
 
+        /// <summary>La celda vecina por la arista dada (data-model.md → HexEdge).</summary>
+        public HexCell Neighbour(HexEdge edge)
+        {
+            var (q, r) = ToAxial();
+            var (dq, dr) = AxialDirections[(int)edge];
+            return FromAxial(q + dq, r + dr);
+        }
+
         public bool IsNeighbourOf(HexCell other)
         {
             var (q, r) = ToAxial();

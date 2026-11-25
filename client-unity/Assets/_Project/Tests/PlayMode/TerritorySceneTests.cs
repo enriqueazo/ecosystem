@@ -55,12 +55,13 @@ namespace Ecosystem.Tests.PlayMode
         }
 
         [Test]
-        public void Scene_ShowsSixteenPiecesAtTheirLayoutPositions()
+        public void Scene_ShowsFiftyFivePiecesAtTheirLayoutPositionsWithoutRotation()
         {
             Assert.That(_view, Is.Not.Null, "La escena necesita un TerritoryView.");
-            Assert.That(_view.Tiles, Has.Count.EqualTo(16));
+            Assert.That(_view.Tiles, Has.Count.EqualTo(55));
+            Assert.That(_view.Tiles.Select(tile => tile.localRotation), Is.All.EqualTo(Quaternion.identity));
 
-            var expected = TerritoryLayout.Create(Enumerable.Range(0, 16).Select(i => new HexCell(i % 4, i / 4))).Layout;
+            var expected = TerritoryLayout.Create(DiscCells()).Layout;
             var positions = _view.Tiles.Select(tile => tile.localPosition).ToArray();
             foreach (var cell in expected.Cells)
             {
@@ -70,19 +71,54 @@ namespace Ecosystem.Tests.PlayMode
             }
         }
 
+        /// <summary>
+        /// Invariantes 3 y 6 de contracts/territory-scene.md (spec 005): cada pieza usa la malla y
+        /// los materiales del prefab de su variante y ninguna proyecta ni recibe sombras. La hierba
+        /// sigue siendo HexTile, como en la spec 004.
+        /// </summary>
         [Test]
-        public void Pieces_UseTheTileMeshAndCastNoShadows()
+        public void Pieces_UseTheResourcesOfTheirVariantAndCastNoShadows()
         {
-            foreach (var tile in _view.Tiles)
+            var catalog = _view.Catalog;
+            Assert.That(catalog, Is.Not.Null, "TerritoryView necesita el catálogo.");
+            Assert.That(_view.Tiles, Has.Count.EqualTo(_view.Layout.Entries.Count));
+
+            for (var i = 0; i < _view.Tiles.Count; i++)
             {
+                var entry = _view.Layout.Entries[i];
+                var tile = _view.Tiles[i];
                 var filter = tile.GetComponent<MeshFilter>();
                 var renderer = tile.GetComponent<MeshRenderer>();
-                Assert.That(filter.sharedMesh, Is.Not.Null);
-                Assert.That(filter.sharedMesh.name, Is.EqualTo("HexTile"));
-                Assert.That(renderer.sharedMaterials, Has.Length.EqualTo(2), "Césped (submalla 0) y tierra (submalla 1).");
-                Assert.That(renderer.shadowCastingMode, Is.EqualTo(ShadowCastingMode.Off));
-                Assert.That(renderer.receiveShadows, Is.False);
+                Assert.That(filter.sharedMesh, Is.Not.Null, entry.ToString());
+                Assert.That(renderer.shadowCastingMode, Is.EqualTo(ShadowCastingMode.Off), entry.ToString());
+                Assert.That(renderer.receiveShadows, Is.False, entry.ToString());
+
+                if (entry.Terrain == TerrainKind.River)
+                {
+                    Assert.That(catalog.TryGetRiverMesh(entry.River, RiverPiece.Canonical(entry.River, entry.Rotation), out var riverMesh), Is.True);
+                    Assert.That(filter.sharedMesh, Is.SameAs(riverMesh), entry.ToString());
+                    Assert.That(renderer.sharedMaterials, Is.EqualTo(catalog.RiverPrefab.GetComponent<MeshRenderer>().sharedMaterials), entry.ToString());
+                    continue;
+                }
+
+                Assert.That(catalog.TryGetTerrainPrefab(entry.Terrain, out var prefab), Is.True, entry.ToString());
+                Assert.That(filter.sharedMesh, Is.SameAs(prefab.GetComponent<MeshFilter>().sharedMesh), entry.ToString());
+                Assert.That(renderer.sharedMaterials, Is.EqualTo(prefab.GetComponent<MeshRenderer>().sharedMaterials), entry.ToString());
+                if (entry.Terrain == TerrainKind.Grass)
+                {
+                    Assert.That(filter.sharedMesh.name, Is.EqualTo("HexTile"));
+                    Assert.That(renderer.sharedMaterials, Has.Length.EqualTo(2), "Césped (submalla 0) y tierra (submalla 1).");
+                }
             }
+        }
+
+        /// <summary>La composición de la escena usa las cuatro variantes (spec FR-017).</summary>
+        [Test]
+        public void Scene_ShowsTheFourVariants()
+        {
+            var kinds = _view.Layout.Entries.Select(entry => entry.Terrain).Distinct().ToArray();
+
+            Assert.That(kinds, Is.SupersetOf(new[] { TerrainKind.Grass, TerrainKind.Snow, TerrainKind.Sand, TerrainKind.Water }));
         }
 
         [Test]
@@ -173,6 +209,20 @@ namespace Ecosystem.Tests.PlayMode
             }
         }
 
+        /// <summary>Las 55 celdas del disco de la spec 005 (FR-001): q² + q·r + r² ≤ 13 respecto a (4, 4).</summary>
+        private static HexCell[] DiscCells()
+        {
+            var (cq, cr) = new HexCell(4, 4).ToAxial();
+            return (from row in Enumerable.Range(-2, 13)
+                    from column in Enumerable.Range(-2, 13)
+                    let cell = new HexCell(column, row)
+                    let axial = cell.ToAxial()
+                    let dq = axial.Q - cq
+                    let dr = axial.R - cr
+                    where dq * dq + dq * dr + dr * dr <= 13
+                    select cell).ToArray();
+        }
+
         private static TerritoryLayoutAsset AssetWith(params HexCell[] cells)
         {
             var asset = ScriptableObject.CreateInstance<TerritoryLayoutAsset>();
@@ -196,7 +246,7 @@ namespace Ecosystem.Tests.PlayMode
         public void View_WithAnEmptyLayout_LogsAnErrorAndShowsNoPieces()
         {
             LogAssert.Expect(LogType.Error, "[Territorio] La disposición del territorio está vacía.");
-            _view.SetLayout(AssetWith());
+            _view.SetLayout(AssetWith(new HexCell[0]));
 
             Assert.That(_view.Tiles, Is.Empty);
         }
@@ -219,6 +269,94 @@ namespace Ecosystem.Tests.PlayMode
             Assert.That(_view.Tiles, Is.Empty);
         }
 
+        // --- Datos no válidos de la spec 005 (contracts/territory-scene.md → Datos no válidos; SC-006) ---
+
+        private static TerritoryLayoutAsset AssetWith(params TerritoryCell[] cells)
+        {
+            var asset = ScriptableObject.CreateInstance<TerritoryLayoutAsset>();
+            asset.SetCells(cells);
+            return asset;
+        }
+
+        private static TerritoryCell Cell(int column, int row, TerrainKind kind, RiverShape river = RiverShape.None, int rotation = 0) =>
+            new TerritoryCell(new HexCell(column, row), kind, river, rotation);
+
+        private static readonly object[] InvalidLayouts =
+        {
+            new object[] { "no conexa", new[] { Cell(0, 0, TerrainKind.Grass), Cell(5, 0, TerrainKind.Grass) }, @"^\[Territorio\] La disposición no es conexa" },
+            new object[] { "variante desconocida", new[] { Cell(0, 0, TerrainKind.Grass), Cell(1, 0, (TerrainKind)9) }, @"^\[Territorio\] La celda \(columna 1, fila 0\) tiene una variante de terreno desconocida" },
+            new object[] { "río sin forma", new[] { Cell(0, 0, TerrainKind.Grass), Cell(1, 0, TerrainKind.River) }, @"^\[Territorio\] La celda \(columna 1, fila 0\) tiene datos de río no válidos" },
+            new object[] { "río que acaba en nieve", new[] { Cell(0, 0, TerrainKind.River, RiverShape.Straight, 0), Cell(1, 0, TerrainKind.Snow) }, @"^\[Territorio\] El río de la celda \(columna 0, fila 0\)" },
+        };
+
+        [TestCaseSource(nameof(InvalidLayouts))]
+        public void View_WithInvalidData_LogsTheCauseAndShowsNoPieces(string name, TerritoryCell[] cells, string message)
+        {
+            LogAssert.Expect(LogType.Error, new Regex(message));
+            _view.SetLayout(AssetWith(cells));
+
+            Assert.That(_view.Tiles, Is.Empty, name);
+            Assert.That(_view.GetComponentsInChildren<MeshRenderer>(false), Is.Empty, $"{name}: ninguna pieza visible.");
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [Test]
+        public void View_WithACatalogMissingAUsedVariant_LogsItAndShowsNoPieces()
+        {
+            var complete = _view.Catalog;
+            var incomplete = ScriptableObject.CreateInstance<TerrainCatalogAsset>();
+            complete.TryGetTerrainPrefab(TerrainKind.Grass, out var grass);
+            complete.TryGetTerrainPrefab(TerrainKind.Sand, out var sand);
+            complete.TryGetTerrainPrefab(TerrainKind.Water, out var water);
+            var meshes = RiverPiece.CanonicalKeys().Select(key =>
+            {
+                complete.TryGetRiverMesh(key.Shape, key.Rotation, out var mesh);
+                return (key.Shape, key.Rotation, mesh);
+            });
+            incomplete.SetEntries(new[] { (TerrainKind.Grass, grass), (TerrainKind.Sand, sand), (TerrainKind.Water, water) }, complete.RiverPrefab, meshes);
+
+            LogAssert.Expect(LogType.Error, "[Territorio] El catálogo no tiene recursos para variante nieve.");
+            _view.SetCatalog(incomplete);
+
+            Assert.That(_view.Tiles, Is.Empty);
+            Assert.That(_view.GetComponentsInChildren<MeshRenderer>(false), Is.Empty, "Ninguna pieza visible.");
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        /// <summary>
+        /// US5, escenario 1: otra disposición válida (7 celdas con un río de borde a borde) coloca
+        /// exactamente sus piezas, con los recursos de cada una.
+        /// </summary>
+        [Test]
+        public void View_WithAnotherValidLayout_PlacesExactlyItsPiecesAndResources()
+        {
+            var cells = new[]
+            {
+                Cell(3, 4, TerrainKind.River, RiverShape.Straight, 0),
+                Cell(4, 4, TerrainKind.River, RiverShape.Straight, 3),
+                Cell(5, 4, TerrainKind.River, RiverShape.Straight, 0),
+                Cell(4, 3, TerrainKind.Snow),
+                Cell(3, 3, TerrainKind.Grass),
+                Cell(3, 5, TerrainKind.Sand),
+                Cell(4, 5, TerrainKind.Water),
+            };
+            _view.SetLayout(AssetWith(cells));
+
+            Assert.That(_view.Tiles, Has.Count.EqualTo(7));
+            _view.Catalog.TryGetRiverMesh(RiverShape.Straight, 0, out var straight);
+            for (var i = 0; i < cells.Length; i++)
+            {
+                var center = HexMetrics.Default.Center(cells[i].Cell);
+                Assert.That(Vector3.Distance(_view.Tiles[i].localPosition, new Vector3(center.X, center.Y, center.Z)), Is.LessThan(1e-4f));
+                if (cells[i].Terrain == TerrainKind.River)
+                {
+                    Assert.That(_view.Tiles[i].GetComponent<MeshFilter>().sharedMesh, Is.SameAs(straight), cells[i].ToString());
+                }
+            }
+
+            LogAssert.NoUnexpectedReceived();
+        }
+
         [UnityTest]
         public IEnumerator Camera_DoesNotMoveOverTime()
         {
@@ -231,6 +369,16 @@ namespace Ecosystem.Tests.PlayMode
             Assert.That(_camera.transform.position, Is.EqualTo(position));
             Assert.That(_camera.transform.rotation, Is.EqualTo(rotation));
             Assert.That(_camera.orthographicSize, Is.EqualTo(size));
+        }
+
+        /// <summary>La composición de la escena muestra un río de al menos 5 piezas (spec FR-017, US3).</summary>
+        [Test]
+        public void Scene_ShowsARiverOfAtLeastFivePieces()
+        {
+            var river = _view.Layout.Entries.Where(entry => entry.Terrain == TerrainKind.River).ToArray();
+
+            Assert.That(river, Has.Length.GreaterThanOrEqualTo(5));
+            Assert.That(river.Select(entry => entry.River), Is.SupersetOf(new[] { RiverShape.Spring, RiverShape.Straight, RiverShape.Curve }));
         }
     }
 }
