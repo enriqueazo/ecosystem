@@ -75,23 +75,23 @@ escenarios de [quickstart.md](quickstart.md).
 
 **⚠️ CRITICAL**: Las historias referencian `docs/decisions/pendientes.md`; debe existir antes.
 
-- [ ] T005 Crear `docs/decisions/0000-plantilla.md` con:
+- [X] T005 Crear `docs/decisions/0000-plantilla.md` con:
   - los campos de `data-model.md` → `Registro de decisión (ADR).Número`, `.Título`, `.Estado`,
     `.Fecha` y `.Secciones`;
   - instrucciones breves de uso, en español.
-- [ ] T006 Crear `docs/decisions/pendientes.md` como fuente única (FR-033):
+- [X] T006 Crear `docs/decisions/pendientes.md` como fuente única (FR-033):
   - contenido: una entrada por cada decisión abierta (D-01, D-02, D-04, D-05, D-06, D-08, D-09)
     con los campos `data-model.md` → `Decisión pendiente.ID`, `.Opciones`, `.Bloquea`,
     `.Información necesaria` y `.Límite`, tomados de spec.md → *Decisiones pendientes*;
   - D-02: incluir la propuesta Unity 6.3 LTS de research.md R-2, marcada como **propuesta**;
   - D-09: estado "aplazada" con el motivo de research.md R-7;
   - D-03 y D-07 no figuran como pendientes, solo como enlaces a ADR-0002 y ADR-0003.
-- [ ] T007 [P] Crear `docs/decisions/0001-estructura-monorepo.md` (estado `aceptada`): áreas y
+- [X] T007 [P] Crear `docs/decisions/0001-estructura-monorepo.md` (estado `aceptada`): áreas y
   responsabilidades de spec.md FR-001, regla FR-002 y alternativa `contracts/` descartada
   (spec.md → *Assumptions*).
-- [ ] T008 [P] Crear `docs/decisions/0003-pipeline-render-urp.md` (estado `aceptada`): Clarifications Q2 y research.md R-9.
-- [ ] T009 [P] Crear `docs/decisions/0004-conectividad-sin-sdk-cliente.md` (estado `aceptada`): Clarifications Q1 y research.md R-5.
-- [ ] T010 Crear `docs/decisions/README.md`:
+- [X] T008 [P] Crear `docs/decisions/0003-pipeline-render-urp.md` (estado `aceptada`): Clarifications Q2 y research.md R-9.
+- [X] T009 [P] Crear `docs/decisions/0004-conectividad-sin-sdk-cliente.md` (estado `aceptada`): Clarifications Q1 y research.md R-5.
+- [X] T010 Crear `docs/decisions/README.md`:
   - índice de ADR (0000, 0001, 0003 y 0004; 0002 se añade en T017);
   - enlace a `pendientes.md`;
   - procedimiento para crear un ADR y resolver una pendiente (transición de `data-model.md` →
