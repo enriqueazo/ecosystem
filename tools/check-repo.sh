@@ -73,6 +73,12 @@ check_ignored() {
       "client-unity/Assets/_Project.meta"
     )
   fi
+  if [[ -f "$REPO_ROOT/server-nakama/package.json" ]]; then
+    required+=(
+      "server-nakama/package-lock.json"
+      "server-nakama/.node-version"
+    )
+  fi
   local path failed=0
   for path in "${required[@]}"; do
     if git -C "$REPO_ROOT" check-ignore -q --no-index -- "$path"; then

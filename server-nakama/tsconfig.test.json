@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["es2024"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"]
+  },
+  "files": ["node_modules/nakama-runtime/index.d.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts"]
+}

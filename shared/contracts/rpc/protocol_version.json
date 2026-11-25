@@ -1,0 +1,64 @@
+{
+  "$schema": "../contract.schema.json",
+  "id": "protocol_version",
+  "kind": "rpc",
+  "version": 1,
+  "description": "Devuelve la versión de protocolo y la versión del módulo de servidor, para que el cliente detecte incompatibilidades. RPC técnico, sin lógica de juego.",
+  "auth": "session",
+  "maxRequestBytes": 1024,
+  "request": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object"
+  },
+  "response": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["protocolVersion", "moduleVersion"],
+    "properties": {
+      "protocolVersion": { "type": "integer", "minimum": 1 },
+      "moduleVersion": {
+        "type": "string",
+        "maxLength": 64,
+        "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+      }
+    }
+  },
+  "errors": [
+    {
+      "code": "SESSION_REQUIRED",
+      "grpcStatus": 7,
+      "when": "La llamada no tiene sesión de usuario (p. ej. se hace con la clave HTTP de servidor)."
+    },
+    {
+      "code": "PAYLOAD_TOO_LARGE",
+      "grpcStatus": 3,
+      "when": "La petición supera maxRequestBytes bytes UTF-8."
+    },
+    {
+      "code": "INVALID_ARGUMENT",
+      "grpcStatus": 3,
+      "when": "La petición no es JSON válido o no es un objeto."
+    },
+    {
+      "code": "INTERNAL",
+      "grpcStatus": 13,
+      "when": "Error inesperado del servidor. Se registra solo en el servidor; la respuesta no incluye detalles internos."
+    }
+  ],
+  "examples": {
+    "request": {
+      "valid": [{}, { "foo": 1, "bar": "x" }],
+      "invalid": [[], 42, "x", null]
+    },
+    "response": {
+      "valid": [{ "protocolVersion": 1, "moduleVersion": "0.1.0" }],
+      "invalid": [
+        { "protocolVersion": 1 },
+        { "protocolVersion": 0, "moduleVersion": "0.1.0" },
+        { "protocolVersion": 1, "moduleVersion": "v1" },
+        { "protocolVersion": 1, "moduleVersion": "0.1.0", "node": "nakama-local" }
+      ]
+    }
+  }
+}

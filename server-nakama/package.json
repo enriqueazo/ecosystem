@@ -1,0 +1,42 @@
+{
+  "name": "ecosystem-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Módulos de servidor autoritativo de Nakama (TypeScript → ES5).",
+  "type": "module",
+  "engines": {
+    "node": ">=26.13.1 <27",
+    "npm": ">=11.20.0 <12"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.ts",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "check:imports": "node scripts/check-imports.ts",
+    "typecheck": "npm run generate && tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "test": "npm run generate && node --test \"test/unit/**/*.test.ts\"",
+    "contracts:check": "node scripts/contracts.ts check",
+    "contracts:lock": "node scripts/contracts.ts lock",
+    "build": "npm run generate && rollup -c && npm run check:es5",
+    "check:es5": "node scripts/check-es5.ts",
+    "check": "npm run format:check && npm run lint && npm run check:imports && npm run typecheck && npm test && npm run contracts:check && npm run build",
+    "test:integration": "node --test \"test/integration/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.13",
+    "@babel/preset-env": "7.29.14",
+    "@babel/preset-typescript": "7.29.7",
+    "@biomejs/biome": "2.6.9",
+    "@rollup/plugin-babel": "7.1.0",
+    "@types/node": "26.6.10",
+    "acorn": "8.19.0",
+    "ajv": "8.20.0",
+    "nakama-runtime": "https://codeload.github.com/heroiclabs/nakama-common/tar.gz/e6bf1ab75aa90ec2f0e3f4e4be7c83b45710da0e",
+    "rollup": "4.68.8",
+    "typescript": "7.0.2"
+  },
+  "allowScripts": {
+    "fsevents": false
+  }
+}

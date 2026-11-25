@@ -61,7 +61,7 @@ run_in_case() {
   OUT="$CASE_DIR/.out"; ERR="$CASE_DIR/.err"
   (
     cd "$CASE_DIR" || exit 99
-    env -u NAKAMA_API_PORT PATH="$CASE_DIR/.stubs:$PATH" ${env_args[@]+"${env_args[@]}"} \
+    env -u NAKAMA_API_PORT -u NAKAMA_RUNTIME_HTTP_KEY PATH="$CASE_DIR/.stubs:$PATH" ${env_args[@]+"${env_args[@]}"} \
       bash "$CASE_DIR/$script" "$@" >"$OUT" 2>"$ERR"
   )
   CODE=$?
@@ -77,7 +77,7 @@ assert_exit() {
 assert_file_contains() {
   local name="$1" file="$2" text="$3"
   if grep -qF -- "$text" "$file"; then return 0; fi
-  fail "$name" "no contiene «$text»: $(tr '\n' ' ' <"$file")"
+  fail "$name" "no contiene «${text}»: $(tr '\n' ' ' <"$file")"
   return 1
 }
 
@@ -87,8 +87,20 @@ CB="tools/check-backend.sh"
 
 # curl simulado: escribe sus argumentos en .curl-args e imita el comportamiento de
 # `curl -s -o /dev/null -w '%{http_code}'` según CURL_MODE (ok | http500 | refused).
+# Para la comprobación de salud imita `curl -s -o /dev/null -w '%{http_code}'` según CURL_MODE
+# (ok | http500 | refused). Para el RPC (--module) imita `curl -s -w '\n%{http_code}'` según
+# RPC_MODE: loaded (403 SESSION_REQUIRED), missing (404, función no registrada) u odd (500).
 curl_stub() {
-  stub curl 'printf "%s\n" "$@" >"'"$CASE_DIR"'/.curl-args"
+  stub curl 'printf "%s\n" "$@" >>"'"$CASE_DIR"'/.curl-args"
+case "$*" in
+  */v2/rpc/*)
+    case "${RPC_MODE:-loaded}" in
+      loaded) printf "%s\n403" "{\"code\":7,\"message\":\"{\\\"code\\\":\\\"SESSION_REQUIRED\\\",\\\"message\\\":\\\"x\\\"}\"}" ;;
+      missing) printf "%s\n404" "{\"code\":5,\"message\":\"RPC function not found\"}" ;;
+      odd) printf "%s\n500" "{}" ;;
+    esac
+    exit 0 ;;
+esac
 case "${CURL_MODE:-ok}" in
   ok) printf 200; exit 0 ;;
   http500) printf 500; exit 0 ;;
@@ -115,6 +127,22 @@ test_check_backend() {
   run_in_case CURL_MODE=refused DOCKER_MODE=up -- "$CB"
   assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "backend no disponible" \
     && assert_file_contains "$n" "$ERR" "docker compose up -d --wait" && pass "$n"
+
+  n="sin respuesta y sin server-nakama/build/index.js → 1 con la indicación de construir"
+  new_repo "$CB"; curl_stub; docker_stub
+  mkdir -p "$CASE_DIR/server-nakama"; printf '{}\n' >"$CASE_DIR/server-nakama/package.json"
+  run_in_case CURL_MODE=refused DOCKER_MODE=up -- "$CB"
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/build/index.js" \
+    && assert_file_contains "$n" "$ERR" "npm run build" && pass "$n"
+
+  n="sin respuesta con el módulo construido → 1 sin la indicación de construir"
+  new_repo "$CB"; curl_stub; docker_stub
+  mkdir -p "$CASE_DIR/server-nakama/build"; printf '{}\n' >"$CASE_DIR/server-nakama/package.json"
+  printf 'function InitModule() {}\n' >"$CASE_DIR/server-nakama/build/index.js"
+  run_in_case CURL_MODE=refused DOCKER_MODE=up -- "$CB"
+  if assert_exit "$n" 1; then
+    if grep -q "npm run build" "$ERR"; then fail "$n" "sugiere construir aunque el módulo existe"; else pass "$n"; fi
+  fi
 
   n="HTTP 500 → 2"
   new_repo "$CB"; curl_stub; docker_stub
@@ -153,6 +181,48 @@ test_check_backend() {
   new_repo "$CB"; curl_stub; docker_stub
   run_in_case NAKAMA_API_PORT='7350;rm' -- "$CB"
   assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "NAKAMA_API_PORT" && pass "$n"
+
+  n="--module con el módulo cargado (403 SESSION_REQUIRED) → 0"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case NAKAMA_RUNTIME_HTTP_KEY=clave-de-prueba-123 RPC_MODE=loaded -- "$CB" --module
+  assert_exit "$n" 0 && assert_file_contains "$n" "$OUT" "Módulo cargado" \
+    && assert_file_contains "$n" "$CASE_DIR/.curl-args" "/v2/rpc/protocol_version" && pass "$n"
+
+  n="--module sin el módulo (404) → 4 con la indicación de construir"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case NAKAMA_RUNTIME_HTTP_KEY=clave-de-prueba-123 RPC_MODE=missing -- "$CB" --module
+  assert_exit "$n" 4 && assert_file_contains "$n" "$ERR" "módulo no cargado" \
+    && assert_file_contains "$n" "$ERR" "npm run build" && pass "$n"
+
+  n="--module con una respuesta inesperada (500) → 4"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case NAKAMA_RUNTIME_HTTP_KEY=clave-de-prueba-123 RPC_MODE=odd -- "$CB" --module
+  assert_exit "$n" 4 && pass "$n"
+
+  n="--module con la salud fallida → 1 (sin cambios)"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case NAKAMA_RUNTIME_HTTP_KEY=clave-de-prueba-123 CURL_MODE=refused -- "$CB" --module
+  assert_exit "$n" 1 && pass "$n"
+
+  n="--module sin NAKAMA_RUNTIME_HTTP_KEY → 64"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case -- "$CB" --module
+  assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "NAKAMA_RUNTIME_HTTP_KEY" && pass "$n"
+
+  n="--module lee la clave de deploy/local/.env"
+  new_repo "$CB"; curl_stub; docker_stub
+  mkdir -p "$CASE_DIR/deploy/local"; printf 'NAKAMA_RUNTIME_HTTP_KEY=clave-del-env-456\n' >"$CASE_DIR/deploy/local/.env"
+  run_in_case RPC_MODE=loaded -- "$CB" --module
+  assert_exit "$n" 0 && assert_file_contains "$n" "$CASE_DIR/.curl-args" "clave-del-env-456" && pass "$n"
+
+  n="--module no imprime la clave"
+  new_repo "$CB"; curl_stub; docker_stub
+  run_in_case NAKAMA_RUNTIME_HTTP_KEY=clave-de-prueba-123 RPC_MODE=missing -- "$CB" --module
+  if grep -q "clave-de-prueba-123" "$OUT" "$ERR"; then
+    fail "$n" "la clave aparece en la salida"
+  else
+    pass "$n"
+  fi
 }
 
 # --- check-repo.sh --------------------------------------------------------------------------
@@ -170,6 +240,12 @@ new_repo_for_check_repo() {
 # Simula un proyecto Unity mínimo para que se comprueben las rutas del cliente.
 fake_unity_project() {
   mkdir -p "$CASE_DIR/client-unity/ProjectSettings" "$CASE_DIR/client-unity/Packages"
+}
+
+# Simula el proyecto del servidor para que se comprueben su lockfile y .node-version.
+fake_server_project() {
+  mkdir -p "$CASE_DIR/server-nakama"
+  printf '{"name":"x","version":"0.0.0"}\n' >"$CASE_DIR/server-nakama/package.json"
 }
 
 have_docker_cli() { command -v docker >/dev/null 2>&1; }
@@ -251,6 +327,24 @@ test_check_repo() {
   new_repo_for_check_repo
   run_in_case -- "$CR" --only otra
   assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "Uso:" && pass "$n"
+
+  n="--only ignored con el lockfile del servidor ignorado → 1"
+  new_repo_for_check_repo; fake_server_project
+  printf 'server-nakama/package-lock.json\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/package-lock.json" && pass "$n"
+
+  n="--only ignored con .node-version del servidor ignorado → 1"
+  new_repo_for_check_repo; fake_server_project
+  printf '.node-version\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/.node-version" && pass "$n"
+
+  n="--only ignored sin server-nakama/package.json no comprueba el servidor → 0"
+  new_repo_for_check_repo
+  printf 'server-nakama/package-lock.json\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 0 && pass "$n"
 
   n="argumento desconocido → 64"
   new_repo_for_check_repo
