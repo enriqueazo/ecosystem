@@ -11,8 +11,8 @@ autoritativo en Nakama con PostgreSQL. Este repositorio es un monorepo con todas
 | Área | Contenido |
 |------|-----------|
 | [`client-unity/`](client-unity/README.md) | Proyecto Unity para Android e iOS, con URP. |
-| [`server-nakama/`](server-nakama/README.md) | Módulos de servidor autoritativo de Nakama. *Runtime pendiente (D-01).* |
-| [`shared/`](shared/README.md) | Solo contratos cliente-servidor versionados. |
+| [`server-nakama/`](server-nakama/README.md) | Módulos de servidor autoritativo de Nakama en TypeScript ([ADR-0006](docs/decisions/0006-runtime-nakama-typescript.md)). |
+| [`shared/`](shared/README.md) | Solo contratos cliente-servidor versionados, en JSON ([ADR-0008](docs/decisions/0008-contratos-json-versionados.md)). |
 | [`deploy/local/`](deploy/local/README.md) | Entorno de desarrollo local: Nakama + PostgreSQL con Docker Compose. |
 | [`docs/decisions/`](docs/decisions/README.md) | Registro de decisiones de arquitectura (ADR) y [decisiones pendientes](docs/decisions/pendientes.md). |
 | [`tools/`](tools/) | Scripts de verificación y sus pruebas. |

@@ -6,22 +6,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 
 ## Abiertas
 
-### D-01 · Runtime de los módulos de Nakama
-
-- **Opciones**:
-  - **Go**: máximo rendimiento y tipado estático. El plugin debe compilarse con la versión
-    exacta de Nakama y de su toolchain, así que cada actualización de Nakama obliga a recompilar.
-  - **TypeScript/JavaScript**: tipado (TS) y tooling conocido. Se ejecuta en la VM de JavaScript
-    embebida en Nakama y requiere empaquetar en un único archivo; las pruebas en Node no
-    equivalen al runtime real.
-  - **Lua**: el más simple, con menos tooling y sin tipado.
-- **Bloquea**: el código y la estructura interna de `server-nakama/`; la compilación, pruebas,
-  formato y análisis del servidor; las reglas de `.gitignore` del runtime; la carga de módulos en
-  `deploy/local/compose.yaml`; y el trabajo de CI del servidor.
-- **Información necesaria**: experiencia del equipo, requisitos de rendimiento de las partidas
-  autoritativas, coste de mantener las actualizaciones y herramientas de pruebas disponibles.
-- **Límite**: antes de implementar lógica de servidor sustancial (constitución).
-
 ### D-04 · Proveedor de CI
 
 - **Opciones**: GitHub Actions (el remoto actual está en GitHub) u otro proveedor.
@@ -31,15 +15,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 - **Límite**: antes de depender de la CI para integrar cambios. Flujo mínimo previsto: ejecutar
   `tools/tests/run.sh` y `tools/check-repo.sh` en cada PR, con versiones de acciones o imágenes
   fijadas.
-
-### D-05 · Formato de definición de contratos
-
-- **Opciones**: esquemas JSON, Protocol Buffers u otro formato que permita generar o validar
-  código para C# y para el runtime elegido.
-- **Bloquea**: el formato descrito en `shared/README.md` y la primera definición de contrato.
-- **Información necesaria**: el runtime de Nakama (D-01) y las necesidades de tamaño y frecuencia
-  de los mensajes en directo.
-- **Límite**: antes del primer RPC o mensaje de partida.
 
 ### D-06 · Nombre de producto e identificador de aplicación definitivos
 
@@ -72,6 +47,8 @@ se sustituye por un enlace en la sección *Resueltas*.
 
 | ID | Decisión | Registro |
 |----|----------|----------|
+| D-01 | Runtime de los módulos de Nakama: TypeScript transpilado a ES5 para la VM JavaScript | [ADR-0006](0006-runtime-nakama-typescript.md) |
 | D-02 | Unity 6.3 LTS (rama `6000.3`); la revisión exacta queda fijada en `ProjectSettings/ProjectVersion.txt` | [ADR-0005](0005-unity-63-lts.md) |
 | D-03 | Versiones de Nakama y PostgreSQL: 3.42.0 y 16.16 | [ADR-0002](0002-entorno-local-nakama-postgresql.md) |
+| D-05 | Formato de contratos: JSON versionado con JSON Schema 2020-12 | [ADR-0008](0008-contratos-json-versionados.md) |
 | D-07 | Pipeline de render del cliente: URP | [ADR-0003](0003-pipeline-render-urp.md) |

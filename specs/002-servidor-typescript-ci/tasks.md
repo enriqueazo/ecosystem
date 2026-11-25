@@ -250,28 +250,28 @@ dependen de `generate`) y US2 los necesitan.
   - generar `shared/contracts/contracts.lock.json` con `npm run contracts:lock`;
   - `npm run check` en verde.
 - [X] T035 [US4] Validar B1–B3 de quickstart.md con cambios temporales que se revierten, y anotar los resultados.
-- [ ] T036 [P] [US4] Completar `shared/README.md` según research.md R-6 y contracts/contract-format.md:
+- [X] T036 [P] [US4] Completar `shared/README.md` según research.md R-6 y contracts/contract-format.md:
   - en *a. Organización*, la carpeta `contracts/`;
   - en *b. Formato*, JSON Schema 2020-12 y el metaesquema (ya no pendiente);
   - en *c. Versionado*, cómo se codifican las versiones (ya no pendiente);
   - una sección nueva de validación y comprobación (`contracts:check`, `contracts:lock`, `generate`);
   - en *d. Errores*, el transporte en Nakama;
   - en *f*, el paso «actualizar la huella».
-- [ ] T037 [P] [US4] Reescribir `server-nakama/README.md` (FR-008):
+- [X] T037 [P] [US4] Reescribir `server-nakama/README.md` (FR-008):
   - requisitos (Node 26.13.1 y npm 11);
   - instalación, comandos (enlace a su contrato), estructura de `src/`, `test/` y `scripts/`;
   - restricciones de la VM (ES5, globales, sin APIs de Node, `const enum`);
   - pruebas unitarias y de integración;
   - carga en el entorno local (enlace a `deploy/local/README.md`);
   - sustituir la sección «Qué se añadirá al resolver D-01».
-- [ ] T038 [P] [US4] Crear `docs/decisions/0006-runtime-nakama-typescript.md` (aceptada):
+- [X] T038 [P] [US4] Crear `docs/decisions/0006-runtime-nakama-typescript.md` (aceptada):
   - contexto y opciones de D-01;
   - decisión de research.md R-1 a R-5, incluida la separación TypeScript 7 / Babel 7 y su plan B;
   - P-03 (perfil de las partidas) como pregunta abierta.
-- [ ] T039 [P] [US4] Crear `docs/decisions/0008-contratos-json-versionados.md` (aceptada):
+- [X] T039 [P] [US4] Crear `docs/decisions/0008-contratos-json-versionados.md` (aceptada):
   - research.md R-6 y R-7;
   - justificación de los ayudantes de `ajv/dist/runtime` como única dependencia de ejecución (FR-004).
-- [ ] T040 [US4] Actualizar `docs/decisions/pendientes.md` (D-01 y D-05 → *Resueltas*, con enlaces a 0006 y 0008) y el índice `docs/decisions/README.md`. Validar E1 para D-01 y D-05.
+- [X] T040 [US4] Actualizar `docs/decisions/pendientes.md` (D-01 y D-05 → *Resueltas*, con enlaces a 0006 y 0008) y el índice `docs/decisions/README.md`. Validar E1 para D-01 y D-05.
 
 **Checkpoint**: commits `feat(server)` (T033–T034) y `docs(shared|server|decisions)` (T036–T040).
 
@@ -433,3 +433,7 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T033 Red | 2026-11-25 | ✅ | `contracts.test.ts` falla con `ERR_MODULE_NOT_FOUND` |
 | T034 Green | 2026-11-25 | ✅ | 17/17 (unitarias totales 68/68). La prueba «contratos reales» encontró un **fallo en `listContractFiles`** (`generate.ts`): con una ruta con barra final no excluía `protocol.json`, el metaesquema ni el lockfile. Corregido normalizando con `resolve`. Mejora sobre el plan: `contracts:lock` **se niega** a sobrescribir la huella de un `id@version` ya registrado (si no, bastaría ejecutarlo para saltarse la subida de versión). Además se comprueba que los códigos de error de cada contrato son únicos (`data-model.md` → `Contrato.errors`). `contracts.lock.json` generado: `protocol_version@1` |
 | B1–B3 | 2026-11-25 | ✅ | B1 `contracts:check` OK. B2: `maxRequestBytes` 1024 → 2048 sin subir `version` → «protocol_version@1: la huella no coincide… sube "version"», código 1; `contracts:lock` también lo rechaza y el lockfile no cambia. B3: `[]` en `examples.request.valid` → «examples.request.valid[2] no valida contra request». Todo revertido |
+| B4 / T036 | 2026-11-25 | ✅ | `shared/README.md`: organización, formato (JSON Schema 2020-12 con metaesquema y las restricciones de la VM de Nakama), versionado (protocolo consultado por RPC; los mensajes no llevan versión en esta fase), errores (transporte real en Nakama y campo `error` que hay que ignorar), compatibilidad, checklist con la huella y una sección nueva de validación y comprobación. Sin marcas de «pendiente de D-05» |
+| T037 | 2026-11-25 | ✅ | `server-nakama/README.md` reescrito: requisitos, instalación, comandos, estructura, restricciones de la VM (con cómo se impone cada una), pruebas y cómo añadir un RPC. Sustituye «Qué se añadirá al resolver D-01» |
+| T038 / T039 | 2026-11-25 | ✅ | ADR-0006 (TypeScript, con las diferencias Node ↔ Nakama y la limitación del `stackTrace`) y ADR-0008 (JSON versionado: sin dependencias de ejecución, validadores sin estado y comprobación ES5 solo de sintaxis), ambos aceptados |
+| E1 (D-01, D-05) | 2026-11-25 | ✅ | `pendientes.md`: D-01 y D-05 pasan a *Resueltas* con enlace a ADR-0006 y ADR-0008; índice actualizado; el README raíz enlaza los ADR en el mapa. Las menciones a D-01 en los ADR 0001 y 0002 se mantienen porque son contexto histórico de decisiones aceptadas |
