@@ -33,7 +33,8 @@ Se usa **JSON versionado**:
 - **Una sola definición**: el servidor genera con Ajv 8.20.0 (modo standalone) los validadores y
   las constantes a partir de los archivos. El cliente C# validará los mismos archivos.
 
-Detalle operativo en [shared/README.md](../../shared/README.md).
+Detalle operativo en [shared/README.md](../../shared/README.md). La validación en el cliente C# se
+amplía en [ADR-0010](0010-validadores-csharp-generados.md) (validadores generados).
 
 ## Consecuencias
 

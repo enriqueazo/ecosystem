@@ -1,6 +1,6 @@
 # 0004 · Verificar la conectividad del backend sin SDK en el cliente
 
-- **Estado**: aceptada
+- **Estado**: sustituida por [0009](0009-sdk-nakama-unity.md)
 - **Fecha**: 2026-11-25
 
 ## Contexto

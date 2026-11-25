@@ -11,11 +11,13 @@ consideradas, la decisión y sus consecuencias, como exige la constitución del 
 | [0001](0001-estructura-monorepo.md) | Estructura del monorepo | aceptada |
 | [0002](0002-entorno-local-nakama-postgresql.md) | Entorno local con Docker Compose: Nakama 3.42.0 y PostgreSQL 16.16 | aceptada |
 | [0003](0003-pipeline-render-urp.md) | Pipeline de render del cliente: URP | aceptada |
-| [0004](0004-conectividad-sin-sdk-cliente.md) | Verificar la conectividad del backend sin SDK en el cliente | aceptada |
+| [0004](0004-conectividad-sin-sdk-cliente.md) | Verificar la conectividad del backend sin SDK en el cliente | sustituida por 0009 |
 | [0005](0005-unity-63-lts.md) | Versión de Unity: 6.3 LTS | aceptada |
 | [0006](0006-runtime-nakama-typescript.md) | Runtime de los módulos de Nakama: TypeScript | aceptada |
 | [0007](0007-ci-github-actions.md) | Proveedor de CI: GitHub Actions | aceptada |
 | [0008](0008-contratos-json-versionados.md) | Formato de los contratos cliente-servidor: JSON versionado | aceptada |
+| [0009](0009-sdk-nakama-unity.md) | SDK de Nakama en el cliente Unity y sesión de invitado | aceptada |
+| [0010](0010-validadores-csharp-generados.md) | Validadores C# generados desde los contratos | aceptada |
 
 Las decisiones todavía abiertas están en [pendientes.md](pendientes.md).
 

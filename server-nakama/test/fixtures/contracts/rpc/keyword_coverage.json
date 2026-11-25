@@ -1,0 +1,191 @@
+{
+  "id": "keyword_coverage",
+  "kind": "rpc",
+  "version": 1,
+  "description": "Contrato de prueba: ejercita todas las palabras clave del subconjunto admitido. Sus ejemplos se validan con Ajv (Node) y con los validadores C# generados (Unity).",
+  "auth": "session",
+  "maxRequestBytes": 512,
+  "request": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 4,
+        "pattern": "^[a-z😀]+$"
+      },
+      "count": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10
+      },
+      "ratio": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "flag": {
+        "type": "boolean"
+      },
+      "tag": {
+        "enum": ["a", "b", 3]
+      },
+      "fixed": {
+        "const": "x"
+      },
+      "list": {
+        "type": "array"
+      },
+      "nothing": {
+        "type": "null"
+      }
+    }
+  },
+  "response": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["ok"],
+    "properties": {
+      "ok": {
+        "type": "boolean"
+      }
+    }
+  },
+  "errors": [
+    {
+      "code": "INVALID_ARGUMENT",
+      "grpcStatus": 3,
+      "when": "Petición inválida."
+    }
+  ],
+  "examples": {
+    "request": {
+      "valid": [
+        {
+          "name": "ab"
+        },
+        {
+          "name": "abcd",
+          "count": 1,
+          "ratio": 0,
+          "flag": true
+        },
+        {
+          "name": "😀😀😀😀",
+          "count": 10,
+          "ratio": 1,
+          "flag": false
+        },
+        {
+          "name": "ab",
+          "count": 5.0,
+          "ratio": 0.5
+        },
+        {
+          "name": "ab",
+          "tag": "a",
+          "fixed": "x",
+          "list": [],
+          "nothing": null
+        },
+        {
+          "name": "ab",
+          "tag": 3
+        }
+      ],
+      "invalid": [
+        {},
+        [],
+        "ab",
+        {
+          "name": "a"
+        },
+        {
+          "name": "abcde"
+        },
+        {
+          "name": "😀😀😀😀😀"
+        },
+        {
+          "name": "AB"
+        },
+        {
+          "name": 12
+        },
+        {
+          "name": "ab",
+          "count": 0
+        },
+        {
+          "name": "ab",
+          "count": 11
+        },
+        {
+          "name": "ab",
+          "count": 1.5
+        },
+        {
+          "name": "ab",
+          "count": "1"
+        },
+        {
+          "name": "ab",
+          "ratio": 1.01
+        },
+        {
+          "name": "ab",
+          "ratio": -0.1
+        },
+        {
+          "name": "ab",
+          "flag": "true"
+        },
+        {
+          "name": "ab",
+          "tag": "c"
+        },
+        {
+          "name": "ab",
+          "tag": "3"
+        },
+        {
+          "name": "ab",
+          "fixed": "y"
+        },
+        {
+          "name": "ab",
+          "list": {}
+        },
+        {
+          "name": "ab",
+          "nothing": 0
+        },
+        {
+          "name": "ab",
+          "extra": 1
+        }
+      ]
+    },
+    "response": {
+      "valid": [
+        {
+          "ok": true
+        }
+      ],
+      "invalid": [
+        {},
+        {
+          "ok": 1
+        },
+        {
+          "ok": true,
+          "x": 1
+        }
+      ]
+    }
+  }
+}

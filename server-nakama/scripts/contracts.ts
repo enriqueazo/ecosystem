@@ -8,7 +8,12 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Ajv2020 } from "ajv/dist/2020.js";
-import { listContractFiles } from "./generate.ts";
+import {
+  type CSharpOutput,
+  defaultCSharpOutputs,
+  generateCSharpSource,
+  listContractFiles,
+} from "./generate.ts";
 
 interface ContractLike {
   id?: unknown;
@@ -154,6 +159,21 @@ export function checkContracts(contractsDir: string): string[] {
   return problems;
 }
 
+// FR-013 (spec 003): el C# versionado del cliente debe coincidir con lo que genera la definición.
+export function checkGeneratedCSharp(outputs: CSharpOutput[]): string[] {
+  const problems: string[] = [];
+  for (const output of outputs) {
+    const expected = generateCSharpSource(output.contractsDir, output);
+    const actual = existsSync(output.outFile) ? readFileSync(output.outFile, "utf8") : null;
+    if (actual !== expected) {
+      problems.push(
+        `${basename(output.outFile)} desactualizado: ejecuta npm run generate y confirma el cambio (${output.outFile})`,
+      );
+    }
+  }
+  return problems;
+}
+
 export function lockContracts(contractsDir: string): void {
   const lock = readLock(contractsDir);
   for (const { contract } of readContracts(contractsDir)) {
@@ -181,6 +201,7 @@ if (import.meta.main) {
   const contractsDir = dirArg ?? resolve(serverRoot, "../shared/contracts");
   if (command === "check") {
     const problems = checkContracts(contractsDir);
+    if (!dirArg) problems.push(...checkGeneratedCSharp(defaultCSharpOutputs(serverRoot)));
     if (problems.length === 0) {
       console.log("contracts:check OK");
     } else {

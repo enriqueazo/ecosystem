@@ -284,6 +284,22 @@ test_check_repo() {
   run_in_case -- "$CR" --only secrets
   assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "PG_VERSION" && pass "$n"
 
+  n="--only secrets con la configuración local del cliente en el índice → 1"
+  new_repo_for_check_repo
+  mkdir -p "$CASE_DIR/client-unity/LocalConfig"
+  printf '{"serverKey":"real"}\n' >"$CASE_DIR/client-unity/LocalConfig/connection.local.json"
+  git -C "$CASE_DIR" add -f client-unity/LocalConfig/connection.local.json
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "client-unity/LocalConfig/connection.local.json" && pass "$n"
+
+  n="--only secrets permite connection.example.json → 0"
+  new_repo_for_check_repo
+  mkdir -p "$CASE_DIR/client-unity/LocalConfig"
+  printf '{}\n' >"$CASE_DIR/client-unity/LocalConfig/connection.example.json"
+  git -C "$CASE_DIR" add client-unity/LocalConfig/connection.example.json
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 0 && pass "$n"
+
   n="--only secrets permite .env.example → 0"
   new_repo_for_check_repo
   run_in_case -- "$CR" --only secrets

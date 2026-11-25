@@ -12,14 +12,24 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import standaloneModule from "ajv/dist/standalone/index.js";
+import { type CSharpOptions, generateCSharpSource } from "./generate-csharp.ts";
+
+export { generateCSharpSource };
 
 // Módulo CommonJS: con "nodenext" el default import es el objeto exports; la función está en .default.
 const standaloneCode = standaloneModule.default;
+
+export interface CSharpOutput extends CSharpOptions {
+  contractsDir: string;
+  outFile: string;
+}
 
 export interface GenerateOptions {
   contractsDir: string;
   packageJsonPath: string;
   outDir: string;
+  // Salidas C# para el cliente Unity (spec 003, ADR-0010).
+  csharpOutputs?: CSharpOutput[];
 }
 
 interface ContractError {
@@ -201,6 +211,32 @@ export function generate(options: GenerateOptions): void {
   mkdirSync(options.outDir, { recursive: true });
   writeFileSync(join(options.outDir, "contracts.js"), js);
   writeFileSync(join(options.outDir, "contracts.d.ts"), `${declarations}\n`);
+
+  for (const output of options.csharpOutputs ?? []) {
+    mkdirSync(dirname(output.outFile), { recursive: true });
+    writeFileSync(output.outFile, generateCSharpSource(output.contractsDir, output));
+  }
+}
+
+// Salidas C# del repositorio: contratos reales y el contrato de prueba de palabras clave.
+export function defaultCSharpOutputs(serverRoot: string): CSharpOutput[] {
+  const client = resolve(serverRoot, "../client-unity/Assets/_Project");
+  return [
+    {
+      contractsDir: resolve(serverRoot, "../shared/contracts"),
+      outFile: join(client, "Scripts/Contracts/Generated/Contracts.g.cs"),
+      namespace: "Ecosystem.Contracts",
+      includeProtocol: true,
+      includeRuntime: true,
+    },
+    {
+      contractsDir: join(serverRoot, "test/fixtures/contracts"),
+      outFile: join(client, "Tests/EditMode/Generated/ContractFixtures.g.cs"),
+      namespace: "Ecosystem.Tests.EditMode.Generated",
+      includeProtocol: false,
+      includeRuntime: false,
+    },
+  ];
 }
 
 if (import.meta.main) {
@@ -209,6 +245,7 @@ if (import.meta.main) {
     contractsDir: resolve(serverRoot, "../shared/contracts"),
     packageJsonPath: join(serverRoot, "package.json"),
     outDir: join(serverRoot, "src/generated"),
+    csharpOutputs: defaultCSharpOutputs(serverRoot),
   });
-  console.log("Generado src/generated/ desde shared/contracts/");
+  console.log("Generado src/generated/ y el C# del cliente desde shared/contracts/");
 }

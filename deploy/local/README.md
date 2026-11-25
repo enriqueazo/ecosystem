@@ -17,6 +17,11 @@ reales. Nakama carga el módulo de servidor TypeScript construido en `server-nak
 Nakama monta `server-nakama/build/` en **solo lectura** como directorio de módulos y arranca
 `index.js`. No se monta ninguna otra ruta del repositorio.
 
+Caducidad de las sesiones de jugador (spec 003, FR-009): **2 h** el token de sesión
+(`--session.token_expiry_sec 7200`) y **7 días** el token de refresco
+(`--session.refresh_token_expiry_sec 604800`). Si un jugador vuelve después, el cliente se
+reautentica como invitado y recupera la misma cuenta.
+
 Versiones, digests y motivos en [ADR-0002](../../docs/decisions/0002-entorno-local-nakama-postgresql.md).
 Los datos de PostgreSQL se guardan en un volumen de Docker (`ecosystem-local_postgres-data`), no
 en el repositorio.

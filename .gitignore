@@ -9,6 +9,8 @@
 /client-unity/[Rr]ecordings/
 /client-unity/MemoryCaptures/
 /client-unity/.utmp/
+# Configuración de conexión local del cliente (ejemplo versionado: connection.example.json)
+/client-unity/LocalConfig/connection.local.json
 
 # Proyectos y soluciones que genera el IDE a partir del proyecto Unity
 /client-unity/*.csproj

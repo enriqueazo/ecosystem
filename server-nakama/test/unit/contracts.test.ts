@@ -3,7 +3,13 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, describe, it } from "node:test";
-import { checkContracts, fingerprint, lockContracts } from "../../scripts/contracts.ts";
+import {
+  checkContracts,
+  checkGeneratedCSharp,
+  fingerprint,
+  lockContracts,
+} from "../../scripts/contracts.ts";
+import { generateCSharpSource } from "../../scripts/generate.ts";
 
 const realContracts = new URL("../../../shared/contracts/", import.meta.url);
 const root = mkdtempSync(join(tmpdir(), "contracts-test-"));
@@ -190,5 +196,44 @@ describe("lockContracts", () => {
 
     assert.equal(fingerprint(a), fingerprint(b));
     assert.equal(fingerprint(a), fingerprint(reordered));
+  });
+});
+
+describe("checkGeneratedCSharp", () => {
+  const csharpOptions = {
+    namespace: "Ecosystem.Contracts",
+    includeProtocol: true,
+    includeRuntime: true,
+  };
+
+  it("acepta un C# generado al día", () => {
+    const { dir } = fixture();
+    const outFile = join(dir, "Contracts.g.cs");
+    writeFileSync(outFile, generateCSharpSource(dir, csharpOptions));
+
+    assert.deepEqual(checkGeneratedCSharp([{ contractsDir: dir, outFile, ...csharpOptions }]), []);
+  });
+
+  it("rechaza un C# desactualizado", () => {
+    const { dir } = fixture();
+    const outFile = join(dir, "Contracts.g.cs");
+    writeFileSync(outFile, generateCSharpSource(dir, csharpOptions));
+    writeFileSync(join(dir, "protocol.json"), JSON.stringify({ protocolVersion: 2 }));
+
+    assert.match(
+      checkGeneratedCSharp([{ contractsDir: dir, outFile, ...csharpOptions }]).join("\n"),
+      /Contracts\.g\.cs desactualizado: ejecuta npm run generate/,
+    );
+  });
+
+  it("rechaza un C# que no existe", () => {
+    const { dir } = fixture();
+
+    assert.match(
+      checkGeneratedCSharp([
+        { contractsDir: dir, outFile: join(dir, "Falta.g.cs"), ...csharpOptions },
+      ]).join("\n"),
+      /Falta\.g\.cs desactualizado/,
+    );
   });
 });
