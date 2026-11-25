@@ -364,7 +364,7 @@ quickstart.md.
   Anotarlo en el registro.
 - [X] T066 Ejecución final de A1, A2 y B1, y builds de desarrollo de Android e iOS que compilan, según `client-unity/README.md` → *Builds de desarrollo*. Anotar los resultados y las salidas en el registro. Si una build no se puede ejecutar, anotar qué falta y por qué.
 - [ ] T067 Commit `docs: describe the circular territory, terrain variants and rivers in the READMEs` (T062–T063) y commit `docs(spec): log the visual review, tests, builds and repository checks for spec 005` (T064–T066).
-- [ ] T068 Con la autorización explícita del responsable: push y PR hacia `main`. La CI tiene que estar en verde. Anotar el PR y el resultado de la CI en el registro y confirmarlo con `docs(spec): log the PR and CI result for spec 005`.
+- [X] T068 Con la autorización explícita del responsable: push y PR hacia `main`. La CI tiene que estar en verde. Anotar el PR y el resultado de la CI en el registro y confirmarlo con `docs(spec): log the PR and CI result for spec 005`.
 
 ---
 
@@ -495,3 +495,4 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T065 | Higiene (quickstart D) | Sin cambios en `server-nakama/`, `shared/`, `deploy/`, `.github/` ni `ProjectSettings/`. Recursos de hierba idénticos a `main`. Ningún GUID cambiado: el único `.meta` modificado es el renombrado de `HexTileMeshMenu.cs.meta` a `TerritoryMeshesMenu.cs.meta` (R100, mismo GUID). Todo con `.meta`, carpetas incluidas. Sin temporales en Git. Binarios: 2,6 MB en total, ninguno de más de 5 MB (ADR-0011). `tools/check-repo.sh` → 0 |
 | 2026-11-25 | T066 | Ejecución final: A1, A2 y B1 sobre el código final | EditMode: salida 0 · 427/427. PlayMode: salida 0 · 28/28. Integración: salida 0 · 14/14 |
 | 2026-11-25 | T066 | Builds de desarrollo en modo batch con `BuildPipeline.BuildPlayer` y las escenas de la build (script de editor temporal, no versionado) | Android: correcta, 0 errores, `Builds/Android/Ecosystem-dev.apk`. iOS: correcta, 0 errores, proyecto Xcode en `Builds/iOS/`. Las dos con `Bootstrap` y `Territory`. Ningún archivo versionado cambió. iOS queda como plataforma activa del editor (`Library/`, no versionado) |
+| 2026-11-25 | T068 | Push y PR con la autorización del responsable | PR #5 (https://github.com/enriqueazo/ecosystem/pull/5) hacia `main`. CI en verde: `repo`, `server` y `backend`. Las pruebas de Unity no corren en la CI (ADR-0007). La revisión visual (T057 y T064) sigue pendiente de registrar |
