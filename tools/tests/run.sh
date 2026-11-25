@@ -155,9 +155,113 @@ test_check_backend() {
   assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "NAKAMA_API_PORT" && pass "$n"
 }
 
+# --- check-repo.sh --------------------------------------------------------------------------
+
+CR="tools/check-repo.sh"
+CR_FILES=("$CR" ".gitignore" "deploy/local/compose.yaml" "deploy/local/.env.example")
+
+# Repo temporal con los archivos reales necesarios, todos confirmados en Git.
+new_repo_for_check_repo() {
+  new_repo "${CR_FILES[@]}"
+  git -C "$CASE_DIR" add -A -- . ':!.stubs'
+  git -C "$CASE_DIR" commit -q -m "base"
+}
+
+# Simula un proyecto Unity mínimo para que se comprueben las rutas del cliente.
+fake_unity_project() {
+  mkdir -p "$CASE_DIR/client-unity/ProjectSettings" "$CASE_DIR/client-unity/Packages"
+}
+
+have_docker_cli() { command -v docker >/dev/null 2>&1; }
+
+test_check_repo() {
+  echo "check-repo.sh"
+  local n
+
+  n="repo válido → 0"
+  if have_docker_cli; then
+    new_repo_for_check_repo
+    run_in_case -- "$CR"
+    assert_exit "$n" 0 && pass "$n"
+  else
+    skip "$n" "CLI de Docker no disponible"
+  fi
+
+  n="--only secrets con deploy/local/.env en el índice → 1"
+  new_repo_for_check_repo
+  printf 'POSTGRES_PASSWORD=real\n' >"$CASE_DIR/deploy/local/.env"
+  git -C "$CASE_DIR" add -f deploy/local/.env
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "deploy/local/.env" && pass "$n"
+
+  n="--only secrets con .env.local en el índice → 1"
+  new_repo_for_check_repo
+  printf 'X=1\n' >"$CASE_DIR/.env.local"
+  git -C "$CASE_DIR" add -f .env.local
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" ".env.local" && pass "$n"
+
+  n="--only secrets con datos de PostgreSQL en el índice → 1"
+  new_repo_for_check_repo
+  mkdir -p "$CASE_DIR/deploy/local/pgdata"; printf '16\n' >"$CASE_DIR/deploy/local/pgdata/PG_VERSION"
+  git -C "$CASE_DIR" add -f deploy/local/pgdata/PG_VERSION
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "PG_VERSION" && pass "$n"
+
+  n="--only secrets permite .env.example → 0"
+  new_repo_for_check_repo
+  run_in_case -- "$CR" --only secrets
+  assert_exit "$n" 0 && pass "$n"
+
+  n="--only ignored con *.meta ignorado y proyecto Unity → 1"
+  new_repo_for_check_repo; fake_unity_project
+  printf '*.meta\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "client-unity/Assets/_Project.meta" && pass "$n"
+
+  n="--only ignored con .env.example ignorado → 1"
+  new_repo_for_check_repo
+  printf '.env.example\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "deploy/local/.env.example" && pass "$n"
+
+  n="--only ignored sin proyecto Unity omite las rutas del cliente → 0"
+  new_repo_for_check_repo
+  printf '*.meta\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 0 && pass "$n"
+
+  n="--only compose con compose.yaml inválido → 1"
+  if have_docker_cli; then
+    new_repo_for_check_repo
+    printf 'services:\n  roto: [\n' >"$CASE_DIR/deploy/local/compose.yaml"
+    run_in_case -- "$CR" --only compose
+    assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "compose" && pass "$n"
+  else
+    skip "$n" "CLI de Docker no disponible"
+  fi
+
+  n="--only compose sin CLI de Docker → 1 con mensaje explícito"
+  new_repo_for_check_repo
+  stub docker 'echo "docker: command not found" >&2; exit 127'
+  run_in_case -- "$CR" --only compose
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "CLI de Docker no disponible" && pass "$n"
+
+  n="--only con comprobación desconocida → 64"
+  new_repo_for_check_repo
+  run_in_case -- "$CR" --only otra
+  assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "Uso:" && pass "$n"
+
+  n="argumento desconocido → 64"
+  new_repo_for_check_repo
+  run_in_case -- "$CR" --desconocido
+  assert_exit "$n" 64 && pass "$n"
+}
+
 # --- ejecución ------------------------------------------------------------------------------
 
 test_check_backend
+test_check_repo
 
 echo
 printf 'Resultado: %d correctas, %d fallidas, %d omitidas\n' "$PASSED" "$FAILED" "$SKIPPED"
