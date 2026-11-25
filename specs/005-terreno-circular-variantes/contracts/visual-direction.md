@@ -5,8 +5,11 @@ FR-023) y dónde quedan los valores aprobados (FR-020). Amplía el
 [contrato visual de la spec 004](../../004-territorio-hexagonal/contracts/visual-direction.md), cuyos
 valores de hierba, fondo, cámara y luz **no cambian**.
 
-> **Estado**: **pendiente de diseño y aprobación**. Este documento se completa en la
-> implementación: enlace al artefacto, fecha y columna «Aprobado».
+> **Estado**: variantes (nieve, arena y agua) y nivel del agua `hw` **aprobados por el responsable el
+> 2026-11-25** (T033), sin cambios sobre la propuesta. El río (`w`, `rp`) y la composición con el río
+> están **pendientes** (T050).
+> Artefacto de diseño: <https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp> (privado: solo lo abre su
+> propietario hasta que se comparta).
 
 ## 1. Artefacto de diseño (Claude Design)
 
@@ -27,17 +30,27 @@ de research.md R-7. Contiene:
 
 | Parámetro | Valor de partida (research.md R-7) | Aprobado |
 |-----------|-------------------------------------|----------|
-| Nieve: base, luz y sombra | `#E6EDF2`, `#F7FAFC` y `#C3D1DD` | |
-| Nieve: borde de nieve del lateral (altura y color) | 20 %, `#DCE5EC` | |
-| Arena: base, luz y sombra | `#D8BF8A`, `#E8D4A4` y `#BC9E68` | |
-| Arena: capas del lateral | `#C9AA74`, `#B08E5A` y `#DCC596` | |
-| Agua: base, luz y sombra | `#4E8E9F`, `#6DA8B5` y `#3D7585` | |
-| Agua: lecho y lámina del lateral | lecho `#7A6A55` y `#5E5040`; lámina en el 12 % superior | |
-| Nivel del agua `hw` (con `h = 0,35`) | 0,25 | |
+| Nieve: base, luz y sombra | `#E6EDF2`, `#F7FAFC` y `#C3D1DD` | Igual |
+| Nieve: borde de nieve del lateral (altura y color) | 20 %, `#DCE5EC` | Igual |
+| Nieve: banda de borde de la cara superior | `#AFC0CF` (propuesta), 0,045 u | Igual |
+| Arena: base, luz y sombra | `#D8BF8A`, `#E8D4A4` y `#BC9E68` | Igual |
+| Arena: banda de borde de la cara superior | `#A98C5A` (propuesta), 0,045 u | Igual |
+| Arena: capas del lateral | `#C9AA74`, `#B08E5A` y `#DCC596` | Igual |
+| Agua: base, luz y sombra | `#4E8E9F`, `#6DA8B5` y `#3D7585` | Igual |
+| Agua: lecho y lámina del lateral | lecho `#7A6A55` y `#5E5040`; lámina en el 12 % superior | Igual |
+| Nivel del agua `hw` (con `h = 0,35`) | 0,25 | 0,25 |
 | Anchura del cauce `w` (con `W ≈ 0,866`) | 0,26 | |
 | Radio de la poza `rp` | 0,17 | |
-| Composición | data-model.md → *Composición de partida* | |
-| Enlace al artefacto y fecha de aprobación | — | |
+| Composición de las variantes | data-model.md → *Composición de partida* | Igual (nieve 8, arena 6, agua 6) |
+| Composición del río | data-model.md → *Composición de partida* | |
+| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp> | Variantes: 2026-11-25. Río: pendiente |
+
+**Cómo se hicieron las texturas** (registro de T032): con un script determinista (Python, sin
+dependencias, fuera del repositorio) que reutiliza el ruido y el borde hexagonal del script de la spec
+004, a partir de la paleta de esta tabla. Se subieron al artefacto y son **los mismos archivos** que se
+importan en Unity. Las referencias 16:9 y 9:19.5 son renders reales de la escena en *Play*. Medido en la
+aprobación: contraste de la nieve frente al fondo de 30 L* (93,4 frente a 63,4) y `T_Water_Top`
+idéntica a sí misma desplazada (½, ½).
 
 **Condiciones que el revisor comprueba en la revisión manual**:
 - la nieve no se confunde con el fondo `#8E9BAA` ni con la arena;

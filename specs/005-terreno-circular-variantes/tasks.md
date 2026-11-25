@@ -216,23 +216,23 @@ con los recursos de su variante) y los criterios C2–C5, C8, C10, C11 y C13 de 
   Generar `_Project/Art/Territory/Meshes/WaterTile.asset` en modo batch. Comprobar que
   `HexTile.asset` no cambia (`git diff` vacío). T024 pasa a verde.
 - [X] T031 [US2] Commit `feat(client): generate the water tile mesh and the territory meshes command` (T022–T024 y T029–T030). T025–T028 siguen en rojo hasta T036 y **no** se incluyen: entran en T038.
-- [ ] T032 [US2] **Diseño** (sin commit de código): crear el artefacto de Claude Design con la herramienta de artefactos, intención *design* (FR-019, research.md R-7, contracts/visual-direction.md §1).
+- [X] T032 [US2] **Diseño** (sin commit de código): crear el artefacto de Claude Design con la herramienta de artefactos, intención *design* (FR-019, research.md R-7, contracts/visual-direction.md §1).
   - Contenido: paletas de nieve, arena y agua, vista aislada de cada variante, la composición de las variantes, referencias en 16:9 y 9:19.5 y notas de estilo.
   - Texturas: pintar las 6 de research.md R-7 con un script determinista **fuera del repositorio** (`$CLAUDE_JOB_DIR/tmp` o equivalente). `T_Water_Top` tiene que ser periódica en `(½, ½)`.
   - Referencias: renders reales en *Play* con una importación temporal, revertida sin confirmar.
   - Comprobar el contraste exigido (nieve frente al fondo ≥ 25 L*).
   - Anotar el enlace y las desviaciones en el registro.
-- [ ] T033 [US2] **Espera bloqueante**: el responsable aprueba el artefacto o pide cambios. Si cambia `RiverMetrics.WaterLevel`, actualizar `RiverMetrics.Default`, regenerar `WaterTile.asset` y repetir A1. Anotar la fecha de aprobación.
-- [ ] T034 [US2] Medir el umbral de ADR-0011 con los PNG aprobados: ninguno de más de 5 MB y el total por debajo de 50 MB (quickstart D). Importar:
+- [X] T033 [US2] **Espera bloqueante**: el responsable aprueba el artefacto o pide cambios. Si cambia `RiverMetrics.WaterLevel`, actualizar `RiverMetrics.Default`, regenerar `WaterTile.asset` y repetir A1. Anotar la fecha de aprobación.
+- [X] T034 [US2] Medir el umbral de ADR-0011 con los PNG aprobados: ninguno de más de 5 MB y el total por debajo de 50 MB (quickstart D). Importar:
   - texturas: `_Project/Art/Territory/Textures/T_Snow_Top.png`, `T_Snow_Side.png`, `T_Sand_Top.png`, `T_Sand_Side.png`, `T_Water_Top.png` y `T_Water_Side.png`, con la configuración de contracts/visual-direction.md §3;
   - materiales: `_Project/Art/Territory/Materials/M_Snow_Top.mat`, `M_Snow_Side.mat`, `M_Sand_Top.mat`, `M_Sand_Side.mat`, `M_Water_Top.mat` y `M_Water_Side.mat`;
   - prefabs: `_Project/Art/Territory/Prefabs/SnowTile.prefab`, `SandTile.prefab` y `WaterTile.prefab`.
 
   T025 pasa a verde.
-- [ ] T035 [US2] Completar `specs/005-terreno-circular-variantes/contracts/visual-direction.md` §2 con los valores aprobados de las variantes y de `hw`, el enlace al artefacto y la fecha. Marcar el estado como aprobado para las variantes.
-- [ ] T036 [US2] Añadir a `_Project/Data/Territory/TerrainCatalog.asset` las entradas Snow, Sand y Water. En `_Project/Data/Territory/InitialTerritory.asset`, aplicar la composición aprobada de las variantes (data-model.md → *Composición de partida*, o la ajustada en T033). Las celdas de río siguen siendo hierba hasta US3. T026, T027 y T028 pasan a verde. Ejecutar A1 y A2 y anotarlo.
-- [ ] T037 [US2] Captura temporal en *Play* (16:9 y 9:19.5) frente a las referencias aprobadas: variantes reconocibles, laterales frontales, agua más baja con orillas sin huecos y hierba idéntica a la de la spec 004. Anotarlo en el registro.
-- [ ] T038 [US2] Commit `feat(client): add the approved snow, sand and water terrain art` (T025–T028 y T034–T037).
+- [X] T035 [US2] Completar `specs/005-terreno-circular-variantes/contracts/visual-direction.md` §2 con los valores aprobados de las variantes y de `hw`, el enlace al artefacto y la fecha. Marcar el estado como aprobado para las variantes.
+- [X] T036 [US2] Añadir a `_Project/Data/Territory/TerrainCatalog.asset` las entradas Snow, Sand y Water. En `_Project/Data/Territory/InitialTerritory.asset`, aplicar la composición aprobada de las variantes (data-model.md → *Composición de partida*, o la ajustada en T033). Las celdas de río siguen siendo hierba hasta US3. T026, T027 y T028 pasan a verde. Ejecutar A1 y A2 y anotarlo.
+- [X] T037 [US2] Captura temporal en *Play* (16:9 y 9:19.5) frente a las referencias aprobadas: variantes reconocibles, laterales frontales, agua más baja con orillas sin huecos y hierba idéntica a la de la spec 004. Anotarlo en el registro.
+- [X] T038 [US2] Commit `feat(client): add the approved snow, sand and water terrain art` (T025–T028 y T034–T037).
 
 **Checkpoint**: cuatro variantes con arte aprobado. La hierba no cambia.
 
@@ -470,3 +470,9 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T029–T030 | `TerritoryMeshesMenu` sustituye a `HexTileMeshMenu` (`git mv`, mismo `.meta`). `-executeMethod Ecosystem.Territory.Editor.TerritoryMeshesMenu.Regenerate` | Salida 0. `WaterTile.asset` nuevo (6,7 KB). `HexTile.asset` regenerado **sin cambios** (`git status` limpio) |
 | 2026-11-25 | T029–T030 | A1 | Salida 2 · 263/284: pasan T022–T024 (mapeo en red, `RiverMetrics` y `WaterTile` al día). Fallan solo las 21 comprobaciones de arte, catálogo y composición de T025, T026 y T028 (faltan las texturas, materiales, prefabs y composición que llegan con T034–T036) |
 | 2026-11-25 | T031 | Commit con T022–T024 y T029–T030 | T025–T028 quedan fuera del commit, en rojo, y entran en T038 |
+| 2026-11-25 | T032 | Artefacto de Claude Design creado: https://claude.ai/artifact/98VB8yMnzYHcMT252Mm8wp (privado) | Cuatro paneles: variantes y valores (paletas, medidas, lo que no cambia y lo que se evita), composición (mapa de las 55 celdas y río previsto), las 6 texturas y referencias en Unity (16:9, 9:19.5 y dos detalles, renders reales en *Play*). Igual que en la spec 004: (1) las texturas se pintan con un script determinista (Python sin dependencias, fuera del repositorio) que reutiliza el ruido del de la 004; son **los mismos bytes** que se importan; (2) las referencias se renderizan con una importación temporal sin confirmar; (3) no se usa el sistema de diseño «Vocablo», que es de otro producto. `T_Water_Top` es periódica en (½, ½) (diferencia máxima 0). Contraste nieve frente al fondo: 93,4 − 63,4 = 30 L* (≥ 25). Con la importación temporal: A1 284/284 y A2 21/21 |
+| 2026-11-25 | T033 | Aprobación del artefacto por el responsable | **Aprobado tal cual** el 2026-11-25: paletas de nieve, arena y agua, `hw` = 0,25, composición de las variantes y las 6 texturas. `RiverMetrics.Default` no cambia |
+| 2026-11-25 | T034 | Umbral de ADR-0011 y bytes importados | Ningún binario de más de 5 MB. Total de `client-unity/Assets` en Git, con los nuevos: 2,2 MB (texturas del territorio: 1,1 MB). Las 6 texturas del proyecto son idénticas (`cmp`) a las del artefacto. Materiales y prefabs copiados de los de la hierba con GUID nuevos (script temporal, no versionado); los de la hierba no cambian |
+| 2026-11-25 | T035 | `contracts/visual-direction.md` §2 | Valores aprobados de las variantes y de `hw`, enlace y fecha. El río sigue pendiente (T050) |
+| 2026-11-25 | T036 | Catálogo (Snow, Sand y Water) y composición de las variantes en `InitialTerritory.asset`; celdas del río aún de hierba | A1: salida 0 · 284/284. A2: salida 0 · 21/21. T025–T028 pasan a verde |
+| 2026-11-25 | T037 | Capturas en *Play* (16:9, 9:19.5, detalle del lago y de la nieve) frente a las referencias aprobadas | Son las mismas capturas del artefacto: variantes reconocibles, laterales frontales distintos, agua sin costura entre piezas y más baja que la tierra con orillas sin huecos, y hierba igual que en la spec 004 |

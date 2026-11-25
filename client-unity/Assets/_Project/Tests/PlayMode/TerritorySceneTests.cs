@@ -71,19 +71,54 @@ namespace Ecosystem.Tests.PlayMode
             }
         }
 
+        /// <summary>
+        /// Invariantes 3 y 6 de contracts/territory-scene.md (spec 005): cada pieza usa la malla y
+        /// los materiales del prefab de su variante y ninguna proyecta ni recibe sombras. La hierba
+        /// sigue siendo HexTile, como en la spec 004.
+        /// </summary>
         [Test]
-        public void Pieces_UseTheTileMeshAndCastNoShadows()
+        public void Pieces_UseTheResourcesOfTheirVariantAndCastNoShadows()
         {
-            foreach (var tile in _view.Tiles)
+            var catalog = _view.Catalog;
+            Assert.That(catalog, Is.Not.Null, "TerritoryView necesita el catálogo.");
+            Assert.That(_view.Tiles, Has.Count.EqualTo(_view.Layout.Entries.Count));
+
+            for (var i = 0; i < _view.Tiles.Count; i++)
             {
+                var entry = _view.Layout.Entries[i];
+                var tile = _view.Tiles[i];
                 var filter = tile.GetComponent<MeshFilter>();
                 var renderer = tile.GetComponent<MeshRenderer>();
-                Assert.That(filter.sharedMesh, Is.Not.Null);
-                Assert.That(filter.sharedMesh.name, Is.EqualTo("HexTile"));
-                Assert.That(renderer.sharedMaterials, Has.Length.EqualTo(2), "Césped (submalla 0) y tierra (submalla 1).");
-                Assert.That(renderer.shadowCastingMode, Is.EqualTo(ShadowCastingMode.Off));
-                Assert.That(renderer.receiveShadows, Is.False);
+                Assert.That(filter.sharedMesh, Is.Not.Null, entry.ToString());
+                Assert.That(renderer.shadowCastingMode, Is.EqualTo(ShadowCastingMode.Off), entry.ToString());
+                Assert.That(renderer.receiveShadows, Is.False, entry.ToString());
+
+                if (entry.Terrain == TerrainKind.River)
+                {
+                    Assert.That(catalog.TryGetRiverMesh(entry.River, RiverPiece.Canonical(entry.River, entry.Rotation), out var riverMesh), Is.True);
+                    Assert.That(filter.sharedMesh, Is.SameAs(riverMesh), entry.ToString());
+                    Assert.That(renderer.sharedMaterials, Is.EqualTo(catalog.RiverPrefab.GetComponent<MeshRenderer>().sharedMaterials), entry.ToString());
+                    continue;
+                }
+
+                Assert.That(catalog.TryGetTerrainPrefab(entry.Terrain, out var prefab), Is.True, entry.ToString());
+                Assert.That(filter.sharedMesh, Is.SameAs(prefab.GetComponent<MeshFilter>().sharedMesh), entry.ToString());
+                Assert.That(renderer.sharedMaterials, Is.EqualTo(prefab.GetComponent<MeshRenderer>().sharedMaterials), entry.ToString());
+                if (entry.Terrain == TerrainKind.Grass)
+                {
+                    Assert.That(filter.sharedMesh.name, Is.EqualTo("HexTile"));
+                    Assert.That(renderer.sharedMaterials, Has.Length.EqualTo(2), "Césped (submalla 0) y tierra (submalla 1).");
+                }
             }
+        }
+
+        /// <summary>La composición de la escena usa las cuatro variantes (spec FR-017).</summary>
+        [Test]
+        public void Scene_ShowsTheFourVariants()
+        {
+            var kinds = _view.Layout.Entries.Select(entry => entry.Terrain).Distinct().ToArray();
+
+            Assert.That(kinds, Is.SupersetOf(new[] { TerrainKind.Grass, TerrainKind.Snow, TerrainKind.Sand, TerrainKind.Water }));
         }
 
         [Test]

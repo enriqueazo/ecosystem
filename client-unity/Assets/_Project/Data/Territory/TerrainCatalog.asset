@@ -15,5 +15,11 @@ MonoBehaviour:
   terrains:
   - kind: 0
     prefab: {fileID: 2122814189498614032, guid: 9d8237d1a89ed4edab6f36643c4c90fd, type: 3}
+  - kind: 1
+    prefab: {fileID: 2122814189498614032, guid: 166d711458cd4743bd6c00bcfd3e41fb, type: 3}
+  - kind: 2
+    prefab: {fileID: 2122814189498614032, guid: ac0075fb386241c49f73103c4682b2a3, type: 3}
+  - kind: 3
+    prefab: {fileID: 2122814189498614032, guid: 4944045e38bf4fef9bd79f9a4f4d8114, type: 3}
   riverPrefab: {fileID: 0}
   riverMeshes: []

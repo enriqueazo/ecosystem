@@ -15,12 +15,12 @@ MonoBehaviour:
   cells:
   - column: 3
     row: 0
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 4
     row: 0
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 5
@@ -30,17 +30,17 @@ MonoBehaviour:
     rotation: 0
   - column: 1
     row: 1
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 2
     row: 1
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 3
     row: 1
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 4
@@ -60,12 +60,12 @@ MonoBehaviour:
     rotation: 0
   - column: 1
     row: 2
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 2
     row: 2
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 3
@@ -95,7 +95,7 @@ MonoBehaviour:
     rotation: 0
   - column: 0
     row: 3
-    terrain: 0
+    terrain: 1
     river: 0
     rotation: 0
   - column: 1
@@ -205,7 +205,7 @@ MonoBehaviour:
     rotation: 0
   - column: 7
     row: 5
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0
   - column: 1
@@ -220,7 +220,7 @@ MonoBehaviour:
     rotation: 0
   - column: 3
     row: 6
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 4
@@ -235,12 +235,12 @@ MonoBehaviour:
     rotation: 0
   - column: 6
     row: 6
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0
   - column: 7
     row: 6
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0
   - column: 1
@@ -250,41 +250,41 @@ MonoBehaviour:
     rotation: 0
   - column: 2
     row: 7
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 3
     row: 7
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 4
     row: 7
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 5
     row: 7
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0
   - column: 6
     row: 7
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0
   - column: 3
     row: 8
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 4
     row: 8
-    terrain: 0
+    terrain: 3
     river: 0
     rotation: 0
   - column: 5
     row: 8
-    terrain: 0
+    terrain: 2
     river: 0
     rotation: 0

@@ -161,5 +161,24 @@ namespace Ecosystem.Tests.EditMode.Territory
                 Object.DestroyImmediate(layout);
             }
         }
+
+        // --- El catálogo del proyecto (data-model.md → TerrainCatalogAsset.terrains) ---
+
+        private const string CatalogPath = "Assets/_Project/Data/Territory/TerrainCatalog.asset";
+        private const string Prefabs = "Assets/_Project/Art/Territory/Prefabs";
+
+        [TestCase(TerrainKind.Grass, "HexTile.prefab")]
+        [TestCase(TerrainKind.Snow, "SnowTile.prefab")]
+        [TestCase(TerrainKind.Sand, "SandTile.prefab")]
+        [TestCase(TerrainKind.Water, "WaterTile.prefab")]
+        public void ProjectCatalog_MapsEachTerrainToItsPrefab(TerrainKind kind, string prefab)
+        {
+            var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<TerrainCatalogAsset>(CatalogPath);
+            Assert.That(catalog, Is.Not.Null, $"Falta {CatalogPath}.");
+
+            Assert.That(catalog.TryGetTerrainPrefab(kind, out var actual), Is.True, kind.ToString());
+            Assert.That(actual, Is.EqualTo(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>($"{Prefabs}/{prefab}")));
+            Assert.That(catalog.TerrainEntryCount(kind), Is.EqualTo(1), "Una sola entrada por variante.");
+        }
     }
 }

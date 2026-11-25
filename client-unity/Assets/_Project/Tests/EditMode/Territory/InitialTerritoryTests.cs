@@ -66,5 +66,19 @@ namespace Ecosystem.Tests.EditMode.Territory
             var ordered = layout.Cells.OrderBy(cell => cell.Row).ThenBy(cell => cell.Column);
             Assert.That(layout.Cells, Is.EqualTo(ordered));
         }
+
+        /// <summary>Spec FR-017: cada variante con al menos 4 celdas y una en el borde frontal.</summary>
+        [TestCase(TerrainKind.Grass)]
+        [TestCase(TerrainKind.Snow)]
+        [TestCase(TerrainKind.Sand)]
+        [TestCase(TerrainKind.Water)]
+        public void EveryVariant_HasFourCellsAndOneOnTheFrontBorder(TerrainKind kind)
+        {
+            var layout = Load();
+            var cells = layout.Entries.Where(entry => entry.Terrain == kind).Select(entry => entry.Cell).ToArray();
+
+            Assert.That(cells, Has.Length.GreaterThanOrEqualTo(4), kind.ToString());
+            Assert.That(cells.Intersect(layout.FrontBorderCells()), Is.Not.Empty, $"{kind}: ninguna celda en el borde frontal.");
+        }
     }
 }
