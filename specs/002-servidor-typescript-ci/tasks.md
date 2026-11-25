@@ -162,16 +162,16 @@ dependen de `generate`) y US2 los necesitan.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T020 [US2] Crear `server-nakama/test/cases/protocol-version.cases.ts` con la tabla de contracts/rpc-protocol-version.md → *Casos compartidos*. Cada caso tiene una entrada, si hay sesión, y el resultado esperado: respuesta o `code` de `data-model.md` → `Error estándar.code`.
-- [ ] T021 [P] [US2] Escribir `server-nakama/test/unit/payload.test.ts` (Red) para el tamaño UTF-8 con caracteres de 1 a 4 bytes, el límite exacto y el análisis JSON (cadena vacía → `{}`, JSON inválido, no objeto).
-- [ ] T022 [P] [US2] Escribir `server-nakama/test/unit/errors.test.ts` (Red):
+- [X] T020 [US2] Crear `server-nakama/test/cases/protocol-version.cases.ts` con la tabla de contracts/rpc-protocol-version.md → *Casos compartidos*. Cada caso tiene una entrada, si hay sesión, y el resultado esperado: respuesta o `code` de `data-model.md` → `Error estándar.code`.
+- [X] T021 [P] [US2] Escribir `server-nakama/test/unit/payload.test.ts` (Red) para el tamaño UTF-8 con caracteres de 1 a 4 bytes, el límite exacto y el análisis JSON (cadena vacía → `{}`, JSON inválido, no objeto).
+- [X] T022 [P] [US2] Escribir `server-nakama/test/unit/errors.test.ts` (Red):
   - las constantes gRPC propias valen lo mismo que `nkruntime.Codes` (3, 7, 16);
   - el error lanzado tiene `{code: <gRPC>, message: JSON}`, con `message` conforme a `data-model.md` → `Error estándar.message` (sin contenido de la petición).
-- [ ] T023 [P] [US2] Escribir `server-nakama/test/unit/protocol-version.test.ts` (Red):
+- [X] T023 [P] [US2] Escribir `server-nakama/test/unit/protocol-version.test.ts` (Red):
   - recorre la tabla de T020 contra la función pura;
   - valida cada respuesta con el validador generado de `response`;
   - comprueba que contiene **exactamente** `protocolVersion` y `moduleVersion` (SC-008).
-- [ ] T024 [P] [US2] Añadir a `tools/tests/run.sh` los casos de `check-backend.sh --module` (Red), con un stub de `curl` según contracts/tooling-cli.md:
+- [X] T024 [P] [US2] Añadir a `tools/tests/run.sh` los casos de `check-backend.sh --module` (Red), con un stub de `curl` según contracts/tooling-cli.md:
   - 403 con `SESSION_REQUIRED` → 0;
   - 404 → 4 con el mensaje de construir;
   - salud fallida → 1 (como hasta ahora);
@@ -180,18 +180,18 @@ dependen de `generate`) y US2 los necesitan.
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Implementar `server-nakama/src/errors.ts` y `server-nakama/src/payload.ts` (Green: T021 y T022):
+- [X] T025 [US2] Implementar `server-nakama/src/errors.ts` y `server-nakama/src/payload.ts` (Green: T021 y T022):
   - solo ES5 y sin APIs de Node;
   - `errors.ts` construye el error según `data-model.md` → `Error estándar.code` y `Error estándar.message`.
-- [ ] T026 [US2] Implementar `server-nakama/src/rpc/protocolVersion.ts` (Green: T023):
+- [X] T026 [US2] Implementar `server-nakama/src/rpc/protocolVersion.ts` (Green: T023):
   - función pura que recibe la carga y el `userId`, y aplica el orden de validación de contracts/rpc-protocol-version.md;
   - usa los validadores y constantes generados (`data-model.md` → `Contrato.maxRequestBytes`, `Versión de protocolo.protocolVersion` y `Módulo de servidor.moduleVersion`).
-- [ ] T027 [US2] Sustituir el `server-nakama/src/main.ts` provisional por la capa fina:
+- [X] T027 [US2] Sustituir el `server-nakama/src/main.ts` provisional por la capa fina:
   - `InitModule` global que registra **solo** `protocol_version` (`data-model.md` → `Módulo de servidor.RPC registrados`) con la función global `rpcProtocolVersion`, que delega en T026 y traduce el error;
   - una línea `info` con la versión al cargar y ningún dato de la petición;
   - truco anti-*tree-shaking*;
   - `npm run check` en verde.
-- [ ] T028 [US2] Implementar `tools/check-backend.sh --module` (Green: T024) y actualizar su contrato de referencia en `specs/001-base-proyecto-entorno/contracts/tooling-cli.md` con la opción y el código 4.
+- [X] T028 [US2] Implementar `tools/check-backend.sh --module` (Green: T024) y actualizar su contrato de referencia en `specs/001-base-proyecto-entorno/contracts/tooling-cli.md` con la opción y el código 4.
 - [ ] T029 [US2] Escribir `server-nakama/test/integration/protocol-version.int.test.ts` y el script `test:integration`, según contracts/server-scripts.md:
   - comprueba primero `tools/check-backend.sh --module` y falla de inmediato si no da 0;
   - autentica un dispositivo de prueba y recorre la tabla de T020 contra el RPC real con `?unwrap`;
@@ -418,3 +418,7 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | A4 | 2026-11-25 | ✅ | Error de tipos → `tsc` TS2322 en `src/main.ts(14,7)`; formato → `biome format` código 1 con el archivo y el diff; análisis → `lint/suspicious/noDoubleEquals` en `src/main.ts:14:43`, código 1. Todo revertido |
 | A5 | 2026-11-25 | ✅ | `[1].includes(1)` en `src/` → TS2550 (`lib: es5`) |
 | A6 | 2026-11-25 | ✅ | Tras construir, `git status` no muestra `node_modules/`, `build/` ni `src/generated/` |
+| T020–T023 Red | 2026-11-25 | ✅ | `payload.test.ts`, `errors.test.ts` y `protocol-version.test.ts` fallan con `ERR_MODULE_NOT_FOUND` (faltan `src/payload.ts`, `src/errors.ts` y `src/rpc/protocolVersion.ts`) |
+| T024 Red | 2026-11-25 | ✅ | `tools/tests/run.sh`: 6 casos nuevos de `--module` fallan (código 64 por opción desconocida). **Fallo previo detectado**: en el mensaje de fallo de `assert_file_contains`, bash leía `«$text»` como una variable llamada `text` más el primer byte de `»` y abortaba con `unbound variable`. Solo ocurría cuando una aserción fallaba. Corregido con `${text}` |
+| T025–T027 Green | 2026-11-25 | ✅ | Unitarias 45/45: tabla compartida de 12 casos contra la función pura, la respuesta valida con el validador generado y trae exactamente 2 campos, y los códigos gRPC coinciden con `nakama-runtime/index.d.ts`. `npm run check` en verde. `build/index.js`: 5,4 KB en ES5, sin `require`/`import`/`export`, con `InitModule` y `rpcProtocolVersion` globales y el validador de respuesta fuera por *tree-shaking* |
+| T028 Green | 2026-11-25 | ✅ | `tools/tests/run.sh` 31/31; sin `--module`, comportamiento y códigos sin cambios. Contrato de referencia de la spec 001 actualizado con `--module` y el código 4 |
