@@ -497,13 +497,13 @@ omitir con justificación escrita.
 
 ### Decisiones pendientes (se resuelven en `/speckit-plan`)
 
-| ID | Decisión | Qué bloquea | Cómo se resuelve |
-|----|----------|-------------|------------------|
-| P-01 | Cómo se amplía el dato de la disposición con la variante y la pieza de río (mismo recurso o recurso asociado) y cómo se migra `InitialTerritory.asset` | FR-002, FR-011, FR-017 | El más simple que se valide sin Unity y conserve el GUID del recurso existente |
-| P-02 | Si la lámina de agua y el cauce se generan por código, como `HexTile`, o se importan como modelo | FR-009, FR-013, FR-021 | Exactitud de FR-013 y FR-014 comprobable por prueba |
-| P-03 | Qué aristas abre cada pieza en el giro 0 y el sentido del giro | FR-012, FR-016 | Convención coherente con `HexCell` y data-model de la spec 004 |
-| P-04 | Cómo representa la vista la variante de cada celda (prefab por variante o prefab común con materiales del catálogo) | FR-011, FR-018 | Menor cambio sobre `TerritoryView` y sin cambiar el aspecto de la hierba |
-| P-05 | Valores visuales de partida (paletas, nivel del agua, anchura y profundidad del cauce) | FR-019 | Valores de partida del plan; los definitivos, al aprobar el diseño |
+| ID | Decisión | Qué bloquea | Cómo se resuelve | Resolución |
+|----|----------|-------------|------------------|------------|
+| P-01 | Cómo se amplía el dato de la disposición con la variante y la pieza de río (mismo recurso o recurso asociado) y cómo se migra `InitialTerritory.asset` | FR-002, FR-011, FR-017 | El más simple que se valide sin Unity y conserve el GUID del recurso existente | **Resuelta** (research.md R-1): mismo asset y GUID; cada celda lleva `terrain`, `river` y `rotation` con valores por defecto compatibles |
+| P-02 | Si la lámina de agua y el cauce se generan por código, como `HexTile`, o se importan como modelo | FR-009, FR-013, FR-021 | Exactitud de FR-013 y FR-014 comprobable por prueba | **Resuelta** (R-2): generadas por código, guardadas como assets y comprobadas por prueba; 15 mallas de río ya giradas |
+| P-03 | Qué aristas abre cada pieza en el giro 0 y el sentido del giro | FR-012, FR-016 | Convención coherente con `HexCell` y data-model de la spec 004 | **Resuelta** (R-3): aristas en el orden de `HexCell.Neighbours()` (E, NE, NO, O, SO, SE), giro antihorario visto desde arriba |
+| P-04 | Cómo representa la vista la variante de cada celda (prefab por variante o prefab común con materiales del catálogo) | FR-011, FR-018 | Menor cambio sobre `TerritoryView` y sin cambiar el aspecto de la hierba | **Resuelta** (R-5): `TerrainCatalogAsset` con un prefab por variante y mallas de río; la hierba conserva `HexTile.prefab` |
+| P-05 | Valores visuales de partida (paletas, nivel del agua, anchura y profundidad del cauce) | FR-019 | Valores de partida del plan; los definitivos, al aprobar el diseño | **Parcial** (R-7): valores de partida; los definitivos, al aprobar el diseño (contracts/visual-direction.md §2) |
 
 ### Key Entities
 
