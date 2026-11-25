@@ -207,20 +207,20 @@ carga, con PlayMode.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T024 [P] [US3] Escribir `_Project/Tests/EditMode/Connection/ProtocolCompatibilityTests.cs` (Red):
+- [X] T024 [P] [US3] Escribir `_Project/Tests/EditMode/Connection/ProtocolCompatibilityTests.cs` (Red):
   - versión igual → `Connected`;
   - servidor mayor → `UpdateRequired`;
   - servidor menor → `ServerIncompatible`;
   - respuesta que no cumple el contrato (falta un campo, tipo incorrecto, campo extra) → `ServerIncompatible`, sin reintento;
   - el error del RPC se interpreta por `code` y `message`, ignorando `error` (FR-012);
   - la versión del cliente sale de `ProtocolContracts.ProtocolVersion`.
-- [ ] T025 [P] [US3] Añadir a `_Project/Tests/Integration/GuestSignInIntegrationTests.cs` (Red) la llamada real a `protocol_version`: respuesta validada y `Connected` con la versión vigente.
+- [X] T025 [P] [US3] Añadir a `_Project/Tests/Integration/GuestSignInIntegrationTests.cs` (Red) la llamada real a `protocol_version`: respuesta validada y `Connected` con la versión vigente.
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Implementar `ProtocolCompatibility.cs` y el paso de versión en `ConnectionFlow.cs` (Green: T024), con `ProtocolVersionContract.ValidateResponse` sobre el `JToken` de la respuesta.
-- [ ] T027 [US3] Implementar `GetProtocolVersion` en `NakamaGameServer.cs` (RPC `protocol_version`, con la carga como JSON), devolviendo el texto JSON tal cual para que lo valide el núcleo (Green: T025). Mostrar los estados `UpdateRequired` y `ServerIncompatible` en `ConnectionScreen.cs`, sin reintento en el primero (contracts/connection-states.md).
-- [ ] T028 [US3] Validar quickstart.md B9:
+- [X] T026 [US3] Implementar `ProtocolCompatibility.cs` y el paso de versión en `ConnectionFlow.cs` (Green: T024), con `ProtocolVersionContract.ValidateResponse` sobre el `JToken` de la respuesta.
+- [X] T027 [US3] Implementar `GetProtocolVersion` en `NakamaGameServer.cs` (RPC `protocol_version`, con la carga como JSON), devolviendo el texto JSON tal cual para que lo valide el núcleo (Green: T025). Mostrar los estados `UpdateRequired` y `ServerIncompatible` en `ConnectionScreen.cs`, sin reintento en el primero (contracts/connection-states.md).
+- [X] T028 [US3] Validar quickstart.md B9:
   - subir temporalmente `protocolVersion` del servidor a 2 → `UpdateRequired`;
   - cliente en 2 y servidor en 1 → `ServerIncompatible`.
 
@@ -417,3 +417,7 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T022 | 2026-11-25 | ✅ | `--session.refresh_token_expiry_sec 604800` en `compose.yaml` (documentado en `deploy/local/README.md`). Medido en los JWT emitidos: sesión 7200 s y refresco 604 800 s. Spec 002: `check-backend --module` OK e integración 13/13 |
 | T023 / B2–B5 / SC-002 | 2026-11-25 | ✅ (B5 en parte) | B2 automatizado: 10 reaperturas, alternando sesión vigente y caducidad forzada → misma cuenta las 10 veces (integración 8/8). B3 y B4 cubiertos por T019. B5: clasificación 403 → `AccountError` verificada con el servidor real y con la prueba unitaria; **no verificado** visualmente en el editor (requiere la interfaz) |
 | Incidencia de herramientas | 2026-11-25 | — | Un vigilante de tiempo en segundo plano (`sleep 300; pkill`) de una ejecución anterior mató una ejecución posterior. Se eliminó y no se vuelve a usar; el `[Timeout]` de las pruebas limita el tiempo |
+| T024 Red | 2026-11-25 | ✅ | `ProtocolCompatibilityTests` y `StandardErrorTests` no compilaban: faltaban `ClientProtocolVersion`, `ProtocolCompatibility` y `StandardError`. Incluye el caso FR-007 pendiente de US2 (rechazo de sesión por el RPC → una sola reautenticación) |
+| T026 Green | 2026-11-25 | ✅ | EditMode 102/102. `ProtocolCompatibility.Evaluate`: valida la respuesta con `ProtocolVersionContract.ValidateResponse`; igual → `Connected`, servidor mayor → `UpdateRequired`, menor o respuesta fuera del contrato (falta un campo, tipo erróneo, campo extra, no JSON) → `ServerIncompatible`, sin reintento. `StandardError.TryParseCode` lee el código del contrato en `message` e ignora el campo `error` de Nakama (FR-012). Versión del cliente: `ProtocolContracts.ProtocolVersion` por defecto |
+| T025 / T027 | 2026-11-25 | ✅ | El adaptador `GetProtocolVersionAsync` ya existía desde T015 (sin Red real). Prueba de integración nueva: la respuesta real del RPC valida contra el contrato generado y su versión es la del cliente. Integración 9/9. Los estados `UpdateRequired` y `ServerIncompatible` se muestran con `ConnectionTexts`; «Reintentar» solo en `ServerIncompatible` |
+| T028 / B9 / SC-004 | 2026-11-25 | ✅ | Automatizado contra el servidor real inyectando la versión del cliente (sin cambiar archivos versionados): cliente por detrás → `UpdateRequired`; cliente por delante → `ServerIncompatible`. Integración 10/10 y PlayMode 2/2; `git status` sin cambios en contratos |
