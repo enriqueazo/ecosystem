@@ -267,7 +267,10 @@ omitir con justificación escrita.
   - cielo (*skybox*), degradado, textura, niebla o viñeta;
   - brillo (*bloom*), animación o cualquier efecto que cambie con el tiempo.
 - **FR-011**: La **dirección visual** MUST definirse con Claude Design (`/design`) y aprobarla el
-  responsable **antes** de crear los recursos de Unity. Incluye como mínimo:
+  responsable **antes** de importar las texturas y de fijar los valores visuales definitivos en
+  Unity. Hasta esa aprobación, la escena, la malla, los materiales y el prefab MAY usar los
+  valores de partida del plan (research.md R-5), y se ajustan a los aprobados al integrarlos. La
+  entrega no se da por buena con los valores de partida. Incluye como mínimo:
   - una paleta con los valores exactos del verde del césped, los tonos de la tierra y el gris
     azulado del fondo;
   - las proporciones de la pieza (relación entre ancho y altura del prisma, y altura del borde de
@@ -394,14 +397,14 @@ omitir con justificación escrita.
 
 ### Decisiones pendientes (se resuelven en `/speckit-plan`)
 
-| ID | Decisión | Qué bloquea | Cómo se resuelve |
-|----|----------|-------------|------------------|
-| P-01 | D-08: usar Git LFS o no para los binarios de arte | FR-012, FR-015 | Volumen previsto de texturas y límites del alojamiento; ADR y entrada en *Resueltas* |
-| P-02 | Formato y ubicación del recurso de datos de la disposición (recurso de Unity frente a archivo JSON local), y sistema de coordenadas hexagonales | FR-001, FR-002 | El más simple que se pruebe sin escenas y no se confunda con los contratos de `shared/` |
-| P-03 | Malla del prisma: generada por código o modelo importado | FR-012 | Comparar la exactitud de las aristas compartidas (FR-004) y la facilidad de ajustar las proporciones de FR-011 |
-| P-04 | Mecanismo de paso de `Bootstrap` al territorio (cambio de escena o carga aditiva) y lugar de la escena en la build | FR-020, FR-021 | Respetar FR-017 y la cancelación de la spec 003 |
-| P-05 | Tamaño y compresión de las texturas, y valores de la dirección visual (colores, proporciones, ángulo de cámara y luz) | FR-010, FR-011, FR-014 | Aprobación de la dirección visual (FR-011) |
-| P-06 | Carpeta de arte del territorio dentro de `Assets/_Project/` | FR-013 | Coherencia con la estructura existente del README del cliente |
+| ID | Decisión | Qué bloquea | Cómo se resuelve | Resolución |
+|----|----------|-------------|------------------|------------|
+| P-01 | D-08: usar Git LFS o no para los binarios de arte | FR-012, FR-015 | Volumen previsto de texturas y límites del alojamiento; ADR y entrada en *Resueltas* | **Resuelta** (research.md R-1): sin LFS, con umbral de revisión. Se registrará en ADR-0011 (T002) |
+| P-02 | Formato y ubicación del recurso de datos de la disposición (recurso de Unity frente a archivo JSON local), y sistema de coordenadas hexagonales | FR-001, FR-002 | El más simple que se pruebe sin escenas y no se confunda con los contratos de `shared/` | **Resuelta** (R-2): ScriptableObject en texto, coordenadas offset *odd-r* |
+| P-03 | Malla del prisma: generada por código o modelo importado | FR-012 | Comparar la exactitud de las aristas compartidas (FR-004) y la facilidad de ajustar las proporciones de FR-011 | **Resuelta** (R-3): generada por código, guardada como asset y comprobada por una prueba |
+| P-04 | Mecanismo de paso de `Bootstrap` al territorio (cambio de escena o carga aditiva) y lugar de la escena en la build | FR-020, FR-021 | Respetar FR-017 y la cancelación de la spec 003 | **Resuelta** (R-4): carga `Single` una vez en `Connected`; `Territory.unity` en el índice 1 |
+| P-05 | Tamaño y compresión de las texturas, y valores de la dirección visual (colores, proporciones, ángulo de cámara y luz) | FR-010, FR-011, FR-014 | Aprobación de la dirección visual (FR-011) | **Parcial** (R-5): 512 px y ASTC 6×6, y valores de partida. Los definitivos, al aprobar el diseño (contracts/visual-direction.md §2) |
+| P-06 | Carpeta de arte del territorio dentro de `Assets/_Project/` | FR-013 | Coherencia con la estructura existente del README del cliente | **Resuelta** (plan.md): `Art/Territory/` y `Data/Territory/` |
 
 ### Key Entities
 
