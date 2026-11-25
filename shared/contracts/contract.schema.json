@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Definición de contrato cliente-servidor",
+  "description": "Metaesquema de los contratos de shared/contracts/. Reglas: specs/002-servidor-typescript-ci/data-model.md → Contrato.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "version",
+    "auth",
+    "maxRequestBytes",
+    "request",
+    "response",
+    "errors",
+    "examples"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "description": "snake_case ASCII, 3-64 caracteres; coincide con el nombre del archivo y el identificador del RPC.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{2,63}$"
+    },
+    "kind": { "enum": ["rpc"] },
+    "version": { "type": "integer", "minimum": 1 },
+    "description": {
+      "description": "No normativo: no forma parte de la huella.",
+      "type": "string",
+      "maxLength": 500
+    },
+    "auth": { "enum": ["session"] },
+    "maxRequestBytes": { "type": "integer", "minimum": 1, "maximum": 65536 },
+    "request": {
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "const": "object" } }
+    },
+    "response": {
+      "type": "object",
+      "required": ["type", "additionalProperties"],
+      "properties": {
+        "type": { "const": "object" },
+        "additionalProperties": { "const": false }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "grpcStatus", "when"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "grpcStatus": { "type": "integer", "minimum": 1, "maximum": 16 },
+          "when": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "response"],
+      "properties": {
+        "request": { "$ref": "#/$defs/exampleSet" },
+        "response": { "$ref": "#/$defs/exampleSet" }
+      }
+    }
+  },
+  "$defs": {
+    "exampleSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid", "invalid"],
+      "properties": {
+        "valid": { "type": "array", "minItems": 1 },
+        "invalid": { "type": "array", "minItems": 1 }
+      }
+    }
+  }
+}
