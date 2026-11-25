@@ -328,8 +328,8 @@ omitir con justificación escrita.
 
 | ID | Decisión | Opciones | Qué bloquea | Cómo se resuelve |
 |----|----------|----------|-------------|------------------|
-| P-01 | Versión exacta de Node y del gestor de paquetes | La LTS vigente (en la máquina de trabajo hay Node 26.13.1) u otra que fije el equipo | FR-001 y FR-022 | En `/speckit-plan`: verificar el estado LTS y la compatibilidad con las herramientas elegidas. El responsable puede indicar otra versión. |
-| P-02 | Herramientas de formato, análisis, pruebas, construcción y validación de JSON | Se eligen en el plan entre opciones mantenidas y compatibles con la versión de Node fijada | FR-002, FR-003 y FR-019 | En `/speckit-plan`, documentado en ADR-0006 y ADR-0008. |
+| P-01 | Versión exacta de Node y del gestor de paquetes | La LTS vigente (en la máquina de trabajo hay Node 26.13.1) u otra que fije el equipo | FR-001 y FR-022 | **Resuelta en el plan** (research.md R-1): Node 26.13.1 (LTS) con npm 11.20.0. |
+| P-02 | Herramientas de formato, análisis, pruebas, construcción y validación de JSON | Se eligen en el plan entre opciones mantenidas y compatibles con la versión de Node fijada | FR-002, FR-003 y FR-019 | **Resuelta en el plan** (research.md R-2 a R-6): Biome 2.6.9, `node:test`, TypeScript 7.0.2 solo para tipos, Rollup 4 + Babel 7 a ES5 y Ajv 8 en modo standalone. Se registra en ADR-0006 y ADR-0008. |
 | P-03 | Perfil de las partidas en directo: exigentes en rendimiento o por turnos | — | Nada en esta spec (no hay lógica de partida). Influye en la estructura futura de módulos y en la prioridad de las pruebas de rendimiento | Indicado por el responsable antes de la spec de partidas. ADR-0006 lo recoge como pregunta abierta. |
 
 ### Key Entities
