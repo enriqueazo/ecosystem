@@ -316,7 +316,7 @@ escenarios de [quickstart.md](quickstart.md).
 
 ### Setup for User Story 2
 
-- [ ] T025 [US2] Resolver D-02:
+- [X] T025 [US2] Resolver D-02:
   - crear `docs/decisions/0005-version-unity.md` (estado `aceptada`) con la revisión exacta
     instalada, los módulos y el tipo de licencia;
   - sustituir la entrada D-02 de `docs/decisions/pendientes.md` por un enlace al ADR y añadirlo
@@ -544,3 +544,4 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | D3 | 2026-11-25 | ✅ | `shared/README.md` cubre (a)–(f); (b) pendiente de D-05; sin mensajes, RPC ni opcodes |
 | C1–C6 / US2 | 2026-11-25 | no verificado | Bloqueada por D-02: versión de Unity sin confirmar y Unity Hub/editor no instalados en la máquina. T025–T035 sin ejecutar |
 | T040 | 2026-11-25 | no ejecutada | `/speckit-implement` trata los archivos de `checklists/` como solo lectura; el estado final de los bloqueos queda en este registro (D-02 pendiente → US2 sin verificar; D-04 pendiente → CI no configurada) |
+| T025 / D-02 | 2026-11-25 | ✅ | Confirmada por el responsable: Unity 6.3 LTS. Instalado `6000.3.29f1` con AndroidPlayer (OpenJDK, SDK, NDK) e iOSSupport. Registrada como ADR-0005: la tabla aportada proponía ADR-0004, pero ese número ya está asignado (conectividad sin SDK) y los números no se reutilizan |

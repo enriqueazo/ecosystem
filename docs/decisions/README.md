@@ -12,6 +12,7 @@ consideradas, la decisión y sus consecuencias, como exige la constitución del 
 | [0002](0002-entorno-local-nakama-postgresql.md) | Entorno local con Docker Compose: Nakama 3.42.0 y PostgreSQL 16.16 | aceptada |
 | [0003](0003-pipeline-render-urp.md) | Pipeline de render del cliente: URP | aceptada |
 | [0004](0004-conectividad-sin-sdk-cliente.md) | Verificar la conectividad del backend sin SDK en el cliente | aceptada |
+| [0005](0005-unity-63-lts.md) | Versión de Unity: 6.3 LTS | aceptada |
 
 Las decisiones todavía abiertas están en [pendientes.md](pendientes.md).
 

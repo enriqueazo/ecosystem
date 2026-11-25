@@ -10,7 +10,7 @@ autoritativo en Nakama con PostgreSQL. Este repositorio es un monorepo con todas
 
 | Área | Contenido |
 |------|-----------|
-| `client-unity/` | Proyecto Unity para Android e iOS. *Pendiente de crear hasta fijar la versión de Unity (D-02).* |
+| `client-unity/` | Proyecto Unity para Android e iOS. *Pendiente de crear (versión ya fijada: Unity 6.3 LTS, [ADR-0005](docs/decisions/0005-unity-63-lts.md)).* |
 | [`server-nakama/`](server-nakama/README.md) | Módulos de servidor autoritativo de Nakama. *Runtime pendiente (D-01).* |
 | [`shared/`](shared/README.md) | Solo contratos cliente-servidor versionados. |
 | [`deploy/local/`](deploy/local/README.md) | Entorno de desarrollo local: Nakama + PostgreSQL con Docker Compose. |
@@ -28,7 +28,7 @@ Cliente y servidor no dependen el uno del otro: solo comparten los contratos de 
 | Todo | Git, bash | — |
 | Backend local | Docker Engine + Docker Compose v2 o posterior | Referencia verificada: Docker 29.2.1 y Compose v5.0.2 |
 | Comprobaciones | `curl` | — |
-| Cliente | Unity Hub + editor con *Android Build Support* e *iOS Build Support*; Xcode en macOS para iOS | Pendiente: [D-02](docs/decisions/pendientes.md#d-02--versión-exacta-de-unity-y-módulos) |
+| Cliente | Unity Hub + editor con *Android Build Support* e *iOS Build Support*; Xcode en macOS para iOS | Unity 6.3 LTS, revisión exacta en `client-unity/ProjectSettings/ProjectVersion.txt` ([ADR-0005](docs/decisions/0005-unity-63-lts.md)) |
 
 ## Primeros pasos
 
@@ -43,9 +43,9 @@ docker compose up -d --wait
 ¿Algo falla (falta `.env`, Docker detenido, puerto ocupado…)? Consulta la
 [resolución de problemas](deploy/local/README.md#resolución-de-problemas).
 
-**Cliente Unity**: todavía no está disponible. Se creará cuando se resuelva
-[D-02](docs/decisions/pendientes.md#d-02--versión-exacta-de-unity-y-módulos); entonces sus
-instrucciones estarán en `client-unity/README.md`.
+**Cliente Unity**: todavía no está disponible. La versión ya está fijada
+([ADR-0005](docs/decisions/0005-unity-63-lts.md)); cuando se cree el proyecto, sus instrucciones
+estarán en `client-unity/README.md`.
 
 ## Comprobaciones
 

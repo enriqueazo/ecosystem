@@ -22,20 +22,6 @@ se sustituye por un enlace en la sección *Resueltas*.
   autoritativas, coste de mantener las actualizaciones y herramientas de pruebas disponibles.
 - **Límite**: antes de implementar lógica de servidor sustancial (constitución).
 
-### D-02 · Versión exacta de Unity y módulos
-
-- **Opciones**:
-  - **Propuesta**: Unity 6.3 LTS (línea `6000.3`), con la última revisión `f` disponible al
-    instalar. Es la LTS vigente; 6.0 LTS terminó su soporte estándar en octubre de 2026 y 6.7
-    LTS aún no está publicada.
-  - Alternativas: esperar a 6.7 LTS (fecha incierta) o usar 6.6 (versión *Update*, sin soporte
-    largo).
-- **Bloquea**: todo el cliente Unity (`client-unity/`, historia 2 de la spec 001) y los
-  requisitos previos del cliente en el README.
-- **Información necesaria**: confirmación del responsable; Unity Hub y editor instalados con
-  *Android Build Support* (con OpenJDK y SDK/NDK) e *iOS Build Support*; tipo de licencia.
-- **Límite**: antes de crear el proyecto Unity (primera compilación del cliente).
-
 ### D-04 · Proveedor de CI
 
 - **Opciones**: GitHub Actions (el remoto actual está en GitHub) u otro proveedor.
@@ -86,5 +72,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 
 | ID | Decisión | Registro |
 |----|----------|----------|
+| D-02 | Unity 6.3 LTS (rama `6000.3`); la revisión exacta queda fijada en `ProjectSettings/ProjectVersion.txt` | [ADR-0005](0005-unity-63-lts.md) |
 | D-03 | Versiones de Nakama y PostgreSQL: 3.42.0 y 16.16 | [ADR-0002](0002-entorno-local-nakama-postgresql.md) |
 | D-07 | Pipeline de render del cliente: URP | [ADR-0003](0003-pipeline-render-urp.md) |
