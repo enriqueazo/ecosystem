@@ -57,5 +57,7 @@ Se usa **GitHub Actions**, con un único flujo, `.github/workflows/ci.yml`
   cambios.
 - **Validación**: la CI no se da por configurada hasta verla en un PR real con los tres trabajos en
   verde y con un fallo deliberado detectado en cada uno (spec 002, FR-028). El resultado se
-  registra en el *Registro de verificación* de la spec 002.
+  registra en el *Registro de verificación* de la spec 002. **Validada el 2026-11-25 en el PR #2**:
+  los tres trabajos en verde en 52 s y un fallo deliberado detectado en cada uno (un `.env.*`
+  versionado, un error de tipos y un RPC sin registrar), con los commits temporales revertidos.
 - **Pendiente**: incorporar Unity a la CI requiere una decisión propia, con licencia y coste.

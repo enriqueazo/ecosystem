@@ -71,8 +71,8 @@ automática está aplazada ([D-09](docs/decisions/pendientes.md#d-09--comprobaci
 GitHub Actions ([ADR-0007](docs/decisions/0007-ci-github-actions.md)), definida en
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-**Estado: en validación.** El flujo existe, pero no se da por configurado hasta verlo funcionar en
-un PR real.
+**Estado: configurada.** Validada en el PR #2 (2026-11-25): los tres trabajos pasaron en verde en
+52 s y cada uno detectó un fallo deliberado.
 
 - **Cuándo**: en cada PR hacia `main` y en cada integración en `main`.
 - **Cómo**: sin secretos del repositorio, con permisos de solo lectura y con las acciones fijadas

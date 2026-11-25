@@ -298,10 +298,10 @@ dependen de `generate`) y US2 los necesitan.
 
   Actualizar también la tabla de comprobaciones (`--module`, `npm run check`).
 - [X] T044 [US3] Crear `docs/decisions/0007-ci-github-actions.md` (aceptada, research.md R-9). Mover D-04 a *Resueltas* en `docs/decisions/pendientes.md` y actualizar el índice. **No** se considera hecho hasta completar T046 (FR-028).
-- [ ] T045 [US3] Con autorización explícita del responsable para hacer push y abrir el PR:
+- [X] T045 [US3] Con autorización explícita del responsable para hacer push y abrir el PR:
   - subir la rama y abrir el PR hacia `main`;
   - validar D1: los tres trabajos en verde y la duración total ≤ 15 min, anotada.
-- [ ] T046 [US3] Validar D2 en el PR:
+- [X] T046 [US3] Validar D2 en el PR:
   - tres commits temporales, uno con un fallo por trabajo, cada uno revertido después;
   - comprobar que cada trabajo falla y que su registro identifica la causa;
   - validar D3 con los registros (ningún valor de `.env` impreso).
@@ -444,3 +444,7 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T048 / SC-005 (local) | 2026-11-25 | ✅ | `check-repo.sh --only secrets` → 0; ningún valor real de `deploy/local/.env` en `git log -p main..HEAD` ni en el árbol. Los registros de la CI se comprueban en T046 |
 | SC-001 (1.ª ejecución) | 2026-11-25 | ❌ → corregido | Desde un clon limpio, `npm run check` fallaba en `format:check`: **Biome 2.6 también formatea Markdown** y rellenaba las tablas de `server-nakama/README.md` (cambiado después de la última comprobación local). Corregido excluyendo `**/*.md` de Biome (`3adb5b5`) |
 | SC-001 | 2026-11-25 | ✅ | Clon limpio → `npm ci` → `npm run check` en 5 s (≤ 10 min). Inicio rápido del README hasta `npm run test:integration` 13/13 en 15 s (imágenes ya descargadas). En el clon, `tools/tests/run.sh` 33/33, `check-repo.sh` OK y `git status` limpio |
+| T045 / D1 / SC-004 | 2026-11-25 | ✅ | Con autorización del responsable: rama subida y PR #2 abierto. Ejecución `45616548990`: `repo` 19 s, `server` 21 s y `backend` 39 s, todos en verde; total 52 s (≤ 15 min). En el ejecutor: Node v26.13.1, Docker 28.0.4 y Compose v2.38.2. Integración 13/13 y unitarias 68/68 en la CI |
+| T046 / D2 / SC-003 | 2026-11-25 | ✅ | Ejecución `45616803916` con 3 commits temporales: `repo` falla con «✘ [secrets] … deploy/local/.env.fallo-ci»; `server` con «error TS2322 … src/payload.ts(42,14)»; `backend` con «módulo no cargado (… HTTP 404)», código 4. En `backend` se ejecutaron «Registros de los servicios» (por el fallo) y «Limpiar el entorno» (siempre). Los 3 commits se revirtieron (`e640ab3`, `0fef282`, `51584f6`), con diferencia neta vacía |
+| D3 / SC-005 / SC-006 | 2026-11-25 | ✅ | En los registros de la CI, los valores del `.env` aparecen como `***` (8 máscaras). El único hash de 64 caracteres sin enmascarar es la clave de caché de npm (hash del lockfile), no un secreto. Acciones fijadas por commit y sin `secrets.` |
+| D4 | 2026-11-25 | ✅ | README raíz: CI **configurada** (validada en el PR #2), qué ejecuta cada trabajo, cuándo, cómo reproducirlo, que no cubre Unity y el paso manual de protección de rama. ADR-0007 registra la validación |
