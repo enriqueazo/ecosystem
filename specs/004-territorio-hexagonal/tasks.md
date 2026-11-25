@@ -306,7 +306,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T038 [P] Actualizar `client-unity/README.md` (FR-026):
+- [X] T038 [P] Actualizar `client-unity/README.md` (FR-026):
   - estructura con `Art/Territory`, `Data/Territory`, `Scripts/Territory*` y `Territory.unity`;
   - dependencias `Territory.Editor → Territory.View → Territory`;
   - «Revisar el territorio sin backend»;
@@ -314,7 +314,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - nuevas pruebas en cada grupo;
   - «Bootstrap pasa al territorio al conectar»;
   - quitar «Única escena de la build».
-- [ ] T039 [P] Actualizar `README.md` (raíz): la línea de estado (spec 004, primer territorio visible) y la fila de pruebas de Unity.
+- [X] T039 [P] Actualizar `README.md` (raíz): la línea de estado (spec 004, primer territorio visible) y la fila de pruebas de Unity.
 - [ ] T040 Ejecutar los tres grupos en modo batch (A1, A2 y B1) con el entorno local arrancado. Anotar los códigos de salida y los totales en el registro.
 - [ ] T041 Generar las builds de desarrollo de Android e iOS según `client-unity/README.md` → *Builds de desarrollo*:
   - las dos compilan;

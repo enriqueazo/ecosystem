@@ -3,8 +3,9 @@
 Qué tiene que entregar el diseño con Claude Design (FR-011), cómo entra en Unity (FR-012 a
 FR-014) y dónde quedan registrados los valores aprobados.
 
-> **Estado**: pendiente de diseño. Las celdas «Aprobado» se rellenan en la implementación, con el
-> enlace al artefacto y la fecha de aprobación del responsable.
+> **Estado**: **propuesta, pendiente de aprobación del responsable (T019)**. Artefacto de diseño:
+> <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> (privado: solo lo abre su propietario hasta que
+> se comparta). Las celdas «Aprobado» se rellenan al aprobar, con la fecha.
 
 ## 1. Artefacto de diseño (Claude Design)
 
@@ -33,6 +34,18 @@ Se crea con la herramienta de artefactos de Claude, intención *design*. Contien
 - Ninguna lleva luces ni sombras pintadas que contradigan la luz de la escena: solo una oclusión
   muy suave.
 
+**Cómo se hicieron las texturas** (registro de T018): las dos texturas se pintaron con un script
+determinista (Python, sin dependencias, fuera del repositorio) a partir de la paleta de §2. Se
+subieron al artefacto y son **los mismos archivos** que se importan en Unity al aprobar. Desviaciones
+respecto a §1:
+- no hay botón «Descargar PNG», porque el visor de artefactos bloquea las descargas que inicia la
+  página;
+- no se dibujaron en SVG dentro del artefacto, porque en el equipo no hay rasterizador de SVG para
+  pasarlas a PNG.
+
+Las referencias 16:9 y 9:19.5 son renders reales de la escena en *Play*, hechos con una importación
+temporal de las texturas que se revirtió sin confirmar.
+
 ## 2. Valores aprobados
 
 | Parámetro | Valor de partida (research.md R-5) | Aprobado |
@@ -40,12 +53,15 @@ Se crea con la herramienta de artefactos de Claude, intención *design*. Contien
 | Césped base | `#6FA34A` | — |
 | Tierra base | `#8A5A3B` | — |
 | Fondo | `#8E9BAA` | — |
-| Color ambiente | por definir en el diseño | — |
+| Color ambiente | `#8A929C` (propuesto en el diseño) | — |
 | Altura `h` (con `R = 0,5`) | 0,35 | — |
 | Borde de césped en el lateral | 20 % | — |
 | Inclinación de la cámara `θ` | 35° | — |
 | Luz direccional (rotación, intensidad, color) | (50°, −30°, 0°), 1, blanco cálido | — |
-| Enlace al artefacto y fecha de aprobación | — | — |
+| Paleta de la textura de césped | luz `#86B858`, sombra `#5B8C3C`, borde de pieza `#4E7A34` (propuesta) | — |
+| Paleta de la textura de tierra | estrato claro `#9E6C48`, estrato oscuro `#6E452B`, guijarro `#A88A6E` (propuesta) | — |
+| Banda de borde de la cara superior | 0,045 u (propuesta) | — |
+| Enlace al artefacto y fecha de aprobación | <https://claude.ai/artifact/HDLt4z5rwdcuXTd84hh96V> | — |
 
 El **fondo** MUST ser gris azulado (con el azul como canal dominante, por poco), de luminosidad
 media o clara y saturación baja. El revisor comprueba en la revisión manual que no se lee como
