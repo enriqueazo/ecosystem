@@ -48,14 +48,20 @@ instrucciones estarán en `client-unity/README.md`.
 
 | Comando | Qué comprueba | Necesita |
 |---------|---------------|----------|
-| `tools/tests/run.sh` | Pruebas de los scripts de `tools/` | bash, git |
+| `tools/tests/run.sh` | Pruebas de los scripts de `tools/` | bash, git; el CLI de Docker para los casos de Compose (si falta, se marcan como omitidos) |
+| `tools/check-repo.sh` | Configuración de Compose válida, ningún `.env` ni dato local en Git, ningún archivo imprescindible ignorado | bash, git, CLI de Docker (no el demonio) |
 | `tools/check-backend.sh` | Que el backend local responde | bash, curl; el entorno arrancado |
 
-Los códigos de salida de cada script están en su
-[contrato](specs/001-base-proyecto-entorno/contracts/tooling-cli.md).
+Ejecuta `tools/tests/run.sh` y `tools/check-repo.sh` antes de cada PR. `tools/check-repo.sh --only
+<compose|secrets|ignored>` ejecuta una sola comprobación. Los códigos de salida de cada script
+están en su [contrato](specs/001-base-proyecto-entorno/contracts/tooling-cli.md).
+
+**Formato de C#**: lo aplica el IDE con [`.editorconfig`](.editorconfig). La comprobación
+automática está aplazada ([D-09](docs/decisions/pendientes.md#d-09--comprobación-automática-de-formato-y-análisis-de-c)).
 
 **Estado de la CI: no configurada.** El proveedor está pendiente de decidir
-([D-04](docs/decisions/pendientes.md#d-04--proveedor-de-ci)).
+([D-04](docs/decisions/pendientes.md#d-04--proveedor-de-ci)). Cuando se decida, el flujo mínimo
+ejecutará `tools/tests/run.sh` y `tools/check-repo.sh` en cada PR.
 
 ## Decisiones
 

@@ -266,7 +266,7 @@ escenarios de [quickstart.md](quickstart.md).
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T022 [US5] Añadir a `tools/tests/run.sh` los casos de `tools/check-repo.sh`
+- [X] T022 [US5] Añadir a `tools/tests/run.sh` los casos de `tools/check-repo.sh`
   (contracts/tooling-cli.md → `tools/check-repo.sh`). Cada caso trabaja en un repo Git temporal
   creado con `git init`, que copia `tools/check-repo.sh` a `<tmp>/tools/`, además de
   `.gitignore`, `deploy/local/compose.yaml` y `deploy/local/.env.example`, y ejecuta la copia.
@@ -285,12 +285,12 @@ escenarios de [quickstart.md](quickstart.md).
 
 ### Implementation for User Story 5
 
-- [ ] T023 [US5] Implementar `tools/check-repo.sh` según contracts/tooling-cli.md:
+- [X] T023 [US5] Implementar `tools/check-repo.sh` según contracts/tooling-cli.md:
   - comprobaciones `compose`, `secrets` e `ignored`, con `--only`;
   - informe por comprobación; códigos 0/1/64;
   - `git check-ignore --no-index` para las rutas imprescindibles;
   - ejecutable; `tools/tests/run.sh` debe quedar en verde.
-- [ ] T024 [US5] Completar la sección *Comprobaciones* de `README.md`:
+- [X] T024 [US5] Completar la sección *Comprobaciones* de `README.md`:
   - cómo ejecutar `tools/tests/run.sh`, `tools/check-repo.sh` y `tools/check-backend.sh`, con
     enlace a sus códigos de salida;
   - estado de la CI "no configurada" y lo que el flujo mínimo ejecutará cuando se resuelva D-04
@@ -531,3 +531,7 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | B extra | 2026-11-25 | ✅ | Arranque con los valores de `.env.example` sin modificar (proyecto desechable): sano y `check-backend.sh` → 0 |
 | A5 / SC-010 | 2026-11-25 | ✅ | Sin `go.mod`, `package.json`, `tsconfig`, `.lua` ni `.so` fuera de `specs/` y `docs/decisions/`; sin reglas de runtime en `.gitignore`, `deploy/` ni `tools/` (las coincidencias son `/bin/sh` y shebangs) |
 | FR-004 | 2026-11-25 | ✅ | Sin referencias entre `client-unity/` y `server-nakama/` |
+| T022 Red | 2026-11-25 | ✅ | 12 pruebas nuevas de `check-repo.sh` fallan (script inexistente) |
+| A1 / T023 Green | 2026-11-25 | ✅ | `tools/tests/run.sh`: 21 correctas, 0 fallidas, 0 omitidas |
+| A2 | 2026-11-25 | ✅ | `tools/check-repo.sh` → 0 (compose, secrets, ignored) |
+| A3 | 2026-11-25 | ✅ | `git add -f deploy/local/.env` → `--only secrets` devuelve 1 nombrando el archivo; retirado con `git restore --staged` |
