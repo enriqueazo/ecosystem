@@ -315,11 +315,11 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - «Bootstrap pasa al territorio al conectar»;
   - quitar «Única escena de la build».
 - [X] T039 [P] Actualizar `README.md` (raíz): la línea de estado (spec 004, primer territorio visible) y la fila de pruebas de Unity.
-- [ ] T040 Ejecutar los tres grupos en modo batch (A1, A2 y B1) con el entorno local arrancado. Anotar los códigos de salida y los totales en el registro.
-- [ ] T041 Generar las builds de desarrollo de Android e iOS según `client-unity/README.md` → *Builds de desarrollo*:
+- [X] T040 Ejecutar los tres grupos en modo batch (A1, A2 y B1) con el entorno local arrancado. Anotar los códigos de salida y los totales en el registro.
+- [X] T041 Generar las builds de desarrollo de Android e iOS según `client-unity/README.md` → *Builds de desarrollo*:
   - las dos compilan;
   - tras cerrar, ningún archivo versionado cambia salvo los esperados, que se justifican en el registro.
-- [ ] T042 Ejecutar quickstart D (higiene) y `tools/tests/run.sh`. Las cuatro comprobaciones de D salen vacías o con 0. Anotarlo.
+- [X] T042 Ejecutar quickstart D (higiene) y `tools/tests/run.sh`. Las cuatro comprobaciones de D salen vacías o con 0. Anotarlo.
 - [ ] T043 Revisión visual manual **completa** de quickstart C (tabla C1–C11 en las seis proporciones y *Simulator*), hecha o confirmada por el responsable. Registrar la tabla con fecha y persona en `specs/004-territorio-hexagonal/spec.md` → nueva sección *Revisión visual* (FR-024 y SC-005).
 - [ ] T044 Push y PR hacia `main` **solo con autorización explícita** del responsable (constitución → Git). Anotar el número del PR y el resultado de la CI.
 
@@ -440,3 +440,6 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T020 | Importación de los PNG aprobados (`cmp`: idénticos a los del artefacto), con un script de editor temporal (no versionado) | 512 × 512, sRGB, *mipmaps*, trilineal, césped *Clamp*, tierra *Repeat U / Clamp V*, *override* ASTC 6×6 y máx. 512 en Android e iOS. `git status` sin SVG, capturas ni temporales |
 | 2026-11-25 | T021 | A1 y A2 (Green) | EditMode: 171/171. PlayMode: 20/20. Los valores aprobados coinciden con los de partida, así que no cambian `ApprovedBackground`, la inclinación ni `HexMetrics.Default` (la malla sigue al día) |
 | 2026-11-25 | T022 | Captura en *Play* a 16:9 del estado confirmado (prueba temporal, no versionada) | C2–C6, C9 y C11 conformes por inspección de la captura: 16 piezas que se distinguen por su borde, césped arriba, tierra con borde de hierba en los laterales, sin huecos ni líneas en las aristas (no hace falta el solape de plan.md → *Riesgos*), vista inclinada sin giro y sin perspectiva, fondo liso y coincidente con la referencia aprobada. C8 (30 s sin cambios) lo cubre `Camera_DoesNotMoveOverTime` y la escena no tiene nada animado. La confirmación en el editor queda dentro de T043 |
+| 2026-11-25 | T040 | A1, A2 y B1 seguidos, con el backend local (`tools/check-backend.sh --module` → 0) | EditMode: salida 0 · 171/171. PlayMode: salida 0 · 20/20. Integración: salida 0 · 14/14 (conectado en 0,08 s; territorio visible 0,10 s después) |
+| 2026-11-25 | T041 | Builds de desarrollo en modo batch con `BuildPipeline.BuildPlayer` y las escenas de la build (script de editor temporal, no versionado) | Android: correcta, `Builds/Android/Ecosystem-dev.apk` (60 MB), 0 errores. iOS: correcta, proyecto Xcode en `Builds/iOS/`, 0 errores. Las dos con `Bootstrap` y `Territory`. Ningún archivo versionado cambió. Queda iOS como plataforma activa del editor (`Library/`, no versionado) |
+| 2026-11-25 | T042 | Quickstart D y `tools/tests/run.sh` | Sin cambios en `server-nakama/`, `shared/` ni `deploy/`; sin cambios de orientación ni resolución; `tools/check-repo.sh` → 0; ningún recurso sin `.meta`; `tools/tests/run.sh` → 35/35. Binarios nuevos: solo los dos PNG aprobados (0,3 MB en total, por debajo del umbral de ADR-0011) |
