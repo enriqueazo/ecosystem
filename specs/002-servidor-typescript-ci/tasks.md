@@ -119,31 +119,31 @@ dependen de `generate`) y US2 los necesitan.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T012 [P] [US1] Escribir `server-nakama/test/unit/check-es5.test.ts` (Red). Casos:
+- [X] T012 [P] [US1] Escribir `server-nakama/test/unit/check-es5.test.ts` (Red). Casos:
   - un archivo ES5 pasa;
   - un archivo con `const`, una función flecha o una clase falla con código distinto de 0,
     indicando línea y columna.
-- [ ] T013 [P] [US1] Escribir `server-nakama/test/unit/check-imports.test.ts` (Red). Casos:
+- [X] T013 [P] [US1] Escribir `server-nakama/test/unit/check-imports.test.ts` (Red). Casos:
   - un `src/` con solo imports relativos, de `./generated/` o de tipo `nakama-runtime` pasa;
   - un import de un paquete npm en `src/` falla, nombrando el archivo y el import.
-- [ ] T014 [P] [US1] Añadir a `tools/tests/run.sh` los casos de `check-repo.sh` de contracts/tooling-cli.md → `check-repo.sh` (Red):
+- [X] T014 [P] [US1] Añadir a `tools/tests/run.sh` los casos de `check-repo.sh` de contracts/tooling-cli.md → `check-repo.sh` (Red):
   - con `server-nakama/package.json` presente, `--only ignored` falla si `server-nakama/package-lock.json` o `server-nakama/.node-version` están ignorados;
   - sin `server-nakama/package.json`, no se comprueban.
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar `server-nakama/scripts/check-es5.ts` (Green), que analiza `build/index.js` con acorn (`ecmaVersion: 5`). Encadenarlo en el script `build` de `server-nakama/package.json` (`data-model.md` → `Módulo de servidor.Artefacto`).
-- [ ] T016 [US1] Implementar `server-nakama/scripts/check-imports.ts` (Green) para FR-004:
+- [X] T015 [US1] Implementar `server-nakama/scripts/check-es5.ts` (Green), que analiza `build/index.js` con acorn (`ecmaVersion: 5`). Encadenarlo en el script `build` de `server-nakama/package.json` (`data-model.md` → `Módulo de servidor.Artefacto`).
+- [X] T016 [US1] Implementar `server-nakama/scripts/check-imports.ts` (Green) para FR-004:
   - recorre `src/` (excepto `generated/`) y rechaza imports que no sean relativos o `import type` de `nakama-runtime`;
   - añadirlo como `check:imports` a `check` en `server-nakama/package.json`;
   - los ayudantes de `ajv/dist/runtime` solo entran a través de `src/generated/`, como justifica ADR-0008.
-- [ ] T017 [US1] Ampliar `tools/check-repo.sh` (Green) con los imprescindibles del servidor; `tools/tests/run.sh` en verde.
-- [ ] T018 [US1] Completar los `scripts` de `server-nakama/package.json` según contracts/server-scripts.md:
+- [X] T017 [US1] Ampliar `tools/check-repo.sh` (Green) con los imprescindibles del servidor; `tools/tests/run.sh` en verde.
+- [X] T018 [US1] Completar los `scripts` de `server-nakama/package.json` según contracts/server-scripts.md:
   - `typecheck`, `test` y `build` ejecutan antes `generate`;
   - `check` encadena `format:check`, `lint`, `check:imports`, `typecheck`, `test`, `contracts:check` y `build`;
   - `contracts:check` queda como marcador hasta T033;
   - `npm run check` debe terminar con código 0.
-- [ ] T019 [US1] Validar los escenarios A1–A6 de quickstart.md:
+- [X] T019 [US1] Validar los escenarios A1–A6 de quickstart.md:
   - A2 con Node 24, si se puede instalar con un gestor de versiones; si no, se anota como no verificado;
   - A4 con tres fallos temporales que se revierten;
   - A5 con `Array.prototype.includes`.
@@ -409,3 +409,12 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T007–T009 | 2026-11-25 | ✅ | Metaesquema, `protocol.json` y `rpc/protocol_version.json` v1. Con Ajv 2020 en modo estricto, el contrato valida contra el metaesquema y sus ejemplos se comportan como se espera (2 + 1 válidos aceptados; 4 + 4 inválidos rechazados) |
 | T010 Red | 2026-11-25 | ✅ | `generate.test.ts` falla con `ERR_MODULE_NOT_FOUND` (`scripts/generate.ts` no existe) |
 | T011 Green | 2026-11-25 | ✅ | 6/6 pruebas. **Desviación de R-6**: Ajv standalone emite `require("ajv/dist/runtime/ucs2length")` incluso con `esm: true` (para `maxLength`), lo que rompe ESM y añadiría una dependencia de ejecución. La opción `unicode: false` lo evitaría, pero está obsoleta y cambia la semántica. El generador sustituye ese ayudante por una implementación ES5 propia equivalente (un par sustituto cuenta como 1, verificado con 😀) y **falla** si aparece cualquier otro `require`. Resultado: **0 dependencias de ejecución** en el artefacto, y se retiran `@rollup/plugin-node-resolve` y `@rollup/plugin-commonjs`. `unicodeRegExp: false` evita la bandera `u` (ES2015) en los `RegExp` generados |
+| T012–T014 Red | 2026-11-25 | ✅ | `check-es5.test.ts` y `check-imports.test.ts` fallan con `ERR_MODULE_NOT_FOUND`; `tools/tests/run.sh`: 22 correctas y 2 fallidas (lockfile y `.node-version` del servidor ignorados no se detectaban) |
+| T015–T017 Green | 2026-11-25 | ✅ | Unitarias 15/15; `tools/tests/run.sh` 24/24; `check-repo.sh` comprueba 7 rutas imprescindibles |
+| T018 | 2026-11-25 | ✅ | `npm run check` (formato, lint, `check:imports`, tipos de src y de pruebas, 15 pruebas, construcción y ES5) en verde en unos 2 s. `contracts:check` y `contracts:lock` son marcadores explícitos hasta T033–T034 |
+| A1 | 2026-11-25 | ✅ | `npm ci` → 0, sin cambios en `package-lock.json` |
+| A2 | 2026-11-25 | ✅ | Node v24.22.3 oficial (tar verificado con SHA256SUMS de nodejs.org, en el *scratchpad* y borrado después): `npm ci` → `EBADENGINE`, «Required: node >=26.13.1 <27, npm >=11.20.0 <12 / Actual: v24.22.3, 11.19.1». npm 11 ya no admite `--node-version` para simularlo |
+| A3 | 2026-11-25 | ✅ | Ver T018: `build/index.js` generado y verificado como ES5 |
+| A4 | 2026-11-25 | ✅ | Error de tipos → `tsc` TS2322 en `src/main.ts(14,7)`; formato → `biome format` código 1 con el archivo y el diff; análisis → `lint/suspicious/noDoubleEquals` en `src/main.ts:14:43`, código 1. Todo revertido |
+| A5 | 2026-11-25 | ✅ | `[1].includes(1)` en `src/` → TS2550 (`lib: es5`) |
+| A6 | 2026-11-25 | ✅ | Tras construir, `git status` no muestra `node_modules/`, `build/` ni `src/generated/` |
