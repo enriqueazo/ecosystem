@@ -1,3 +1,4 @@
+using System.Linq;
 using Ecosystem.Territory;
 using NUnit.Framework;
 using UnityEditor;
@@ -53,6 +54,15 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(actual.x, Is.EqualTo(expected.X).Within(Tolerance), what);
             Assert.That(actual.y, Is.EqualTo(expected.Y).Within(Tolerance), what);
             Assert.That(actual.z, Is.EqualTo(expected.Z).Within(Tolerance), what);
+        }
+
+        private static readonly object[] RiverKeys = RiverPiece.CanonicalKeys().Select(k => new object[] { k.Shape, k.Rotation }).ToArray();
+
+        [TestCaseSource(nameof(RiverKeys))]
+        public void RiverPiece_MatchesTheGeneratorOutput(RiverShape shape, int rotation)
+        {
+            var expected = RiverPieceMeshBuilder.Build(HexMetrics.Default, RiverMetrics.Default, shape, rotation);
+            AssertMatches($"{Meshes}/River/River_{shape}_{rotation}.asset", expected.Vertices, expected.Normals, expected.Uvs, expected.Submeshes);
         }
     }
 }

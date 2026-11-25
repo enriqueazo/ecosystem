@@ -248,17 +248,17 @@ río con su malla), A5 y los criterios C6 y C7 de quickstart.md.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T039 [P] [US3] Crear `_Project/Tests/EditMode/Territory/RiverConnectionTests.cs` con la regla de data-model.md → `TerritoryLayout` (orden 6 y *Regla de conexión*):
+- [X] T039 [P] [US3] Crear `_Project/Tests/EditMode/Territory/RiverConnectionTests.cs` con la regla de data-model.md → `TerritoryLayout` (orden 6 y *Regla de conexión*):
   - **aceptan**: conexión recíproca, desembocadura en agua, salida por el borde, río cerrado sin manantial y dos ríos vecinos sin conectar;
   - **rechazan** con `BrokenRiver`, celda, arista y el mensaje exacto: vecina de hierba, nieve o arena, y vecina de río con la arista cerrada (vista desde las dos piezas);
   - `Disconnected` va antes que `BrokenRiver`.
-- [ ] T040 [P] [US3] Crear `_Project/Tests/EditMode/Territory/PolygonTriangulatorTests.cs`:
+- [X] T040 [P] [US3] Crear `_Project/Tests/EditMode/Territory/PolygonTriangulatorTests.cs`:
   - convexo, cóncavo y en forma de «U»;
   - la suma de las áreas de los triángulos es igual al área del polígono;
   - todos los triángulos tienen la misma orientación;
   - el número de triángulos es `n − 2`;
   - un polígono degenerado devuelve un resultado definido, no una excepción.
-- [ ] T041 [P] [US3] Crear `_Project/Tests/EditMode/Territory/RiverPieceMeshBuilderTests.cs` con los invariantes 1–6 de data-model.md → *Mallas generadas*, para las 15 combinaciones (forma, giro canónico):
+- [X] T041 [P] [US3] Crear `_Project/Tests/EditMode/Territory/RiverPieceMeshBuilderTests.cs` con los invariantes 1–6 de data-model.md → *Mallas generadas*, para las 15 combinaciones (forma, giro canónico):
   - cortes de anchura `w` centrados en el punto medio de cada arista abierta;
   - muescas hasta `hw` y laterales completos sin huecos;
   - agua del cauce a `y = hw`;
@@ -270,11 +270,11 @@ río con su malla), A5 y los criterios C6 y C7 de quickstart.md.
   También, con una tolerancia de ≤ 0,1 % de `W` (FR-013, FR-014 y SC-005):
   - para cada pareja de piezas con conexión recíproca, los cortes coinciden;
   - el corte de la desembocadura casa con la arista de `WaterTile`.
-- [ ] T042 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/TerritoryMeshAssetTests.cs` con las 15 mallas `Art/Territory/Meshes/River/River_{Shape}_{r}.asset`, frente a `RiverPieceMeshBuilder`.
-- [ ] T043 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs` y `TerritoryArtAssetTests.cs`:
+- [X] T042 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/TerritoryMeshAssetTests.cs` con las 15 mallas `Art/Territory/Meshes/River/River_{Shape}_{r}.asset`, frente a `RiverPieceMeshBuilder`.
+- [X] T043 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/TerrainCatalogAssetTests.cs` y `TerritoryArtAssetTests.cs`:
   - `riverPrefab` es `RiverTile.prefab`, con los materiales `M_Grass_Top`, `M_Earth_Side` y `M_Water_Top` y sin sombras;
   - `riverMeshes` tiene exactamente las 15 claves de data-model.md → `TerrainCatalogAsset.riverMeshes`, sin repetidas.
-- [ ] T044 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs` con el río de FR-017:
+- [X] T044 [P] [US3] Ampliar `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs` con el río de FR-017:
   - al menos 5 piezas;
   - un manantial, al menos un recto y al menos una curva;
   - el curso desemboca en agua.
@@ -285,9 +285,9 @@ río con su malla), A5 y los criterios C6 y C7 de quickstart.md.
 
 ### Implementation for User Story 3
 
-- [ ] T045 [US3] Añadir a `_Project/Scripts/Territory/TerritoryLayout.cs` la validación `BrokenRiver` con `RiverPiece.OpenEdges` y `HexCell.Neighbour` (data-model.md → `TerritoryLayout`, orden 6). T039 pasa a verde.
-- [ ] T046 [US3] Crear `_Project/Scripts/Territory/PolygonTriangulator.cs` (*ear clipping*, research.md R-2). T040 pasa a verde.
-- [ ] T047 [US3] Crear `_Project/Scripts/Territory/RiverPieceMeshBuilder.cs` (research.md R-2):
+- [X] T045 [US3] Añadir a `_Project/Scripts/Territory/TerritoryLayout.cs` la validación `BrokenRiver` con `RiverPiece.OpenEdges` y `HexCell.Neighbour` (data-model.md → `TerritoryLayout`, orden 6). T039 pasa a verde.
+- [X] T046 [US3] Crear `_Project/Scripts/Territory/PolygonTriangulator.cs` (*ear clipping*, research.md R-2). T040 pasa a verde.
+- [X] T047 [US3] Crear `_Project/Scripts/Territory/RiverPieceMeshBuilder.cs` (research.md R-2):
   - trazado recto, curva (arco de 60° con centro a `√3·R` y radio `1,5·R`, `ArcSegments`) y manantial con poza (`PoolSegments`);
   - orillas trianguladas;
   - paredes y laterales con muesca, con `v = y/h`;
@@ -295,8 +295,8 @@ río con su malla), A5 y los criterios C6 y C7 de quickstart.md.
   - mallas giradas por construcción.
 
   T041 pasa a verde.
-- [ ] T048 [US3] Ampliar `_Project/Scripts/Territory.Editor/TerritoryMeshesMenu.cs` para generar las 15 mallas en `_Project/Art/Territory/Meshes/River/`. Generarlas en modo batch y comprobar que regenerar dos veces da archivos idénticos. T042 pasa a verde.
-- [ ] T049 [US3] Commit `feat(client): add river connection rules and generated river piece meshes` (T039–T042 y T045–T048). T043–T044 siguen en rojo hasta T051 y **no** se incluyen: entran en T054.
+- [X] T048 [US3] Ampliar `_Project/Scripts/Territory.Editor/TerritoryMeshesMenu.cs` para generar las 15 mallas en `_Project/Art/Territory/Meshes/River/`. Generarlas en modo batch y comprobar que regenerar dos veces da archivos idénticos. T042 pasa a verde.
+- [X] T049 [US3] Commit `feat(client): add river connection rules and generated river piece meshes` (T039–T042 y T045–T048). T043–T044 siguen en rojo hasta T051 y **no** se incluyen: entran en T054.
 - [ ] T050 [US3] **Diseño**: ampliar el artefacto de T032 con las tres piezas de río (`w`, `rp` y `hw`), el detalle de una unión y de la desembocadura, la composición completa con el río y referencias nuevas en 16:9 y 9:19.5 (contracts/visual-direction.md §1). **Espera bloqueante**: aprobación del responsable. Si cambian `RiverMetrics.ChannelWidth` o `.PoolRadius`, actualizar `RiverMetrics.Default`, regenerar las mallas y repetir A1.
 - [ ] T051 [US3] Crear `_Project/Art/Territory/Prefabs/RiverTile.prefab` (`MeshFilter` sin malla y `MeshRenderer[M_Grass_Top, M_Earth_Side, M_Water_Top]`, sin sombras). En `_Project/Data/Territory/TerrainCatalog.asset`, añadir `riverPrefab` y las 15 `riverMeshes`. En `_Project/Data/Territory/InitialTerritory.asset`, aplicar el río aprobado (data-model.md → *Composición de partida*: `TerritoryCell.Terrain = River`, `.River` y `.Rotation`). T043 y T044 pasan a verde. Ejecutar A1 y A2 y anotarlo.
 - [ ] T052 [US3] Completar `specs/005-terreno-circular-variantes/contracts/visual-direction.md` §2 con `w`, `rp`, la composición aprobada y la fecha. Marcar el estado como aprobado.
@@ -476,3 +476,7 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T035 | `contracts/visual-direction.md` §2 | Valores aprobados de las variantes y de `hw`, enlace y fecha. El río sigue pendiente (T050) |
 | 2026-11-25 | T036 | Catálogo (Snow, Sand y Water) y composición de las variantes en `InitialTerritory.asset`; celdas del río aún de hierba | A1: salida 0 · 284/284. A2: salida 0 · 21/21. T025–T028 pasan a verde |
 | 2026-11-25 | T037 | Capturas en *Play* (16:9, 9:19.5, detalle del lago y de la nieve) frente a las referencias aprobadas | Son las mismas capturas del artefacto: variantes reconocibles, laterales frontales distintos, agua sin costura entre piezas y más baja que la tierra con orillas sin huecos, y hierba igual que en la spec 004 |
+| 2026-11-25 | T039–T044 | A1 con las pruebas de US3 y sin implementación (Red) | Salida 1: no compila porque faltan `RiverPieceMeshData`, `RiverPieceMeshBuilder`, `PolygonTriangulator` y `TerritoryLayoutStatus.BrokenRiver`. Ajuste previo: una prueba del triangulador que construía un polígono que se cruzaba consigo mismo se sustituye por una de ojo de cerradura, la forma de la orilla del manantial |
+| 2026-11-25 | T045–T047 | A1 (Green del núcleo) | Salida 2 · 407/427. Pasan conexiones, triangulador y los invariantes 1–6 y las uniones de las 15 mallas (≤ 0,1 % de W). Dos pruebas de la fase 2 tenían datos de río que ahora son, con razón, un río roto: se corrigen los datos (un recto NO–SE que desemboca en agua; un recto con giro 3, canónico 0, unido a una curva) sin cambiar lo que comprueban |
+| 2026-11-25 | T048 | `TerritoryMeshesMenu.Regenerate` en modo batch, dos veces | 15 mallas en `Meshes/River/` (276 KB en texto YAML), idénticas en las dos ejecuciones (`shasum`). `HexTile.asset` y `WaterTile.asset` sin cambios. A1: salida 2 · 424/427; solo fallan las 3 comprobaciones de T043–T044 (faltan `RiverTile.prefab`, las mallas en el catálogo y el río en la composición, que llegan con T051) |
+| 2026-11-25 | T049 | Commit con T039–T042 y T045–T048 | T043–T044 quedan fuera del commit, en rojo, y entran en T054 |

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ecosystem.Territory;
@@ -19,6 +18,10 @@ namespace Ecosystem.Territory.Editor
         public const string MeshesFolder = "Assets/_Project/Art/Territory/Meshes";
         public const string HexTilePath = MeshesFolder + "/HexTile.asset";
         public const string WaterTilePath = MeshesFolder + "/WaterTile.asset";
+        public const string RiverFolder = MeshesFolder + "/River";
+
+        /// <summary>Ruta de la malla de una pieza de río por su forma y su giro canónico.</summary>
+        public static string RiverPath(RiverShape shape, int rotation) => $"{RiverFolder}/River_{shape}_{rotation}.asset";
 
         [MenuItem("Ecosystem/Territorio/Regenerar mallas del territorio")]
         public static void Regenerate()
@@ -28,6 +31,11 @@ namespace Ecosystem.Territory.Editor
 
             Save(HexTilePath, "HexTile", HexPrismMeshBuilder.Build(hex));
             Save(WaterTilePath, "WaterTile", HexPrismMeshBuilder.Build(new HexMetrics(hex.OuterRadius, river.WaterLevel), TopUv.Lattice));
+            foreach (var (shape, rotation) in RiverPiece.CanonicalKeys())
+            {
+                var data = RiverPieceMeshBuilder.Build(hex, river, shape, rotation);
+                Save(RiverPath(shape, rotation), $"River_{shape}_{rotation}", data.Vertices, data.Normals, data.Uvs, data.Submeshes);
+            }
 
             AssetDatabase.SaveAssets();
             Debug.Log($"[Territorio] Mallas del territorio guardadas en {MeshesFolder}.");

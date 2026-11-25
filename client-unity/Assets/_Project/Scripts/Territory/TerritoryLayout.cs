@@ -12,6 +12,7 @@ namespace Ecosystem.Territory
         UnknownTerrain,
         InvalidRiverPiece,
         Disconnected,
+        BrokenRiver,
     }
 
     /// <summary>
@@ -138,7 +139,7 @@ namespace Ecosystem.Territory
 
         /// <summary>
         /// Valida y devuelve el primer error en el orden fijo de research.md R-6: vacía, repetida,
-        /// variante desconocida, datos de río y no conexa.
+        /// variante desconocida, datos de río, no conexa y río roto.
         /// </summary>
         public static TerritoryLayoutResult Create(IEnumerable<TerritoryCell> cells)
         {
@@ -194,7 +195,46 @@ namespace Ecosystem.Territory
                     $"La disposición no es conexa: la celda {TerritoryLayoutResult.Describe(unreached.Value)} no está unida al resto.");
             }
 
+            var broken = FirstBrokenRiverEdge(entries, byCell);
+            if (broken != null) return broken;
+
             return TerritoryLayoutResult.Ok(new TerritoryLayout(entries.AsReadOnly(), byCell));
+        }
+
+        /// <summary>
+        /// Regla de conexión (spec FR-016): cada arista abierta de una pieza de río da a otra pieza de
+        /// río con la arista enfrentada abierta, a una celda de agua o fuera del territorio.
+        /// </summary>
+        private static TerritoryLayoutResult FirstBrokenRiverEdge(List<TerritoryCell> entries, Dictionary<HexCell, TerritoryCell> byCell)
+        {
+            foreach (var entry in entries)
+            {
+                if (entry.Terrain != TerrainKind.River) continue;
+                foreach (var edge in RiverPiece.OpenEdges(entry.River, entry.Rotation))
+                {
+                    if (!byCell.TryGetValue(entry.Cell.Neighbour(edge), out var neighbour)) continue;
+                    if (neighbour.Terrain == TerrainKind.Water) continue;
+
+                    string cause;
+                    if (neighbour.Terrain == TerrainKind.River)
+                    {
+                        if (RiverPiece.OpenEdges(neighbour.River, neighbour.Rotation).Contains(edge.Opposite())) continue;
+                        cause = "la vecina es una pieza de río con esa arista cerrada";
+                    }
+                    else
+                    {
+                        cause = $"la vecina es de {TerrainNames.Of(neighbour.Terrain)}";
+                    }
+
+                    return TerritoryLayoutResult.Error(
+                        TerritoryLayoutStatus.BrokenRiver,
+                        entry.Cell,
+                        $"El río de la celda {TerritoryLayoutResult.Describe(entry.Cell)} no continúa por la arista {edge.DisplayName()}: {cause}.",
+                        edge);
+                }
+            }
+
+            return null;
         }
 
         /// <summary>Primera celda, en orden del dato, que no se alcanza por vecinos desde la primera.</summary>

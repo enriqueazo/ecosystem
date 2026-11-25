@@ -134,7 +134,8 @@ namespace Ecosystem.Tests.EditMode.Territory
             {
                 new TerritoryCell(new HexCell(1, 0), TerrainKind.Snow),
                 new TerritoryCell(new HexCell(0, 0), TerrainKind.Water),
-                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 1),
+                // Recto de NO a SE: desemboca en el agua de (0, 0) y sale por el borde (regla de conexión).
+                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 2),
                 new TerritoryCell(new HexCell(1, 1), TerrainKind.Sand),
             };
 
@@ -210,16 +211,17 @@ namespace Ecosystem.Tests.EditMode.Territory
                 Grass(0, 0),
                 new TerritoryCell(new HexCell(1, 0), TerrainKind.Snow),
                 new TerritoryCell(new HexCell(2, 0), TerrainKind.Snow),
-                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 4),
-                new TerritoryCell(new HexCell(1, 1), TerrainKind.River, RiverShape.Curve, 4),
+                // Recto E–O con giro 3 (canónico 0) unido a una curva O–SE que sale por el borde.
+                new TerritoryCell(new HexCell(0, 1), TerrainKind.River, RiverShape.Straight, 3),
+                new TerritoryCell(new HexCell(1, 1), TerrainKind.River, RiverShape.Curve, 3),
             }).Layout;
 
             Assert.That(layout.RequiredVisuals(), Is.EquivalentTo(new[]
             {
                 VisualKey.ForTerrain(TerrainKind.Grass),
                 VisualKey.ForTerrain(TerrainKind.Snow),
-                VisualKey.ForRiver(RiverShape.Straight, 1),
-                VisualKey.ForRiver(RiverShape.Curve, 4),
+                VisualKey.ForRiver(RiverShape.Straight, 0),
+                VisualKey.ForRiver(RiverShape.Curve, 3),
             }));
         }
 
