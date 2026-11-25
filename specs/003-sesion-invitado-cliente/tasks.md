@@ -40,19 +40,19 @@ carga, con PlayMode.
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Comprobar precondiciones y anotarlas en `specs/003-sesion-invitado-cliente/tasks.md` → *Registro de verificación*:
+- [X] T001 Comprobar precondiciones y anotarlas en `specs/003-sesion-invitado-cliente/tasks.md` → *Registro de verificación*:
   - rama `feat/003-sesion-invitado-cliente`;
   - Unity 6000.3.29f1 instalado;
   - Node 26 y npm 11;
   - Docker en marcha;
   - `tools/tests/run.sh` y `cd server-nakama && npm run check` en verde;
   - pruebas EditMode y PlayMode de la spec 001 en verde (línea base).
-- [ ] T002 Añadir los paquetes a `client-unity/Packages/manifest.json` (research.md R-1 y R-2):
+- [X] T002 Añadir los paquetes a `client-unity/Packages/manifest.json` (research.md R-1 y R-2):
   - `com.heroiclabs.nakama-unity` con la URL de Git fijada al commit `704f5da244a49d942f383965f5549420522eb8e0`;
   - `com.unity.nuget.newtonsoft-json` `3.2.2`.
 
   Abrir en modo batch para regenerar `client-unity/Packages/packages-lock.json`. Comprobar: 0 errores de compilación, las pruebas de la línea base en verde y, tras cerrar, solo cambian `manifest.json` y `packages-lock.json`.
-- [ ] T003 [P] Preparar la configuración local del cliente (contracts/client-config.md):
+- [X] T003 [P] Preparar la configuración local del cliente (contracts/client-config.md):
   - crear `client-unity/LocalConfig/connection.example.json` con valores ficticios (`serverKey: "cambia-esto-server-key"`), según `data-model.md` → `Configuración de conexión.host`, `.port`, `.serverKey` y `.useSsl`;
   - añadir `/client-unity/LocalConfig/connection.local.json` a `.gitignore`;
   - comprobar con `git check-ignore --no-index` que el ejemplo no queda ignorado.
@@ -396,3 +396,6 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 
 | Escenario | Fecha | Resultado (✅ / ❌ / no verificado) | Evidencia o motivo |
 |-----------|-------|------------------------------------|--------------------|
+| T001 | 2026-11-25 | ✅ | Rama `feat/003-sesion-invitado-cliente`; Unity 6000.3.29f1; Node v26.13.1 / npm 11.20.0; Docker 29.9.3; `tools/tests/run.sh` 33/33; `npm run check` OK; línea base de Unity: EditMode 10/10 y PlayMode 1/1 |
+| T002 | 2026-11-25 | ✅ | `nakama-unity` por URL de Git fijada al commit `704f5da…` (el lockfile registra el hash) y `newtonsoft-json` 3.2.2. Solo cambian `manifest.json` y `packages-lock.json`. Una sonda temporal en el Editor (borrada) compila contra las API usadas: `Client(…, UnityWebRequestAdapter.Instance)`, `Timeout`, `GlobalRetryConfiguration = new RetryConfiguration(ms, 0)`, `AuthenticateDeviceAsync(id, null, true, null, null, ct)`, `Session.Restore`, `HasExpired`, `HasRefreshExpired`, `SessionRefreshAsync(s, null, null, ct)`, `RpcAsync(s, id, payload, null, ct)`, `ApiResponseException.StatusCode` / `.GrpcStatusCode` y `JToken.Parse`. Sin errores ni avisos de obsolescencia. EditMode 10/10 y PlayMode 1/1 con los paquetes nuevos |
+| T003 | 2026-11-25 | ✅ | `client-unity/LocalConfig/connection.example.json` versionado; `connection.local.json` ignorado (comprobado con `git check-ignore --no-index`) |
