@@ -3,14 +3,15 @@
 Juego móvil multiplataforma (Android e iOS) de estrategia: cliente en Unity y backend
 autoritativo en Nakama con PostgreSQL. Este repositorio es un monorepo con todas las piezas.
 
-> Estado: base del proyecto (spec [001](specs/001-base-proyecto-entorno/spec.md)). Todavía no
-> hay mecánicas de juego.
+> Estado: base del proyecto ([001](specs/001-base-proyecto-entorno/spec.md)), servidor y contratos
+> ([002](specs/002-servidor-typescript-ci/spec.md)) y sesión de invitado del cliente
+> ([003](specs/003-sesion-invitado-cliente/spec.md)). Todavía no hay mecánicas de juego.
 
 ## Mapa del repositorio
 
 | Área | Contenido |
 |------|-----------|
-| [`client-unity/`](client-unity/README.md) | Proyecto Unity para Android e iOS, con URP. |
+| [`client-unity/`](client-unity/README.md) | Proyecto Unity para Android e iOS, con URP. Entra como invitado en Nakama con el SDK oficial ([ADR-0009](docs/decisions/0009-sdk-nakama-unity.md)) y valida las respuestas con validadores C# generados desde los contratos ([ADR-0010](docs/decisions/0010-validadores-csharp-generados.md)). |
 | [`server-nakama/`](server-nakama/README.md) | Módulos de servidor autoritativo de Nakama en TypeScript ([ADR-0006](docs/decisions/0006-runtime-nakama-typescript.md)). |
 | [`shared/`](shared/README.md) | Solo contratos cliente-servidor versionados, en JSON ([ADR-0008](docs/decisions/0008-contratos-json-versionados.md)). |
 | [`deploy/local/`](deploy/local/README.md) | Entorno de desarrollo local: Nakama + PostgreSQL con Docker Compose. |
@@ -46,8 +47,10 @@ docker compose up -d --wait
 [resolución de problemas](deploy/local/README.md#resolución-de-problemas).
 
 **Cliente Unity**: sigue [client-unity/README.md](client-unity/README.md) para abrir el
-proyecto con la versión exacta, ejecutar las pruebas EditMode y PlayMode y generar las builds de
-desarrollo de Android e iOS.
+proyecto con la versión exacta, ejecutar las pruebas y generar las builds de desarrollo de Android
+e iOS. Para conectarlo al backend local, copia `client-unity/LocalConfig/connection.example.json`
+a `connection.local.json` (no se versiona) y pon en `serverKey` el `NAKAMA_SERVER_KEY` de tu
+`deploy/local/.env` ([configuración local](client-unity/README.md#configuración-local)).
 
 ## Comprobaciones
 
@@ -55,9 +58,11 @@ desarrollo de Android e iOS.
 |---------|---------------|----------|
 | `tools/tests/run.sh` | Pruebas de los scripts de `tools/` | bash, git; el CLI de Docker para los casos de Compose (si falta, se marcan como omitidos) |
 | `tools/check-repo.sh` | Configuración de Compose válida, ningún `.env` ni dato local en Git, ningún archivo imprescindible ignorado | bash, git, CLI de Docker (no el demonio) |
-| `cd server-nakama && npm run check` | Formato, análisis, imports, tipos, pruebas unitarias, contratos y construcción del servidor | Node 26 y npm 11 ([server-nakama/README.md](server-nakama/README.md)) |
+| `cd server-nakama && npm run check` | Formato, análisis, imports, tipos, pruebas unitarias, contratos (incluido que el C# generado del cliente esté al día) y construcción del servidor | Node 26 y npm 11 ([server-nakama/README.md](server-nakama/README.md)) |
 | `tools/check-backend.sh --module` | Que el backend local responde y tiene cargado el módulo de servidor | bash, curl; el entorno arrancado |
 | `cd server-nakama && npm run test:integration` | El RPC contra el Nakama local | El entorno arrancado con el módulo construido |
+| Unity EditMode y PlayMode (`Ecosystem.Tests.EditMode`, `Ecosystem.Tests.PlayMode`) | Configuración del proyecto, lógica de conexión con dobles, validadores C# frente a los ejemplos de los contratos, escena inicial | Unity 6000.3.29f1; **solo en local** ([comandos](client-unity/README.md#pruebas)) |
+| Unity integración (`Ecosystem.Tests.Integration`) | Sesión de invitado, versión de protocolo y resiliencia contra el Nakama local | Lo anterior, el entorno arrancado y la configuración local del cliente; **solo en local** |
 
 `tools/check-repo.sh --only <compose|secrets|ignored>` ejecuta una sola comprobación. Los códigos
 de salida de los scripts están en su

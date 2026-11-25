@@ -303,7 +303,7 @@ carga, con PlayMode.
 
   Cambiar el estado de `docs/decisions/0004-conectividad-sin-sdk-cliente.md` a «sustituida por 0009». Actualizar `docs/decisions/README.md`.
 - [X] T038 [P] Crear `docs/decisions/0010-validadores-csharp-generados.md` (aceptada, research.md R-2 y R-3, con la desviación de FR-022 confirmada por el responsable) y añadir una referencia a él en `docs/decisions/0008-contratos-json-versionados.md` sin cambiar su decisión. Actualizar `shared/README.md` → *g* con la salida C# y su comprobación.
-- [ ] T039 Actualizar el README raíz:
+- [X] T039 Actualizar el README raíz:
   - el mapa (`client-unity` conecta con Nakama);
   - los primeros pasos del cliente (configuración local);
   - la tabla de comprobaciones (grupos de Unity, solo en local).
@@ -430,3 +430,4 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T036 | 2026-11-25 | ✅ | `client-unity/README.md`: estructura y dirección de dependencias, C# generado (no se edita), tres grupos de pruebas con comandos en modo batch, cómo llevarlos a la CI, recuperación ante la caché de Burst, conexión (identidad, sesión, versión, reintentos), configuración local, limitaciones (reinstalación = cuenta nueva) y paquetes nuevos. Sustituye «sin SDK» |
 | T037 | 2026-11-25 | ✅ | ADR-0009 (SDK 3.23.0 fijado por commit, identidad = `userId`, `IAuthenticator`, sesión en `PlayerPrefs` con revisión obligatoria al añadir cuentas, caducidades 2 h / 7 días, códigos HTTP verificados). ADR-0004 pasa a «sustituida por 0009»; índice actualizado |
 | T038 | 2026-11-25 | ✅ | ADR-0010 (alternativas descartadas, subconjunto admitido, equivalencia con Ajv en 42 ejemplos). ADR-0008 enlaza a 0010; `shared/README.md` describe la generación C# y la comprobación de desactualización |
+| T039 | 2026-11-25 | ✅ | README raíz: estado (specs 001–003), mapa (`client-unity` entra como invitado; ADR-0009 y 0010), primeros pasos con la configuración local y tabla de comprobaciones con los tres grupos de Unity (solo en local) y la comprobación del C# generado |
