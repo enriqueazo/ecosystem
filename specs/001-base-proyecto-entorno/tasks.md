@@ -35,12 +35,12 @@ escenarios de [quickstart.md](quickstart.md).
 
 **Purpose**: Configuración general del repositorio (FR-024–FR-030), previa a crear cualquier archivo de área.
 
-- [ ] T001 Comprobar precondiciones y anotar el resultado en `tasks.md` → *Registro de verificación*:
+- [X] T001 Comprobar precondiciones y anotar el resultado en `tasks.md` → *Registro de verificación*:
   - la rama actual es `feat/001-base-proyecto-entorno`;
   - `docker info` responde (si no, arrancar Docker Desktop);
   - `docker pull` de `postgres:16.16-alpine` y `registry.heroiclabs.com/heroiclabs/nakama:3.42.0`
     funciona (imágenes de contracts/local-environment.md → *Servicios*).
-- [ ] T002 Reescribir `.gitignore` según research.md R-10:
+- [X] T002 Reescribir `.gitignore` según research.md R-10:
   - eliminar la sección "Go / Nakama" (C-1) y las rutas `/deploy/data/` y `/deploy/volumes/`;
   - limitar `*.csproj`, `*.sln`, `*.suo`, `*.user`, `*.userprefs`, `*.pidb`, `*.booproj`,
     `*.svclog`, `*.pdb`, `*.mdb`, `*.opendb`, `*.VC.db`, `*.VC.VC.opendb` a `/client-unity/`
@@ -52,13 +52,13 @@ escenarios de [quickstart.md](quickstart.md).
   - ninguna regla debe ignorar `.meta`, `Packages/manifest.json`, `Packages/packages-lock.json`
     ni `ProjectSettings/` (FR-027).
   - Cumple `data-model.md` → `Configuración local.no versionado`.
-- [ ] T003 [P] Crear `.gitattributes` según research.md R-10:
+- [X] T003 [P] Crear `.gitattributes` según research.md R-10:
   - `* text=auto eol=lf`;
   - como texto: `*.cs`, `*.unity`, `*.prefab`, `*.asset`, `*.meta`, `*.mat`, `*.asmdef`, `*.json`,
     `*.yaml`, `*.yml`, `*.md`;
   - `*.sh text eol=lf`;
   - binarios: `png`, `jpg`, `jpeg`, `psd`, `tga`, `fbx`, `wav`, `mp3`, `ogg`, `ttf`, `otf`.
-- [ ] T004 [P] Crear `.editorconfig` (FR-029):
+- [X] T004 [P] Crear `.editorconfig` (FR-029):
   - `root = true`, UTF-8, LF, eliminar espacios finales y salto de línea final;
   - indentación: 4 espacios en `*.cs` y 2 en `*.{json,yaml,yml,md,asmdef}`; en `*.sh`, 2 espacios;
   - en `*.md`, `trim_trailing_whitespace = false`;
@@ -511,3 +511,7 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 
 | Escenario | Fecha | Resultado (✅ / ❌ / no verificado) | Evidencia o motivo |
 |-----------|-------|------------------------------------|--------------------|
+| T001 rama | 2026-11-25 | ✅ | `feat/001-base-proyecto-entorno` |
+| T001 Docker | 2026-11-25 | ✅ | Docker Engine 29.2.1 (aarch64), Compose v5.0.2 |
+| T001 imágenes | 2026-11-25 | ✅ | `postgres:16.16-alpine` (índice `sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d`) y `nakama:3.42.0` (índice `sha256:009bfadc8264e4c4e82f1c1bd8b800a74e4dfeb03be59e0faab79117d394cfb8`) descargadas |
+| T002 `.gitignore` | 2026-11-25 | ✅ | `git check-ignore --no-index`: `.env.example`, `manifest.json`, `packages-lock.json`, `ProjectVersion.txt`, `.meta` no ignorados; `.env`, `Library/`, `client-unity/*.csproj` ignorados; `tools/*.csproj` no ignorado (C-2) |
