@@ -55,12 +55,13 @@ namespace Ecosystem.Tests.PlayMode
         }
 
         [Test]
-        public void Scene_ShowsSixteenPiecesAtTheirLayoutPositions()
+        public void Scene_ShowsFiftyFivePiecesAtTheirLayoutPositionsWithoutRotation()
         {
             Assert.That(_view, Is.Not.Null, "La escena necesita un TerritoryView.");
-            Assert.That(_view.Tiles, Has.Count.EqualTo(16));
+            Assert.That(_view.Tiles, Has.Count.EqualTo(55));
+            Assert.That(_view.Tiles.Select(tile => tile.localRotation), Is.All.EqualTo(Quaternion.identity));
 
-            var expected = TerritoryLayout.Create(Enumerable.Range(0, 16).Select(i => new HexCell(i % 4, i / 4))).Layout;
+            var expected = TerritoryLayout.Create(DiscCells()).Layout;
             var positions = _view.Tiles.Select(tile => tile.localPosition).ToArray();
             foreach (var cell in expected.Cells)
             {
@@ -171,6 +172,20 @@ namespace Ecosystem.Tests.PlayMode
             {
                 _camera.ResetAspect();
             }
+        }
+
+        /// <summary>Las 55 celdas del disco de la spec 005 (FR-001): q² + q·r + r² ≤ 13 respecto a (4, 4).</summary>
+        private static HexCell[] DiscCells()
+        {
+            var (cq, cr) = new HexCell(4, 4).ToAxial();
+            return (from row in Enumerable.Range(-2, 13)
+                    from column in Enumerable.Range(-2, 13)
+                    let cell = new HexCell(column, row)
+                    let axial = cell.ToAxial()
+                    let dq = axial.Q - cq
+                    let dr = axial.R - cr
+                    where dq * dq + dq * dr + dr * dr <= 13
+                    select cell).ToArray();
         }
 
         private static TerritoryLayoutAsset AssetWith(params HexCell[] cells)

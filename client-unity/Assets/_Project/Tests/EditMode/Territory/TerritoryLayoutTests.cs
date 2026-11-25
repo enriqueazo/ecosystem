@@ -6,7 +6,7 @@ using static Ecosystem.Tests.EditMode.Territory.TerritoryTestGeometry;
 namespace Ecosystem.Tests.EditMode.Territory
 {
     /// <summary>
-    /// data-model.md → TerritoryLayout: validación (FR-003), disposición inicial 4 × 4 (FR-002),
+    /// data-model.md → TerritoryLayout: validación (FR-003), disposición inicial en disco (spec 005 FR-001),
     /// contigüidad sin huecos ni solapamientos (FR-004, SC-003) y límites para el encuadre.
     /// </summary>
     public sealed class TerritoryLayoutTests
@@ -21,18 +21,18 @@ namespace Ecosystem.Tests.EditMode.Territory
         }
 
         [Test]
-        public void Create_WithTheSixteenInitialCells_IsOkAndKeepsTheOrder()
+        public void Create_WithTheInitialDiscCells_IsOkAndKeepsTheOrder()
         {
             var layout = InitialLayout();
 
             Assert.That(layout.Cells, Is.EqualTo(InitialCells()));
-            Assert.That(layout.Cells.Distinct().Count(), Is.EqualTo(16));
+            Assert.That(layout.Cells.Distinct().Count(), Is.EqualTo(55));
         }
 
         [Test]
-        public void InitialLayout_HasThirtyThreeAdjacentPairs()
+        public void InitialLayout_HasOneHundredThirtyEightAdjacentPairs()
         {
-            Assert.That(InitialLayout().AdjacentPairs(), Is.EqualTo(33));
+            Assert.That(InitialLayout().AdjacentPairs(), Is.EqualTo(138));
         }
 
         [Test]
@@ -60,11 +60,11 @@ namespace Ecosystem.Tests.EditMode.Territory
                 Assert.That(actual, Is.EqualTo(expected), cell.ToString());
             }
 
-            // Celdas interiores del 4 × 4 odd-r: rodeadas por completo.
-            Assert.That(new HexCell(1, 1).Neighbours().All(cells.Contains), Is.True);
-            Assert.That(new HexCell(1, 2).Neighbours().All(cells.Contains), Is.True);
-            Assert.That(new HexCell(2, 1).Neighbours().All(cells.Contains), Is.True);
-            Assert.That(new HexCell(2, 2).Neighbours().All(cells.Contains), Is.True);
+            // Celdas interiores del disco: rodeadas por completo.
+            Assert.That(new HexCell(4, 4).Neighbours().All(cells.Contains), Is.True);
+            Assert.That(new HexCell(3, 3).Neighbours().All(cells.Contains), Is.True);
+            Assert.That(new HexCell(5, 5).Neighbours().All(cells.Contains), Is.True);
+            Assert.That(new HexCell(2, 4).Neighbours().All(cells.Contains), Is.True);
         }
 
         [Test]
@@ -117,9 +117,9 @@ namespace Ecosystem.Tests.EditMode.Territory
                 }
             }
 
-            // Ajustada: el ancho es 4,5 piezas (filas impares desplazadas) y el fondo, 3 pasos de fila + 2R.
-            Assert.That(bounds.Max.X - bounds.Min.X, Is.EqualTo(4.5f * Metrics.Width).Within(1e-5f));
-            Assert.That(bounds.Max.Z - bounds.Min.Z, Is.EqualTo(3 * 1.5f * Metrics.OuterRadius + 2 * Metrics.OuterRadius).Within(1e-5f));
+            // Ajustada: el ancho es 8 piezas (filas 3 y 5, de la columna 0 a la 7 desplazadas) y el fondo, 8 pasos de fila + 2R.
+            Assert.That(bounds.Max.X - bounds.Min.X, Is.EqualTo(8f * Metrics.Width).Within(1e-5f));
+            Assert.That(bounds.Max.Z - bounds.Min.Z, Is.EqualTo(8 * 1.5f * Metrics.OuterRadius + 2 * Metrics.OuterRadius).Within(1e-5f));
             Assert.That(bounds.Corners(), Has.Length.EqualTo(8));
         }
 
@@ -231,6 +231,77 @@ namespace Ecosystem.Tests.EditMode.Territory
             Assert.That(VisualKey.ForRiver(RiverShape.Curve, 3).ToString(), Is.EqualTo("pieza de río curva, giro 3"));
             Assert.That(VisualKey.ForRiver(RiverShape.Straight, 1).ToString(), Is.EqualTo("pieza de río tramo recto, giro 1"));
             Assert.That(VisualKey.ForRiver(RiverShape.Spring, 0).ToString(), Is.EqualTo("pieza de río manantial, giro 0"));
+        }
+
+        // --- Conexa y bordes (data-model.md → TerritoryLayout, orden 5 y Derivados; spec FR-003) ---
+
+        [Test]
+        public void Create_WithALooseCell_IsDisconnectedAndNamesIt()
+        {
+            var cells = new[] { new HexCell(0, 0), new HexCell(1, 0), new HexCell(5, 0), new HexCell(0, 1) };
+
+            var result = TerritoryLayout.Create(cells);
+
+            Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.Disconnected));
+            Assert.That(result.Layout, Is.Null);
+            Assert.That(result.Cell, Is.EqualTo(new HexCell(5, 0)));
+            Assert.That(result.Message, Is.EqualTo("La disposición no es conexa: la celda (columna 5, fila 0) no está unida al resto."));
+        }
+
+        [Test]
+        public void Create_WithTwoGroups_NamesTheFirstUnreachedCellInDataOrder()
+        {
+            var cells = new[] { new HexCell(0, 0), new HexCell(1, 0), new HexCell(4, 3), new HexCell(5, 3), new HexCell(0, 1) };
+
+            var result = TerritoryLayout.Create(cells);
+
+            Assert.That(result.Status, Is.EqualTo(TerritoryLayoutStatus.Disconnected));
+            Assert.That(result.Cell, Is.EqualTo(new HexCell(4, 3)));
+        }
+
+        [Test]
+        public void Create_WithAnInteriorHole_IsStillValid()
+        {
+            var center = new HexCell(4, 4);
+            var ring = center.Neighbours().ToArray();
+
+            Assert.That(TerritoryLayout.Create(ring).Status, Is.EqualTo(TerritoryLayoutStatus.Ok));
+        }
+
+        [Test]
+        public void Create_DataErrorsComeBeforeDisconnected()
+        {
+            var cells = new[]
+            {
+                new TerritoryCell(new HexCell(0, 0), TerrainKind.Grass),
+                new TerritoryCell(new HexCell(5, 0), TerrainKind.River),
+            };
+
+            Assert.That(TerritoryLayout.Create(cells).Status, Is.EqualTo(TerritoryLayoutStatus.InvalidRiverPiece));
+        }
+
+        [Test]
+        public void BorderCells_AreTheCellsWithANeighbourOutside()
+        {
+            var center = new HexCell(4, 4);
+            var layout = TerritoryLayout.Create(new[] { center }.Concat(center.Neighbours())).Layout;
+
+            Assert.That(layout.BorderCells(), Is.EquivalentTo(center.Neighbours()));
+            Assert.That(layout.BorderCells(), Has.No.Member(center));
+        }
+
+        [Test]
+        public void FrontBorderCells_AreTheCellsWithTheirSouthWestOrSouthEastNeighbourOutside()
+        {
+            var center = new HexCell(4, 4);
+            var layout = TerritoryLayout.Create(new[] { center }.Concat(center.Neighbours())).Layout;
+
+            // De la flor de 7 celdas, quedan en el frente las de las aristas E, O, SO y SE del centro.
+            Assert.That(layout.FrontBorderCells(), Is.EquivalentTo(new[]
+            {
+                center.Neighbour(HexEdge.E), center.Neighbour(HexEdge.W),
+                center.Neighbour(HexEdge.SW), center.Neighbour(HexEdge.SE),
+            }));
         }
     }
 }

@@ -146,11 +146,11 @@ A4 de quickstart.md, y el criterio C1 de la revisión manual.
 
 ### Tests for User Story 1 ⚠️
 
-- [ ] T015 [P] [US1] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs` con `Disconnected`:
+- [X] T015 [P] [US1] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs` con `Disconnected`:
   - una celda suelta, dos grupos y el mensaje de data-model.md → `TerritoryLayout` (orden 5);
   - un hueco interior sigue siendo válido (spec FR-003);
   - `BorderCells()` y `FrontBorderCells()` sobre disposiciones pequeñas.
-- [ ] T016 [P] [US1] Crear `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs`, sobre `InitialTerritory.asset`:
+- [X] T016 [P] [US1] Crear `_Project/Tests/EditMode/Territory/InitialTerritoryTests.cs`, sobre `InitialTerritory.asset`:
   - exactamente las 55 celdas de data-model.md → *Disposición inicial*, sin falta ninguna con `q² + q·r + r² ≤ 13` respecto a (4,4);
   - `AdjacentPairs() == 138`;
   - `BorderCells().Count == 24`;
@@ -158,7 +158,7 @@ A4 de quickstart.md, y el criterio C1 de la revisión manual.
 
   Sustituye las comprobaciones de 4 × 4 de `TerritoryLayoutAssetTests` (FR-028, sin perder
   comprobaciones).
-- [ ] T017 [P] [US1] Actualizar las pruebas que fijan 16 piezas para que esperen el disco de 55 celdas (FR-028), con la lista esperada del disco en `TerritoryTestGeometry`:
+- [X] T017 [P] [US1] Actualizar las pruebas que fijan 16 piezas para que esperen el disco de 55 celdas (FR-028), con la lista esperada del disco en `TerritoryTestGeometry`:
   - `_Project/Tests/EditMode/Territory/TerritoryTestGeometry.cs`;
   - `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs`, recuento;
   - `_Project/Tests/EditMode/Territory/TerritorySceneAssetTests.cs`: 55 piezas sin *Play* y la escena sigue limpia;
@@ -170,10 +170,10 @@ A4 de quickstart.md, y el criterio C1 de la revisión manual.
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Añadir a `_Project/Scripts/Territory/TerritoryLayout.cs` la validación `Disconnected` (recorrido por vecinos desde la primera celda), `BorderCells()` y `FrontBorderCells()` (data-model.md → `TerritoryLayout`, orden 5 y *Derivados*). T015 pasa a verde.
-- [ ] T019 [US1] Reescribir `_Project/Data/Territory/InitialTerritory.asset`, conservando el GUID, con las 55 celdas de data-model.md → *Disposición inicial*, todas de hierba, en orden de fila y columna. T016 y T017 pasan a verde. Ejecutar A1 y A2 y anotarlo.
-- [ ] T020 [US1] Validar A3 (sin *Play*, escena sin `*`), A4 (10 reproducciones con 0 errores y 0 avisos) y una captura temporal (no versionada) en 16:9 y 9:19.5 para comprobar el contorno (C1). Anotarlo en el registro.
-- [ ] T021 [US1] Commit `feat(client): replace the 4×4 board with a 55-cell circular territory`.
+- [X] T018 [US1] Añadir a `_Project/Scripts/Territory/TerritoryLayout.cs` la validación `Disconnected` (recorrido por vecinos desde la primera celda), `BorderCells()` y `FrontBorderCells()` (data-model.md → `TerritoryLayout`, orden 5 y *Derivados*). T015 pasa a verde.
+- [X] T019 [US1] Reescribir `_Project/Data/Territory/InitialTerritory.asset`, conservando el GUID, con las 55 celdas de data-model.md → *Disposición inicial*, todas de hierba, en orden de fila y columna. T016 y T017 pasan a verde. Ejecutar A1 y A2 y anotarlo.
+- [X] T020 [US1] Validar A3 (sin *Play*, escena sin `*`), A4 (10 reproducciones con 0 errores y 0 avisos) y una captura temporal (no versionada) en 16:9 y 9:19.5 para comprobar el contorno (C1). Anotarlo en el registro.
+- [X] T021 [US1] Commit `feat(client): replace the 4×4 board with a 55-cell circular territory`.
 
 **Checkpoint**: MVP. Territorio circular de hierba visible sin backend y en el flujo normal.
 
@@ -461,3 +461,8 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T007–T011 | A1 (Green, salvo la escena) | Salida 2 · 235/236: solo falla `TerritoryScene_OpenedInTheEditor_…` (la escena aún no tiene catálogo). Ajuste: `Create(null)` pasa a ser ambiguo con las dos sobrecargas, así que la prueba lo tipa como `(HexCell[])null`. Las piezas se nombran ahora `‹prefab› (columna, fila)` en lugar de `Tile (columna, fila)`; nada dependía del nombre |
 | 2026-11-25 | T012 | `TerrainCatalog.asset` y su `.meta` escritos a mano en YAML (GUID nuevo) con Grass → `HexTile.prefab`. En `Territory.unity`, `tilePrefab` → `catalog` | La escena solo cambia en esa línea |
 | 2026-11-25 | T013 | A1 y A2 (Green) | EditMode: salida 0 · 236/236 (171 previas + 65 nuevas). PlayMode: salida 0 · 20/20. Unity no reescribe la escena ni los datos |
+| 2026-11-25 | T015–T017 | A1 con las pruebas de US1 y sin implementación (Red) | Salida 1: no compila porque faltan `TerritoryLayoutStatus.Disconnected`, `BorderCells` y `FrontBorderCells`. El Red de PlayMode no se vio por separado: con el ensamblado EditMode sin compilar, Unity aborta también la ejecución PlayMode |
+| 2026-11-25 | T018–T019 | A1 y A2 (Green) con `InitialTerritory.asset` reescrito: 55 celdas de hierba en orden de fila y columna, mismo GUID | EditMode: salida 0 · 245/245. PlayMode: salida 0 · 20/20. Ajuste: `Does.Not.Contain` solo admite texto en NUnit; se usa `Has.No.Member`. La prueba de integración ya espera 55 piezas; se ejecuta en T056 |
+| 2026-11-25 | T020 | A3, automatizado en `TerritorySceneAssetTests.TerritoryScene_OpenedInTheEditor_ShowsFiftyFivePiecesAndStaysClean` | Sin *Play*: 55 piezas `DontSave` y `scene.isDirty == false` |
+| 2026-11-25 | T020 | A4: 10 procesos de `TerritorySceneTests` en modo batch (incluye `LogAssert.NoUnexpectedReceived`) | 10/10 con 17/17 y salida 0. Las ejecuciones 6–10 se repitieron: la primera vez fallaron porque se estaban escribiendo las pruebas de US2 en el mismo proyecto (errores de compilación ajenos a la escena) |
+| 2026-11-25 | T020 | Captura en *Play* con una prueba temporal no versionada (16:9 y 9:19.5) | Disco redondo en escorzo, sin huecos ni piezas sueltas, con los laterales del borde frontal visibles. En 9:19.5 ocupa el 88 % del ancho. Observación para C1: las filas 3 y 5 (8 piezas) sobresalen media pieza respecto a la 4 a izquierda y derecha, lo que deja una pequeña muesca en el contorno; es propio del disco K = 13 acordado |

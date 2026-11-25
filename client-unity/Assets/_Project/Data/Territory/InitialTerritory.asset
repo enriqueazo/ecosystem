@@ -13,35 +13,278 @@ MonoBehaviour:
   m_Name: InitialTerritory
   m_EditorClassIdentifier: Ecosystem.Territory.View::Ecosystem.Territory.View.TerritoryLayoutAsset
   cells:
-  - column: 0
-    row: 0
-  - column: 1
-    row: 0
-  - column: 2
-    row: 0
   - column: 3
     row: 0
-  - column: 0
-    row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 0
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 0
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 1
     row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 2
     row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 3
     row: 1
-  - column: 0
-    row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 1
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 1
     row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 2
     row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 3
     row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 7
+    row: 2
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 0
     row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 1
     row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 2
     row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
   - column: 3
     row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 7
+    row: 3
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 1
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 2
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 3
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 7
+    row: 4
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 0
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 1
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 2
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 3
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 7
+    row: 5
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 1
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 2
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 3
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 7
+    row: 6
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 1
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 2
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 3
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 6
+    row: 7
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 3
+    row: 8
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 4
+    row: 8
+    terrain: 0
+    river: 0
+    rotation: 0
+  - column: 5
+    row: 8
+    terrain: 0
+    river: 0
+    rotation: 0

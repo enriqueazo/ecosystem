@@ -23,18 +23,36 @@ namespace Ecosystem.Tests.EditMode.Territory
 
         public static float Dot(Point3 a, Point3 b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 
+        /// <summary>Centro del disco inicial (spec FR-001).</summary>
+        public static readonly HexCell DiscCenter = new HexCell(4, 4);
+
+        /// <summary>Criterio del disco: distancia axial al centro con q² + q·r + r² ≤ 13.</summary>
+        public static bool IsInDisc(HexCell cell)
+        {
+            var (q, r) = cell.ToAxial();
+            var (cq, cr) = DiscCenter.ToAxial();
+            var dq = q - cq;
+            var dr = r - cr;
+            return dq * dq + dq * dr + dr * dr <= 13;
+        }
+
+        /// <summary>
+        /// Las 55 celdas del disco inicial en orden de fila y columna (data-model.md → Disposición
+        /// inicial): filas 0–8 con 3, 6, 7, 8, 7, 8, 7, 6 y 3 piezas.
+        /// </summary>
         public static HexCell[] InitialCells()
         {
-            var cells = new HexCell[16];
-            for (var row = 0; row < 4; row++)
+            var cells = new System.Collections.Generic.List<HexCell>();
+            for (var row = -2; row <= 10; row++)
             {
-                for (var column = 0; column < 4; column++)
+                for (var column = -2; column <= 10; column++)
                 {
-                    cells[row * 4 + column] = new HexCell(column, row);
+                    var cell = new HexCell(column, row);
+                    if (IsInDisc(cell)) cells.Add(cell);
                 }
             }
 
-            return cells;
+            return cells.ToArray();
         }
     }
 }

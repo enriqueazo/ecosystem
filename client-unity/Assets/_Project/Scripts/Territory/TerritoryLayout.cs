@@ -11,6 +11,7 @@ namespace Ecosystem.Territory
         Duplicate,
         UnknownTerrain,
         InvalidRiverPiece,
+        Disconnected,
     }
 
     /// <summary>
@@ -137,7 +138,7 @@ namespace Ecosystem.Territory
 
         /// <summary>
         /// Valida y devuelve el primer error en el orden fijo de research.md R-6: vacía, repetida,
-        /// variante desconocida y datos de río.
+        /// variante desconocida, datos de río y no conexa.
         /// </summary>
         public static TerritoryLayoutResult Create(IEnumerable<TerritoryCell> cells)
         {
@@ -184,7 +185,37 @@ namespace Ecosystem.Territory
                 }
             }
 
+            var unreached = FirstUnreached(entries, byCell);
+            if (unreached.HasValue)
+            {
+                return TerritoryLayoutResult.Error(
+                    TerritoryLayoutStatus.Disconnected,
+                    unreached.Value,
+                    $"La disposición no es conexa: la celda {TerritoryLayoutResult.Describe(unreached.Value)} no está unida al resto.");
+            }
+
             return TerritoryLayoutResult.Ok(new TerritoryLayout(entries.AsReadOnly(), byCell));
+        }
+
+        /// <summary>Primera celda, en orden del dato, que no se alcanza por vecinos desde la primera.</summary>
+        private static HexCell? FirstUnreached(List<TerritoryCell> entries, Dictionary<HexCell, TerritoryCell> byCell)
+        {
+            var reached = new HashSet<HexCell> { entries[0].Cell };
+            var pending = new Queue<HexCell>(reached);
+            while (pending.Count > 0)
+            {
+                foreach (var neighbour in pending.Dequeue().Neighbours())
+                {
+                    if (byCell.ContainsKey(neighbour) && reached.Add(neighbour)) pending.Enqueue(neighbour);
+                }
+            }
+
+            foreach (var entry in entries)
+            {
+                if (!reached.Contains(entry.Cell)) return entry.Cell;
+            }
+
+            return null;
         }
 
         private static string InvalidRiverCause(TerritoryCell entry)
@@ -221,7 +252,18 @@ namespace Ecosystem.Territory
             return keys.AsReadOnly();
         }
 
-        /// <summary>Número de parejas de celdas vecinas (33 en la disposición inicial 4 × 4).</summary>
+        /// <summary>Celdas con al menos un vecino fuera de la disposición, en orden del dato.</summary>
+        public IReadOnlyList<HexCell> BorderCells() =>
+            Cells.Where(cell => cell.Neighbours().Any(neighbour => !Contains(neighbour))).ToList().AsReadOnly();
+
+        /// <summary>
+        /// Celdas del borde frontal: su vecina SO o SE está fuera, así que sus laterales frontales se
+        /// ven desde la cámara (spec FR-017).
+        /// </summary>
+        public IReadOnlyList<HexCell> FrontBorderCells() =>
+            Cells.Where(cell => !Contains(cell.Neighbour(HexEdge.SW)) || !Contains(cell.Neighbour(HexEdge.SE))).ToList().AsReadOnly();
+
+        /// <summary>Número de parejas de celdas vecinas (138 en el disco inicial de 55 celdas).</summary>
         public int AdjacentPairs()
         {
             var set = new HashSet<HexCell>(Cells);
