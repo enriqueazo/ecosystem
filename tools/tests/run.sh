@@ -172,6 +172,12 @@ fake_unity_project() {
   mkdir -p "$CASE_DIR/client-unity/ProjectSettings" "$CASE_DIR/client-unity/Packages"
 }
 
+# Simula el proyecto del servidor para que se comprueben su lockfile y .node-version.
+fake_server_project() {
+  mkdir -p "$CASE_DIR/server-nakama"
+  printf '{"name":"x","version":"0.0.0"}\n' >"$CASE_DIR/server-nakama/package.json"
+}
+
 have_docker_cli() { command -v docker >/dev/null 2>&1; }
 
 test_check_repo() {
@@ -251,6 +257,24 @@ test_check_repo() {
   new_repo_for_check_repo
   run_in_case -- "$CR" --only otra
   assert_exit "$n" 64 && assert_file_contains "$n" "$ERR" "Uso:" && pass "$n"
+
+  n="--only ignored con el lockfile del servidor ignorado → 1"
+  new_repo_for_check_repo; fake_server_project
+  printf 'server-nakama/package-lock.json\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/package-lock.json" && pass "$n"
+
+  n="--only ignored con .node-version del servidor ignorado → 1"
+  new_repo_for_check_repo; fake_server_project
+  printf '.node-version\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/.node-version" && pass "$n"
+
+  n="--only ignored sin server-nakama/package.json no comprueba el servidor → 0"
+  new_repo_for_check_repo
+  printf 'server-nakama/package-lock.json\n' >>"$CASE_DIR/.gitignore"
+  run_in_case -- "$CR" --only ignored
+  assert_exit "$n" 0 && pass "$n"
 
   n="argumento desconocido → 64"
   new_repo_for_check_repo
