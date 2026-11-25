@@ -20,12 +20,18 @@ namespace Ecosystem.Connection
     }
 
     /// <summary>
-    /// Flujo de conexión del cliente (contracts/connection-states.md). Sin dependencias de Unity
-    /// ni de Nakama: todo pasa por los puertos de <see cref="ConnectionDependencies"/>.
+    /// Flujo de conexión del cliente (contracts/connection-states.md). Sin dependencias de Unity ni
+    /// de Nakama: todo pasa por los puertos de <see cref="ConnectionDependencies"/>.
+    /// Cada ejecución es una generación (data-model.md → Generación de intento): si otra ejecución la
+    /// supera, sus resultados se descartan sin cambiar el estado ni guardar nada (FR-017).
     /// </summary>
     public sealed class ConnectionFlow
     {
+        // Margen de validez local (data-model.md → Sesión.Validez local).
+        private static readonly TimeSpan ExpiryMargin = TimeSpan.FromSeconds(60);
+
         private readonly ConnectionDependencies _deps;
+        private int _generation;
 
         public ConnectionFlow(ConnectionDependencies dependencies)
         {
@@ -42,59 +48,85 @@ namespace Ecosystem.Connection
 
         public event Action<ConnectionState> StateChanged;
 
+        /// <summary>
+        /// Ejecuta el flujo completo con reintentos (FR-015). Lanza OperationCanceledException si se
+        /// cancela, sin pasar por ningún estado de error (FR-017).
+        /// </summary>
         public async Task RunAsync(CancellationToken cancellationToken)
         {
+            var generation = ++_generation;
             Problem = null;
             SetState(ConnectionState.Connecting);
 
             if (!_deps.Config.IsValid)
             {
-                Fail(ConnectionState.ConfigurationError, _deps.Config.Problem);
+                Apply(new Outcome(ConnectionState.ConfigurationError, _deps.Config.Problem, null));
                 return;
             }
 
-            var session = await EstablishSessionAsync(cancellationToken);
-            if (!session.IsSuccess)
+            for (var retry = 0; ; retry++)
             {
-                FailWith(session.Failure);
+                cancellationToken.ThrowIfCancellationRequested();
+                var outcome = await AttemptAsync(cancellationToken);
+                if (generation != _generation) return;
+
+                if (outcome.Retryable && retry < RetryPolicy.MaxRetries)
+                {
+                    await _deps.Delay.WaitAsync(RetryPolicy.DelayFor(retry, _deps.Random), cancellationToken);
+                    if (generation != _generation) return;
+                    continue;
+                }
+
+                Apply(outcome);
                 return;
             }
+        }
+
+        private sealed class Outcome
+        {
+            public Outcome(ConnectionState state, string problem, AuthenticatedSession session, bool retryable = false)
+            {
+                State = state;
+                Problem = problem;
+                Session = session;
+                Retryable = retryable;
+            }
+
+            public ConnectionState State { get; }
+            public string Problem { get; }
+            public AuthenticatedSession Session { get; }
+            public bool Retryable { get; }
+        }
+
+        /// <summary>Un intento completo: sesión y comprobación de versión de protocolo.</summary>
+        private async Task<Outcome> AttemptAsync(CancellationToken cancellationToken)
+        {
+            var session = await EstablishSessionAsync(cancellationToken);
+            if (!session.IsSuccess) return FromFailure(session.Failure, null);
 
             var protocol = await _deps.Server.GetProtocolVersionAsync(session.Value, cancellationToken);
             if (!protocol.IsSuccess && protocol.Failure == FailureKind.SessionRejected)
             {
                 // FR-007: el servidor rechazó la sesión durante el uso → una sola reautenticación.
                 _deps.Sessions.Clear();
-                session = await AuthenticateAsync(cancellationToken);
-                if (!session.IsSuccess)
-                {
-                    FailWith(session.Failure);
-                    return;
-                }
+                session = await _deps.Authenticator.AuthenticateAsync(cancellationToken);
+                if (!session.IsSuccess) return FromFailure(session.Failure, null);
                 protocol = await _deps.Server.GetProtocolVersionAsync(session.Value, cancellationToken);
             }
-            if (!protocol.IsSuccess)
-            {
-                FailWith(protocol.Failure);
-                return;
-            }
+            if (!protocol.IsSuccess) return FromFailure(protocol.Failure, session.Value);
 
             var compatibility = ProtocolCompatibility.Evaluate(protocol.Value, _deps.ClientProtocolVersion);
-            if (compatibility != ConnectionState.Connected)
+            switch (compatibility)
             {
-                Fail(compatibility, compatibility == ConnectionState.UpdateRequired
-                    ? "El servidor usa una versión de protocolo mayor que la del cliente."
-                    : "El servidor no admite la versión de protocolo del cliente o su respuesta no cumple el contrato.");
-                return;
+                case ConnectionState.Connected:
+                    return new Outcome(ConnectionState.Connected, null, session.Value);
+                case ConnectionState.UpdateRequired:
+                    return new Outcome(compatibility, "El servidor usa una versión de protocolo mayor que la del cliente.", session.Value);
+                default:
+                    return new Outcome(compatibility,
+                        "El servidor no admite la versión de protocolo del cliente o su respuesta no cumple el contrato.", session.Value);
             }
-
-            Session = session.Value;
-            SetState(ConnectionState.Connected);
         }
-
-        // Margen de validez local (data-model.md → Sesión.Validez local): si el servidor rechaza la
-        // sesión antes, prevalece el servidor.
-        private static readonly TimeSpan ExpiryMargin = TimeSpan.FromSeconds(60);
 
         private bool IsExpired(DateTime expiresAtUtc) => _deps.Clock.UtcNow >= expiresAtUtc - ExpiryMargin;
 
@@ -119,52 +151,39 @@ namespace Ecosystem.Connection
                 else if (!IsExpired(restored.Value.RefreshExpiresAtUtc))
                 {
                     var refreshed = await _deps.Server.RefreshAsync(restored.Value, cancellationToken);
-                    if (refreshed.IsSuccess)
-                    {
-                        _deps.Sessions.Save(refreshed.Value.Tokens);
-                        return refreshed;
-                    }
-                    if (refreshed.Failure != FailureKind.SessionRejected)
+                    if (refreshed.IsSuccess || refreshed.Failure != FailureKind.SessionRejected)
                     {
                         return refreshed;
                     }
                 }
             }
 
-            return await AuthenticateAsync(cancellationToken);
+            return await _deps.Authenticator.AuthenticateAsync(cancellationToken);
         }
 
-        private async Task<ServerResult<AuthenticatedSession>> AuthenticateAsync(CancellationToken cancellationToken)
-        {
-            var authenticated = await _deps.Authenticator.AuthenticateAsync(cancellationToken);
-            if (authenticated.IsSuccess)
-            {
-                _deps.Sessions.Save(authenticated.Value.Tokens);
-            }
-            return authenticated;
-        }
-
-        private void FailWith(FailureKind failure)
+        private static Outcome FromFailure(FailureKind failure, AuthenticatedSession session)
         {
             switch (failure)
             {
                 case FailureKind.InvalidServerKey:
-                    Fail(ConnectionState.ConfigurationError, "El servidor rechazó la clave: revisa \"serverKey\" en la configuración.");
-                    break;
+                    return new Outcome(ConnectionState.ConfigurationError, "El servidor rechazó la clave: revisa \"serverKey\" en la configuración.", session);
                 case FailureKind.AccountRejected:
                 case FailureKind.SessionRejected:
-                    Fail(ConnectionState.AccountError, "El servidor rechazó la autenticación de la cuenta.");
-                    break;
+                    return new Outcome(ConnectionState.AccountError, "El servidor rechazó la autenticación de la cuenta.", session);
                 default:
-                    Fail(ConnectionState.Offline, "No se pudo contactar con el servidor.");
-                    break;
+                    return new Outcome(ConnectionState.Offline, "No se pudo contactar con el servidor.", session, retryable: true);
             }
         }
 
-        private void Fail(ConnectionState state, string problem)
+        private void Apply(Outcome outcome)
         {
-            Problem = problem;
-            SetState(state);
+            if (outcome.Session != null)
+            {
+                _deps.Sessions.Save(outcome.Session.Tokens);
+            }
+            Session = outcome.State == ConnectionState.Connected ? outcome.Session : null;
+            Problem = outcome.Problem;
+            SetState(outcome.State);
         }
 
         private void SetState(ConnectionState state)
