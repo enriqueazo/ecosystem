@@ -38,5 +38,3 @@ export function parseJsonPayload(payload: string): ParseResult {
     return { ok: false };
   }
 }
-
-export const roto: number = "texto";
