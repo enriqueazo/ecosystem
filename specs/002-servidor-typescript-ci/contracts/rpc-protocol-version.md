@@ -16,7 +16,7 @@ el servidor, para detectar incompatibilidades (principio II). No tiene lógica d
 | Autenticación | Sesión de cliente (`Authorization: Bearer <token>`) |
 | Petición | Cuerpo vacío o un objeto JSON. Se ignoran los campos desconocidos. |
 | Tamaño máximo de petición | 1024 bytes UTF-8 |
-| HTTP (API de Nakama) | `POST /v2/rpc/protocol_version?unwrap`, con el cuerpo JSON tal cual. Sin `unwrap`, el cuerpo es una cadena JSON con el contenido escapado. |
+| HTTP (API de Nakama) | `POST /v2/rpc/protocol_version?unwrap`, con el cuerpo JSON tal cual; la respuesta correcta es el objeto JSON. Sin `unwrap`, el cuerpo es una cadena JSON con el contenido escapado (`"{}"`) y la respuesta llega como `{"payload":"<JSON escapado>"}` (verificado). |
 
 ## Respuesta correcta
 
@@ -39,13 +39,30 @@ No hay más campos (`additionalProperties: false`).
 | Llamada con `http_key` de servidor, sin sesión de usuario | `SESSION_REQUIRED` | 7 PERMISSION_DENIED | 403 |
 | La petición supera 1024 bytes | `PAYLOAD_TOO_LARGE` | 3 INVALID_ARGUMENT | 400 |
 | La petición no es JSON, o no es un objeto | `INVALID_ARGUMENT` | 3 INVALID_ARGUMENT | 400 |
+| Excepción inesperada en el módulo | `INTERNAL` | 13 INTERNAL | 500 |
 
-\* Las pruebas de integración confirman el código HTTP y la forma del cuerpo, y este documento se
-corrige si difieren.
+\* Códigos HTTP **verificados** con las pruebas de integración contra Nakama 3.42.0 (2026-11-25),
+salvo `INTERNAL`, que no se puede provocar desde fuera.
 
 Forma del error en el módulo: se lanza `{ code: <gRPC>, message: "<JSON>" }`. `<JSON>` es el
 error estándar de `shared/README.md`, p. ej. `{"code":"PAYLOAD_TOO_LARGE","message":"La petición
-supera 1024 bytes."}`. El mensaje no incluye el contenido de la petición.
+supera 1024 bytes."}`. El mensaje no incluye el contenido de la petición. Cualquier otra excepción
+la convierte `runSafely` en `INTERNAL`, con un mensaje genérico, y su detalle solo se registra en
+el servidor.
+
+Forma HTTP real del cuerpo de error (verificada):
+
+```json
+{"code":7,"error":{"stackTrace":"[object Object]\n\tat runSafely (index.js:45:7(16))\n…"},"message":"{\"code\":\"SESSION_REQUIRED\",\"message\":\"Este RPC requiere una sesión de usuario.\"}"}
+```
+
+- El cliente lee `code` (gRPC) y analiza `message` como el error estándar.
+- **Limitación conocida de Nakama**: el runtime JavaScript adjunta `error.stackTrace` a toda
+  excepción lanzada por un módulo, también a los errores del contrato, y no se puede desactivar
+  (`server/runtime_javascript.go`, `invokeFunction`, en v3.42.0). Como el módulo solo lanza
+  objetos planos, esa traza no incluye mensajes de excepción, datos de la petición ni secretos;
+  solo nombres de función y posiciones del artefacto. Los clientes deben ignorar el campo
+  `error`. Registrado en ADR-0006.
 
 ## Orden de validación
 

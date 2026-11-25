@@ -192,7 +192,7 @@ dependen de `generate`) y US2 los necesitan.
   - truco anti-*tree-shaking*;
   - `npm run check` en verde.
 - [X] T028 [US2] Implementar `tools/check-backend.sh --module` (Green: T024) y actualizar su contrato de referencia en `specs/001-base-proyecto-entorno/contracts/tooling-cli.md` con la opción y el código 4.
-- [ ] T029 [US2] Escribir `server-nakama/test/integration/protocol-version.int.test.ts` y el script `test:integration`, según contracts/server-scripts.md:
+- [X] T029 [US2] Escribir `server-nakama/test/integration/protocol-version.int.test.ts` y el script `test:integration`, según contracts/server-scripts.md:
   - comprueba primero `tools/check-backend.sh --module` y falla de inmediato si no da 0;
   - autentica un dispositivo de prueba y recorre la tabla de T020 contra el RPC real con `?unwrap`;
   - valida cada respuesta correcta del RPC real con el validador generado de `response` y comprueba que contiene **exactamente** `protocolVersion` y `moduleVersion` (SC-008), y que `moduleVersion` coincide con `server-nakama/package.json`;
@@ -200,11 +200,11 @@ dependen de `generate`) y US2 los necesitan.
   - fija en aserciones el código HTTP y la forma del cuerpo observados.
 
   Ejecutarla **antes** de T030 y confirmar que falla (Red: módulo no montado).
-- [ ] T030 [US2] Modificar `deploy/local/compose.yaml` (research.md R-8):
+- [X] T030 [US2] Modificar `deploy/local/compose.yaml` (research.md R-8):
   - montar `../../server-nakama/build` en `/nakama/data/modules` como `:ro`;
   - añadir `--runtime.js_entrypoint index.js` al comando de `nakama`;
   - no montar ninguna otra ruta.
-- [ ] T031 [US2] Validar C1–C5 de quickstart.md:
+- [X] T031 [US2] Validar C1–C5 de quickstart.md:
   - C1 sin `build/`: anotar el comportamiento real de Nakama;
   - C2 con el módulo construido: `--module` → 0 y el registro muestra el RPC;
   - C3: ninguna clave en los registros, incluida la `http_key` de la URL;
@@ -212,7 +212,7 @@ dependen de `generate`) y US2 los necesitan.
   - C5: comparación con A7.
 
   Si la forma HTTP real difiere, corregir `specs/002-servidor-typescript-ci/contracts/rpc-protocol-version.md`. Anotar los resultados en el *Registro de verificación*.
-- [ ] T032 [US2] Actualizar `deploy/local/README.md`:
+- [X] T032 [US2] Actualizar `deploy/local/README.md`:
   - construir el módulo antes de arrancar (`cd server-nakama && npm ci && npm run build`);
   - verificar con `--module`;
   - reiniciar `nakama` tras reconstruir;
@@ -422,3 +422,11 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T024 Red | 2026-11-25 | ✅ | `tools/tests/run.sh`: 6 casos nuevos de `--module` fallan (código 64 por opción desconocida). **Fallo previo detectado**: en el mensaje de fallo de `assert_file_contains`, bash leía `«$text»` como una variable llamada `text` más el primer byte de `»` y abortaba con `unbound variable`. Solo ocurría cuando una aserción fallaba. Corregido con `${text}` |
 | T025–T027 Green | 2026-11-25 | ✅ | Unitarias 45/45: tabla compartida de 12 casos contra la función pura, la respuesta valida con el validador generado y trae exactamente 2 campos, y los códigos gRPC coinciden con `nakama-runtime/index.d.ts`. `npm run check` en verde. `build/index.js`: 5,4 KB en ES5, sin `require`/`import`/`export`, con `InitModule` y `rpcProtocolVersion` globales y el validador de respuesta fuera por *tree-shaking* |
 | T028 Green | 2026-11-25 | ✅ | `tools/tests/run.sh` 31/31; sin `--module`, comportamiento y códigos sin cambios. Contrato de referencia de la spec 001 actualizado con `--module` y el código 4 |
+| T029 Red | 2026-11-25 | ✅ | Con el entorno arrancado sin el módulo montado, `npm run test:integration` aborta en `before`: «Entorno local no disponible…» porque `check-backend.sh --module` devuelve 4 (Nakama real responde 404 al RPC). Confirma con el servidor real la lógica de `--module` |
+| C1 | 2026-11-25 | ✅ | Sin `server-nakama/build/`: Nakama 3.42.0 **no arranca en silencio**. Registro `fatal` «JavaScript entrypoint must be a valid path … /nakama/data/modules/index.js: no such file or directory», reinicios en bucle, `up -d --wait` → 1 y Docker crea `build/` vacía. `check-backend.sh` solo decía «backend no disponible» → añadida, con TDD (Red 32/1 → Green 33/33), la indicación «Falta server-nakama/build/index.js … ejecuta npm ci && npm run build» (FR-016) |
+| C2 | 2026-11-25 | ✅ | Tras `npm run build` y `--force-recreate nakama`: `--module` → 0. Registros: «ecosystem-server 0.1.0 cargado: RPC protocol_version registrado», «Registered JavaScript runtime RPC function invocation id=protocol_version» y «Startup done» |
+| C4 (1.ª ejecución) | 2026-11-25 | ❌ → corregido | 8/13 casos con HTTP 500: `TypeError: Cannot add property errors, object is not extensible`. **Diferencia Node ↔ Nakama** (prevista en el plan): Nakama congela los objetos globales tras `InitModule` y los validadores de Ajv guardan `validateN.errors`. Además, la respuesta 500 incluía el `stackTrace` con el mensaje de la excepción. Correcciones con TDD: (1) el generador elimina `validateN.errors = …` y falla si un esquema necesitaría estado (lectura de `.errors` o `$dynamicRef`/`unevaluated*`), con prueba que congela las funciones en Node (Red 6/2 → Green 8/8); (2) `runSafely` convierte cualquier excepción inesperada en `INTERNAL` (gRPC 13, mensaje genérico) y la registra solo en el servidor; `INTERNAL` añadido al contrato v1 (sin huella registrada aún) (Red → Green 51/51) |
+| C4 | 2026-11-25 | ✅ | `npm run test:integration` 13/13: los 12 casos de la tabla compartida contra el RPC real (respuesta validada con el esquema y exactamente 2 campos; `moduleVersion` = `package.json`), más 401 sin credenciales |
+| C5 | 2026-11-25 | ✅ | La misma tabla de 12 casos da el mismo resultado en Node (unitarias) y en Nakama (integración) |
+| C3 | 2026-11-25 | ✅ | Ningún valor secreto de `.env` en los registros de `nakama` ni de `postgres`, incluida la `http_key` que viaja en la URL (0 apariciones de `http_key`) |
+| T031 forma HTTP | 2026-11-25 | ✅ | Verificada: 400/403/401; cuerpo de error `{"code":<gRPC>,"error":{"stackTrace":…},"message":"<error estándar JSON>"}`; sin `unwrap`, respuesta `{"payload":"…"}`. **Limitación de Nakama**: `server/runtime_javascript.go` (`invokeFunction`, v3.42.0) adjunta `exErr.String()` a toda excepción JS, también a la de los errores del contrato, sin opción para desactivarlo. Con `runSafely` solo se lanzan objetos planos, así que la traza no incluye mensajes, datos ni secretos, solo nombres de función y posiciones. Documentado en `contracts/rpc-protocol-version.md` |
