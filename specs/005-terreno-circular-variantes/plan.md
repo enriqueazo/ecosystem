@@ -146,7 +146,8 @@ client-unity/Assets/_Project/
     │   ├── TerritoryMeshAssetTests.cs, TerrainCatalogAssetTests.cs                   # Nuevas
     │   ├── TerritoryLayoutTests.cs, TerritoryLayoutAssetTests.cs                     # Ampliadas (Cell en vez de DuplicateCell)
     │   ├── TerritoryArtAssetTests.cs, TerritorySceneAssetTests.cs, TerritoryTestGeometry.cs   # Actualizadas
-    │   └── HexTileMeshAssetTests.cs, HexPrismMeshBuilderTests.cs                     # Sin cambios
+    │   ├── HexPrismMeshBuilderTests.cs                 # Ampliada con el mapeo en red; las pruebas existentes no cambian
+    │   └── HexTileMeshAssetTests.cs                    # Solo cambia el nombre del menú en sus mensajes
     ├── PlayMode/TerritorySceneTests.cs                                               # 55 piezas, recursos, datos no válidos
     └── Integration/BootstrapSceneIntegrationTests.cs                                 # 16 → 55
 client-unity/README.md                          # Estado, estructura, sección Territorio y pruebas
@@ -194,7 +195,7 @@ assets.
 | La nieve se confunde con el fondo gris azulado | Diferencia de luminosidad exigida (≥ 25 L*) en la dirección visual. Revisión C2 con las 8 celdas al azar |
 | 55 piezas poco legibles en 9:19.5 vertical | El encuadre ya ocupa el 88 % de la dimensión que limita. Si la revisión C9 falla, se plantea al responsable reducir el margen o el tamaño antes de cambiar nada |
 | Reescribir `InitialTerritory.asset` o el comando del editor cambia GUID | Se edita el asset existente y el comando usa `CopySerialized` sobre los existentes. Comprobación de GUID en quickstart D |
-| La hierba cambia sin querer al tocar `HexPrismMeshBuilder` | El mapeo nuevo es opcional y por defecto da el resultado de la spec 004. `HexTileMeshAssetTests` y `HexPrismMeshBuilderTests` no cambian y deben pasar. `git diff` de los recursos de hierba vacío (quickstart D) |
+| La hierba cambia sin querer al tocar `HexPrismMeshBuilder` | El mapeo nuevo es opcional y por defecto da el resultado de la spec 004. Las comprobaciones de `HexTileMeshAssetTests` y las pruebas existentes de `HexPrismMeshBuilderTests` no cambian y deben pasar. `git diff` de los recursos de hierba vacío (quickstart D) |
 | El visor de artefactos bloquea la descarga de PNG (como en la spec 004) | Las texturas se generan con el script local y se suben al artefacto. Son los mismos archivos que se importan (research.md R-7) |
 
 ## Complexity Tracking

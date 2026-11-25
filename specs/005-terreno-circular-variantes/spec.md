@@ -365,7 +365,7 @@ omitir con justificación escrita.
     fuera del territorio, para que sus laterales se vean;
   - **un río** de al menos 5 piezas: un manantial, al menos un tramo recto y al menos una curva
     suave, que termina en una celda de agua;
-  - el río y el agua con al menos una arista visible desde la cámara (no ocultos tras el borde
+  - el río y el agua visibles en la captura de 16:9 de la revisión C6 (no ocultos tras el borde
     posterior).
 
   Dónde va cada zona lo decide la propuesta de diseño, no una regla.
@@ -401,8 +401,8 @@ omitir con justificación escrita.
   hierba, enlaza al artefacto de diseño y lleva la fecha de aprobación.
 - **FR-021**: Los **recursos finales** que entran en Unity MUST ser, como mínimo:
   1. textura de cara superior y textura de lateral de **nieve**, **arena** y **agua**;
-  2. los recursos que necesite el cauce del río (por ejemplo, una textura de cauce u orilla, si
-     el diseño la pide);
+  2. para el cauce del río, la textura de tierra existente. Si el diseño aprobado pide una textura
+     propia de cauce u orilla, se añade como recurso con su prueba de importación;
   3. materiales mate del pipeline del proyecto para cada textura nueva;
   4. la geometría de la pieza de agua (lámina baja) y de las tres piezas de río, con el cauce
      exacto de FR-013;
