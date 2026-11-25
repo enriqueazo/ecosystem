@@ -87,9 +87,9 @@ dependen de `generate`) y US2 los necesitan.
 
 **⚠️ CRITICAL**: Sin contratos ni generación no hay construcción ni RPC.
 
-- [ ] T007 [P] Crear `shared/contracts/contract.schema.json` (JSON Schema 2020-12). Debe imponer las reglas de `data-model.md` → `Contrato.id`, `Contrato.kind`, `Contrato.version`, `Contrato.auth`, `Contrato.maxRequestBytes`, `Contrato.request` / `Contrato.response`, `Contrato.errors`, `Contrato.examples.request.valid` / `.invalid`, `Contrato.examples.response.valid` / `.invalid` y `Contrato.description`, según la estructura de contracts/contract-format.md.
-- [ ] T008 [P] Crear `shared/contracts/protocol.json` con `{"protocolVersion": 1}`, según `data-model.md` → `Versión de protocolo.protocolVersion`.
-- [ ] T009 Crear `shared/contracts/rpc/protocol_version.json` según contracts/rpc-protocol-version.md:
+- [X] T007 [P] Crear `shared/contracts/contract.schema.json` (JSON Schema 2020-12). Debe imponer las reglas de `data-model.md` → `Contrato.id`, `Contrato.kind`, `Contrato.version`, `Contrato.auth`, `Contrato.maxRequestBytes`, `Contrato.request` / `Contrato.response`, `Contrato.errors`, `Contrato.examples.request.valid` / `.invalid`, `Contrato.examples.response.valid` / `.invalid` y `Contrato.description`, según la estructura de contracts/contract-format.md.
+- [X] T008 [P] Crear `shared/contracts/protocol.json` con `{"protocolVersion": 1}`, según `data-model.md` → `Versión de protocolo.protocolVersion`.
+- [X] T009 Crear `shared/contracts/rpc/protocol_version.json` según contracts/rpc-protocol-version.md:
   - `version: 1`, `auth: "session"` y `maxRequestBytes: 1024`;
   - `request`: objeto con propiedades adicionales permitidas;
   - `response`: `protocolVersion` (entero ≥ 1) y `moduleVersion` (semver, `maxLength: 64`), con
@@ -98,11 +98,11 @@ dependen de `generate`) y US2 los necesitan.
   - ejemplos válidos e inválidos de petición y respuesta.
 
   Debe cumplir `data-model.md` → `Contrato.*` (mismas citas que T007).
-- [ ] T010 Escribir `server-nakama/test/unit/generate.test.ts` (Red), contra un directorio de contratos de prueba en una carpeta temporal:
+- [X] T010 Escribir `server-nakama/test/unit/generate.test.ts` (Red), contra un directorio de contratos de prueba en una carpeta temporal:
   - `generate` produce validadores que aceptan y rechazan los ejemplos;
   - genera `PROTOCOL_VERSION`, `MODULE_VERSION` (`data-model.md` → `Módulo de servidor.moduleVersion`, tomado de `package.json`) y `MAX_REQUEST_BYTES`;
   - falla con un mensaje claro si falta `protocol.json`.
-- [ ] T011 Implementar `server-nakama/scripts/generate.ts` (Green) según contracts/contract-format.md → *Generación*:
+- [X] T011 Implementar `server-nakama/scripts/generate.ts` (Green) según contracts/contract-format.md → *Generación*:
   - Ajv en modo *standalone* con salida ESM;
   - escribe en `server-nakama/src/generated/`;
   - `npm run generate` funciona y `npm test` pasa T010.
@@ -406,3 +406,6 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 | T004 | 2026-11-25 | ✅ | `package.json` con versiones exactas y `engines` node `>=26.13.1 <27` y npm `>=11.20.0 <12`; 0 vulnerabilidades. **Ajuste**: `github:heroiclabs/nakama-common#v1.49.0` se resolvía como `git+ssh` en el lockfile (no funcionaría en la CI sin claves) → dependencia cambiada a la tarball HTTPS del commit `e6bf1ab…` (al que apunta la etiqueta v1.49.0), con `integrity` sha512. `@types/node` 26.6.10 añadido para pruebas y scripts. `fsevents` (opcional de macOS, sin uso) con `allowScripts: {fsevents: false}` explícito |
 | T005 | 2026-11-25 | ✅ | `tsconfig.json` (`lib: ["es5"]`, `module: preserve`, `moduleResolution: bundler`, `erasableSyntaxOnly`, `verbatimModuleSyntax`), `tsconfig.test.json` (tipos de Node), Babel (`ie 11` + TypeScript) y Rollup (`format: es`, sin envoltorio). **Ajustes de Biome 2.6**: `rules.recommended` obsoleto → `preset` (`biome migrate`); `vcs.root: ".."` porque `.gitignore` está en la raíz; sangría de 2 espacios explícita (Biome no lee el `.editorconfig` de la raíz); `package-lock.json` excluido de Biome para que lo formatee solo npm |
 | T006 / R-2 | 2026-11-25 | ✅ | TypeScript 7.0.2 acepta `nakama-runtime` con `lib: ["es5"]` (plan B innecesario). `[1].includes(1)` en `src/` → TS2550. Rollup genera `build/index.js` con `InitModule` global y acorn lo analiza como ES5 |
+| T007–T009 | 2026-11-25 | ✅ | Metaesquema, `protocol.json` y `rpc/protocol_version.json` v1. Con Ajv 2020 en modo estricto, el contrato valida contra el metaesquema y sus ejemplos se comportan como se espera (2 + 1 válidos aceptados; 4 + 4 inválidos rechazados) |
+| T010 Red | 2026-11-25 | ✅ | `generate.test.ts` falla con `ERR_MODULE_NOT_FOUND` (`scripts/generate.ts` no existe) |
+| T011 Green | 2026-11-25 | ✅ | 6/6 pruebas. **Desviación de R-6**: Ajv standalone emite `require("ajv/dist/runtime/ucs2length")` incluso con `esm: true` (para `maxLength`), lo que rompe ESM y añadiría una dependencia de ejecución. La opción `unicode: false` lo evitaría, pero está obsoleta y cambia la semántica. El generador sustituye ese ayudante por una implementación ES5 propia equivalente (un par sustituto cuenta como 1, verificado con 😀) y **falla** si aparece cualquier otro `require`. Resultado: **0 dependencias de ejecución** en el artefacto, y se retiran `@rollup/plugin-node-resolve` y `@rollup/plugin-commonjs`. `unicodeRegExp: false` evita la bandera `u` (ES2015) en los `RegExp` generados |
