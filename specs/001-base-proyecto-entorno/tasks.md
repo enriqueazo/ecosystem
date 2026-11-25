@@ -205,7 +205,7 @@ escenarios de [quickstart.md](quickstart.md).
 > La US2 (P2) está **bloqueada por D-02**, así que se ejecuta después (Phase 7). Esta historia va
 > primero porque no tiene bloqueos.
 
-- [ ] T018 [US3] Crear `README.md` raíz con los apartados de spec.md FR-034:
+- [X] T018 [US3] Crear `README.md` raíz con los apartados de spec.md FR-034:
   - descripción breve;
   - requisitos previos: Docker y Compose (versiones verificadas), git, bash y curl; Unity
     enlaza a D-02 en `docs/decisions/pendientes.md`;
@@ -231,7 +231,7 @@ escenarios de [quickstart.md](quickstart.md).
 
 **Independent Test**: quickstart.md escenarios D3 y A5.
 
-- [ ] T019 [P] [US4] Crear `shared/README.md` según spec.md FR-021:
+- [X] T019 [P] [US4] Crear `shared/README.md` según spec.md FR-021:
   - (a) organización prevista de las definiciones;
   - (b) formato **pendiente de D-05**, con los criterios de elección de spec.md;
   - (c) versionado: versión de protocolo y versión por contrato, con reglas para cambios
@@ -242,14 +242,14 @@ escenarios de [quickstart.md](quickstart.md).
   - (f) checklist de cambio de contrato;
   - aviso: `shared/` solo contiene contratos (`data-model.md` → `Área del repositorio.Dependencias`);
   - sin mensajes, RPC ni opcodes (FR-022).
-- [ ] T020 [P] [US4] Crear `server-nakama/README.md`:
+- [X] T020 [P] [US4] Crear `server-nakama/README.md`:
   - propósito: módulos de servidor autoritativo;
   - límites: sin dependencias del cliente; solo `shared/`;
   - estado: runtime pendiente (enlace a D-01 en `docs/decisions/pendientes.md`);
   - qué se añadirá al resolver D-01: código, pruebas, comprobaciones de formato y análisis,
     reglas de `.gitignore` del runtime y montaje de módulos en `deploy/local/compose.yaml`, todo
     en el mismo cambio que el ADR.
-- [ ] T021 [US4] Ejecutar quickstart.md A5:
+- [X] T021 [US4] Ejecutar quickstart.md A5:
   - `git ls-files` + `git grep -nIiE '\bgo\.mod\b|\.so\b|package\.json|tsconfig|\.lua\b'` fuera
     de `specs/` y `docs/decisions/`, sin coincidencias en configuración;
   - confirmar que no hay referencias cruzadas entre `client-unity/` y `server-nakama/` (FR-004).
@@ -529,3 +529,5 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | B9 | 2026-11-25 | ✅ | Puerto 7350 ocupado: «ports are not available … address already in use»; con `NAKAMA_API_PORT=17350` arranca y `check-backend.sh` → 0 |
 | B10 | 2026-11-25 | ✅ | Docker Desktop detenido: `check-backend.sh` → 3 «Docker no está en ejecución» |
 | B extra | 2026-11-25 | ✅ | Arranque con los valores de `.env.example` sin modificar (proyecto desechable): sano y `check-backend.sh` → 0 |
+| A5 / SC-010 | 2026-11-25 | ✅ | Sin `go.mod`, `package.json`, `tsconfig`, `.lua` ni `.so` fuera de `specs/` y `docs/decisions/`; sin reglas de runtime en `.gitignore`, `deploy/` ni `tools/` (las coincidencias son `/bin/sh` y shebangs) |
+| FR-004 | 2026-11-25 | ✅ | Sin referencias entre `client-unity/` y `server-nakama/` |
