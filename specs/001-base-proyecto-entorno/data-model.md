@@ -21,7 +21,7 @@ Definición completa de las variables en [contracts/local-environment.md](contra
 | **no versionado**: `.env` no se versiona; `.env.example` sí, con valores ficticios evidentes. | FR-028, Principio VII |
 | **secretos obligatorios**: si una variable secreta falta o está vacía, el arranque aborta nombrándola. | FR-018 |
 | **POSTGRES_PASSWORD**: alfanumérica. | research R-4 |
-| **claves de cifrado de sesión**: longitud exigida por Nakama (32 bytes, a verificar). | Por verificar contra la documentación de 3.42.0 al implementar |
+| **claves de cifrado de sesión**: cadena no vacía. Nakama 3.42.0 no exige una longitud concreta (verificado al arrancar con los valores de `.env.example` y con claves de 64 caracteres hexadecimales). Se recomiendan valores aleatorios (`openssl rand -hex 32`). | Verificado en implementación (T015) |
 | **puertos opcionales**: tienen un valor por defecto documentado. | FR-016 |
 
 ## Entorno local

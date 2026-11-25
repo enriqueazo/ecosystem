@@ -23,7 +23,7 @@ ADR-0002.
 
 | Variable | Obligatoria | Secreta | Valor por defecto | Uso |
 |----------|-------------|---------|-------------------|-----|
-| `POSTGRES_PASSWORD` | Sí | Sí | — | Contraseña del usuario de base de datos; solo alfanumérica. |
+| `POSTGRES_PASSWORD` | Sí | Sí | — | Contraseña del usuario de base de datos `nakama` (usuario y base fijos en `compose.yaml`); solo alfanumérica. |
 | `NAKAMA_SERVER_KEY` | Sí | Sí | — | `--socket.server_key`: la clave que usarán los clientes. |
 | `NAKAMA_RUNTIME_HTTP_KEY` | Sí | Sí | — | `--runtime.http_key` |
 | `NAKAMA_CONSOLE_USERNAME` | Sí | No | — | `--console.username` |
@@ -50,6 +50,6 @@ Reglas:
 | Estado | `docker compose ps` | Lista de servicios y su estado de salud. |
 | Registros | `docker compose logs [-f] [servicio]` | — |
 | Detener | `docker compose stop` | Contenedores parados; los datos se conservan. |
-| Reanudar | `docker compose start`, o `up -d --wait` | Vuelve al estado arrancado con los mismos datos. |
+| Reanudar | `docker compose up -d --wait` | Vuelve al estado arrancado con los mismos datos. |
 | Limpiar | `docker compose down -v` | Elimina contenedores, red y volumen. |
 | Verificar | `../../tools/check-backend.sh` | Ver [tooling-cli.md](tooling-cli.md). |

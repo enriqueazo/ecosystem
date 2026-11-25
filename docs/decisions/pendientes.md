@@ -86,4 +86,5 @@ se sustituye por un enlace en la sección *Resueltas*.
 
 | ID | Decisión | Registro |
 |----|----------|----------|
+| D-03 | Versiones de Nakama y PostgreSQL: 3.42.0 y 16.16 | [ADR-0002](0002-entorno-local-nakama-postgresql.md) |
 | D-07 | Pipeline de render del cliente: URP | [ADR-0003](0003-pipeline-render-urp.md) |

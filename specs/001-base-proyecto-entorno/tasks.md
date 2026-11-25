@@ -111,7 +111,7 @@ escenarios de [quickstart.md](quickstart.md).
 
 > Escribir primero y comprobar que FALLAN antes de implementar.
 
-- [ ] T011 [US1] Crear `tools/tests/run.sh`, un ejecutor en bash sin dependencias
+- [X] T011 [US1] Crear `tools/tests/run.sh`, un ejecutor en bash sin dependencias
   (contracts/tooling-cli.md → `tools/tests/run.sh`):
   - cada caso crea `<tmp>/` con `git init`, copia `tools/check-backend.sh` a `<tmp>/tools/` y,
     si el caso lo necesita, escribe `<tmp>/deploy/local/.env` de prueba; después ejecuta la
@@ -129,14 +129,14 @@ escenarios de [quickstart.md](quickstart.md).
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Implementar `tools/check-backend.sh` según contracts/tooling-cli.md:
+- [X] T012 [US1] Implementar `tools/check-backend.sh` según contracts/tooling-cli.md:
   - `set -euo pipefail` y resolución de la raíz del repo;
   - prioridad del puerto: entorno, luego `deploy/local/.env`, luego `7350`;
   - petición a `http://127.0.0.1:<puerto>/healthcheck` con tiempo límite corto;
   - códigos 0/1/2/3/64 con sus mensajes;
   - marcarlo ejecutable (`git update-index --chmod=+x` si hace falta);
   - `tools/tests/run.sh` debe quedar en verde (Green).
-- [ ] T013 [P] [US1] Crear `deploy/local/.env.example`:
+- [X] T013 [P] [US1] Crear `deploy/local/.env.example`:
   - todas las variables de contracts/local-environment.md → *Variables*, con un comentario por
     variable y valores ficticios con prefijo `cambia-esto-`;
   - `POSTGRES_PASSWORD` cumple `data-model.md` → `Configuración local.POSTGRES_PASSWORD`
@@ -145,7 +145,7 @@ escenarios de [quickstart.md](quickstart.md).
     sesión` (verificar la longitud exigida en la documentación de Nakama 3.42.0 y ajustar los
     valores de ejemplo);
   - cabecera que indica: copiar a `.env`, `.env` no se versiona y los valores solo valen en local.
-- [ ] T014 [US1] Crear `deploy/local/compose.yaml` según contracts/local-environment.md y
+- [X] T014 [US1] Crear `deploy/local/compose.yaml` según contracts/local-environment.md y
   research.md R-3/R-4:
   - **proyecto**: `name: ecosystem-local`;
   - **servicio `postgres`**: imagen fijada por etiqueta y digest (`<imagen>:<etiqueta>@sha256:<digest>`; ver más abajo), `POSTGRES_DB=nakama`, usuario y contraseña desde
@@ -167,7 +167,7 @@ escenarios de [quickstart.md](quickstart.md).
   - Digest: el del índice multiarquitectura, obtenido con
     `docker buildx imagetools inspect <imagen>:<etiqueta>`, para no atarlo a una sola
     arquitectura.
-- [ ] T015 [US1] Validar `deploy/local/compose.yaml` en la práctica, desde `deploy/local/`:
+- [X] T015 [US1] Validar `deploy/local/compose.yaml` en la práctica, desde `deploy/local/`:
   - antes de B6, comprobar en la documentación de la API de Nakama 3.42.0 la ruta, el formato
     del cuerpo y la longitud mínima del id de dispositivo, y la ruta `/healthcheck` que usa
     T012 (principio V); si difieren, ajustar B6/B8 de quickstart.md o T012;
@@ -178,7 +178,7 @@ escenarios de [quickstart.md](quickstart.md).
     a comprobar;
   - anotar los resultados en `tasks.md` → *Registro de verificación*; un escenario que no pueda ejecutarse se
     marca "no verificado" con su motivo (FR-043).
-- [ ] T016 [US1] Crear `deploy/local/README.md`, procedimiento único del backend (FR-019):
+- [X] T016 [US1] Crear `deploy/local/README.md`, procedimiento único del backend (FR-019):
   - requisitos (Docker y Compose verificados en 29.2.1 / v5.0.2);
   - configuración (`.env`, contraseña alfanumérica);
   - operaciones arrancar, estado, registros, detener, reanudar, limpiar y verificar, tomadas de
@@ -190,7 +190,7 @@ escenarios de [quickstart.md](quickstart.md).
     tablas internas);
   - límites: solo desarrollo y sin módulos hasta D-01, con enlace a
     `docs/decisions/pendientes.md`.
-- [ ] T017 [US1] Crear `docs/decisions/0002-entorno-local-nakama-postgresql.md` (estado `aceptada`, versiones y fundamento de research.md R-1/R-3) y añadirlo al índice `docs/decisions/README.md`. Registra ambos digests, la fecha en que se obtuvieron y el procedimiento para actualizarlos (cambio explícito, principio VIII).
+- [X] T017 [US1] Crear `docs/decisions/0002-entorno-local-nakama-postgresql.md` (estado `aceptada`, versiones y fundamento de research.md R-1/R-3) y añadirlo al índice `docs/decisions/README.md`. Registra ambos digests, la fecha en que se obtuvieron y el procedimiento para actualizarlos (cambio explícito, principio VIII).
 
 **Checkpoint**: commits `test(tools)` (T011), `feat(tools)` (T012) y `feat(deploy)` (T013–T017). La US1 funciona de forma independiente.
 
@@ -515,3 +515,17 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | T001 Docker | 2026-11-25 | ✅ | Docker Engine 29.2.1 (aarch64), Compose v5.0.2 |
 | T001 imágenes | 2026-11-25 | ✅ | `postgres:16.16-alpine` (índice `sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d`) y `nakama:3.42.0` (índice `sha256:009bfadc8264e4c4e82f1c1bd8b800a74e4dfeb03be59e0faab79117d394cfb8`) descargadas |
 | T002 `.gitignore` | 2026-11-25 | ✅ | `git check-ignore --no-index`: `.env.example`, `manifest.json`, `packages-lock.json`, `ProjectVersion.txt`, `.meta` no ignorados; `.env`, `Library/`, `client-unity/*.csproj` ignorados; `tools/*.csproj` no ignorado (C-2) |
+| T011 Red | 2026-11-25 | ✅ | `tools/tests/run.sh`: 9 pruebas de `check-backend.sh` fallan (script inexistente, código 127) |
+| T012 Green | 2026-11-25 | ✅ | `tools/tests/run.sh`: 9/9 correctas |
+| B0 config | 2026-11-25 | ✅ | `docker compose --env-file .env.example config --quiet` → 0 |
+| B1 | 2026-11-25 | ✅ | Sin `.env`: aborta con «required variable … Falta X: copia deploy/local/.env.example…» para cada variable; 0 contenedores creados |
+| B2 | 2026-11-25 | ✅ | `NAKAMA_SERVER_KEY` vacía: aborta nombrándola; 0 contenedores |
+| B3 | 2026-11-25 | ✅ | `up -d --wait` → 0 en 9,4 s; ambos `healthy`; log «Successfully applied migration count=20»; ningún valor secreto de `.env` en los registros de `nakama` ni `postgres` (nivel INFO). Aviso benigno: Google auth sin `client_ids` |
+| B4 | 2026-11-25 | ✅ | `check-backend.sh` → 0; `GET /healthcheck` → HTTP 200 (ruta verificada) |
+| B5 | 2026-11-25 | ✅ | `lsof`: solo `127.0.0.1:7350` y `127.0.0.1:7351`; 5432 y 7349 cerrados en el anfitrión |
+| B6 | 2026-11-25 | ✅ | `POST /v2/account/authenticate/device` (ruta y cuerpo verificados empíricamente) crea uid `ac9c7807…`; 3 ciclos stop/start: mismo uid con `create=false` y `check-backend.sh` → 0 |
+| B7 | 2026-11-25 | ✅ | Tras `stop`: `check-backend.sh` → 1 «backend no disponible» |
+| B8 | 2026-11-25 | ✅ | `down -v` elimina el volumen; tras arrancar, `create=false` → HTTP 404 «User account not found» |
+| B9 | 2026-11-25 | ✅ | Puerto 7350 ocupado: «ports are not available … address already in use»; con `NAKAMA_API_PORT=17350` arranca y `check-backend.sh` → 0 |
+| B10 | 2026-11-25 | ✅ | Docker Desktop detenido: `check-backend.sh` → 3 «Docker no está en ejecución» |
+| B extra | 2026-11-25 | ✅ | Arranque con los valores de `.env.example` sin modificar (proyecto desechable): sano y `check-backend.sh` → 0 |

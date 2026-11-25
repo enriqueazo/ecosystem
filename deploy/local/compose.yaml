@@ -1,0 +1,73 @@
+# Entorno de desarrollo local: Nakama + PostgreSQL.
+# Uso y operaciones: deploy/local/README.md
+# Contrato: specs/001-base-proyecto-entorno/contracts/local-environment.md
+# Versiones y digests: docs/decisions/0002-entorno-local-nakama-postgresql.md
+#
+# Los secretos se leen de deploy/local/.env (copia de .env.example, no versionado).
+
+name: ecosystem-local
+
+services:
+  postgres:
+    image: postgres:16.16-alpine@sha256:f2f98726820d0342055351c6e9d36e705f5bfffb3dd53ff556325114b08afb6d
+    environment:
+      POSTGRES_DB: nakama
+      POSTGRES_USER: nakama
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "nakama", "-d", "nakama"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    # Sin "ports": la base de datos no es accesible desde el anfitrión.
+
+  nakama:
+    image: registry.heroiclabs.com/heroiclabs/nakama:3.42.0@sha256:009bfadc8264e4c4e82f1c1bd8b800a74e4dfeb03be59e0faab79117d394cfb8
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_ADDRESS: "nakama:${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD: copia deploy/local/.env.example a deploy/local/.env y define el valor}@postgres:5432/nakama"
+      SERVER_KEY: "${NAKAMA_SERVER_KEY:?Falta NAKAMA_SERVER_KEY: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      RUNTIME_HTTP_KEY: "${NAKAMA_RUNTIME_HTTP_KEY:?Falta NAKAMA_RUNTIME_HTTP_KEY: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      SESSION_ENCRYPTION_KEY: "${NAKAMA_SESSION_ENCRYPTION_KEY:?Falta NAKAMA_SESSION_ENCRYPTION_KEY: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      SESSION_REFRESH_ENCRYPTION_KEY: "${NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY:?Falta NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      CONSOLE_USERNAME: "${NAKAMA_CONSOLE_USERNAME:?Falta NAKAMA_CONSOLE_USERNAME: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      CONSOLE_PASSWORD: "${NAKAMA_CONSOLE_PASSWORD:?Falta NAKAMA_CONSOLE_PASSWORD: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+      CONSOLE_SIGNING_KEY: "${NAKAMA_CONSOLE_SIGNING_KEY:?Falta NAKAMA_CONSOLE_SIGNING_KEY: copia deploy/local/.env.example a deploy/local/.env y define el valor}"
+    # Los secretos se pasan como variables del contenedor y el shell los expande al arrancar,
+    # para que no aparezcan en la definición del comando.
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        /nakama/nakama migrate up --database.address "$$DB_ADDRESS"
+        exec /nakama/nakama \
+          --name nakama-local \
+          --database.address "$$DB_ADDRESS" \
+          --logger.level INFO \
+          --session.token_expiry_sec 7200 \
+          --socket.server_key "$$SERVER_KEY" \
+          --runtime.http_key "$$RUNTIME_HTTP_KEY" \
+          --session.encryption_key "$$SESSION_ENCRYPTION_KEY" \
+          --session.refresh_encryption_key "$$SESSION_REFRESH_ENCRYPTION_KEY" \
+          --console.username "$$CONSOLE_USERNAME" \
+          --console.password "$$CONSOLE_PASSWORD" \
+          --console.signing_key "$$CONSOLE_SIGNING_KEY"
+    ports:
+      # Solo la API de cliente y la consola, y solo en loopback. El puerto gRPC no se publica.
+      - "127.0.0.1:${NAKAMA_API_PORT:-7350}:7350"
+      - "127.0.0.1:${NAKAMA_CONSOLE_PORT:-7351}:7351"
+    healthcheck:
+      test: ["CMD", "/nakama/nakama", "healthcheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+    # Sin "volumes": no se cargan módulos de servidor hasta decidir el runtime (D-01).
+
+volumes:
+  postgres-data:

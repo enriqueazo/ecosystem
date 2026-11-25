@@ -9,6 +9,7 @@ consideradas, la decisión y sus consecuencias, como exige la constitución del 
 |----|----------|--------|
 | [0000](0000-plantilla.md) | Plantilla | — |
 | [0001](0001-estructura-monorepo.md) | Estructura del monorepo | aceptada |
+| [0002](0002-entorno-local-nakama-postgresql.md) | Entorno local con Docker Compose: Nakama 3.42.0 y PostgreSQL 16.16 | aceptada |
 | [0003](0003-pipeline-render-urp.md) | Pipeline de render del cliente: URP | aceptada |
 | [0004](0004-conectividad-sin-sdk-cliente.md) | Verificar la conectividad del backend sin SDK en el cliente | aceptada |
 
