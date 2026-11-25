@@ -355,10 +355,10 @@ escenarios de [quickstart.md](quickstart.md).
 
 ### Implementation for User Story 2
 
-- [ ] T031 [US2] Crear `client-unity/Assets/_Project/Scenes/Bootstrap.unity`:
+- [X] T031 [US2] Crear `client-unity/Assets/_Project/Scenes/Bootstrap.unity`:
   - solo una cámara (más la luz que exija URP, si la exige), sin scripts ni arte;
   - configurarla como la única escena de la build, en el índice 0 (FR-008).
-- [ ] T032 [US2] Configurar `client-unity/ProjectSettings/` (FR-006):
+- [X] T032 [US2] Configurar `client-unity/ProjectSettings/` (FR-006):
   - serialización Force Text y `.meta` visibles;
   - IL2CPP en Android e iOS y Android solo ARM64;
   - identificador de aplicación provisional `com.ecosystem.dev`, documentado como provisional
@@ -550,3 +550,5 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | T028 | 2026-11-25 | ✅ | Las API (`NamedBuildTarget`, `PlayerSettings.GetScriptingBackend`/`GetApplicationIdentifier`, `PlayerSettings.Android.targetArchitectures`, `EditorSettings.serializationMode`, `VersionControlSettings.mode`, `GraphicsSettings.defaultRenderPipeline`, `QualitySettings.GetRenderPipelineAssetAt`, `EditorBuildSettings.scenes`, `SceneManager.LoadSceneAsync`, `Object.FindAnyObjectByType`, `LogAssert.NoUnexpectedReceived`) compilan en 6000.3.29f1 sin errores ni avisos CS0618/CS0612 |
 | T029 Red | 2026-11-25 | ✅ | EditMode (batch): 10 casos, 7 pasan y 3 fallan (escena de la build vacía; identificador de la plantilla en Android e iOS). Las 7 que pasan son ajustes que ya trae la plantilla (IL2CPP, ARM64, Force Text, `.meta` visibles) o que dejó T027 (URP Mobile como pipeline) |
 | T030 Red | 2026-11-25 | ✅ | PlayMode (batch): 1 caso, falla: «Scene 'Assets/_Project/Scenes/Bootstrap.unity' couldn't be loaded because it has not been added to the active build profile or shared scene list» |
+| T031 | 2026-11-25 | ✅ | `Assets/_Project/Scenes/Bootstrap.unity` solo con «Main Camera» (sin luz, sin AudioListener ni scripts); única escena de la build en el índice 0; `templateDefaultScene` apunta a ella. Creada con un script de editor temporal (`-executeMethod`) eliminado después, sin restos en archivos versionados |
+| T032 Green | 2026-11-25 | ✅ | IL2CPP en Android e iOS, ARM64, Force Text, `com.ecosystem.dev` en Android e iOS, producto y compañía «Ecosystem» (provisionales, D-06). EditMode 10/10 y PlayMode 1/1 en modo batch |
