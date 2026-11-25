@@ -2,9 +2,11 @@
   "name": "Ecosystem.Tests.EditMode",
   "rootNamespace": "Ecosystem.Tests.EditMode",
   "references": [
-    "UnityEngine.TestRunner",
+    "Ecosystem.Connection",
+    "Ecosystem.Contracts",
+    "Unity.RenderPipelines.Universal.Runtime",
     "UnityEditor.TestRunner",
-    "Unity.RenderPipelines.Universal.Runtime"
+    "UnityEngine.TestRunner"
   ],
   "includePlatforms": [
     "Editor"
@@ -13,6 +15,7 @@
   "allowUnsafeCode": false,
   "overrideReferences": true,
   "precompiledReferences": [
+    "Newtonsoft.Json.dll",
     "nunit.framework.dll"
   ],
   "autoReferenced": false,

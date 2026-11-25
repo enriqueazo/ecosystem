@@ -67,26 +67,26 @@ carga, con PlayMode.
 
 **⚠️ CRITICAL**: las historias dependen de `Ecosystem.Contracts` y de los puertos de `Ecosystem.Connection`.
 
-- [ ] T004 Escribir en `server-nakama/test/unit/generate-csharp.test.ts` (Red) las pruebas de la salida C# del generador, según contracts/csharp-contracts.md:
+- [X] T004 Escribir en `server-nakama/test/unit/generate-csharp.test.ts` (Red) las pruebas de la salida C# del generador, según contracts/csharp-contracts.md:
   - genera `ProtocolContracts.ProtocolVersion` y, por contrato, `Id`, `Version`, `MaxRequestBytes`, `ValidateRequest`, `ValidateResponse` y `Examples`;
   - cubre cada palabra clave del subconjunto (`type`, `properties`, `required`, `additionalProperties` booleano, `minimum`, `maximum`, `minLength`, `maxLength` en caracteres, `pattern`, `enum` y `const` primitivos);
   - **falla** con una palabra clave no admitida (p. ej. `oneOf`, `additionalProperties` como objeto) o con un `pattern` fuera de lo admitido, nombrando el contrato y la palabra clave;
   - la salida es determinista (dos generaciones iguales).
-- [ ] T005 Implementar la salida C# en `server-nakama/scripts/generate.ts` (Green):
+- [X] T005 Implementar la salida C# en `server-nakama/scripts/generate.ts` (Green):
   - una función `generateCSharp` que escribe `client-unity/Assets/_Project/Scripts/Contracts/Generated/Contracts.g.cs` con la cabecera «Generado… No editar»;
   - `npm run generate` escribe la salida JS (existente) y la C#.
-- [ ] T006 Añadir a `server-nakama/scripts/contracts.ts` la comprobación «C# al día»: genera en memoria y compara con el archivo versionado, con el mensaje de contracts/csharp-contracts.md. Añadir sus casos a `server-nakama/test/unit/contracts.test.ts` (Red y después Green). Validar A1 y A2 de quickstart.md.
-- [ ] T007 Crear `_Project/Scripts/Contracts/Ecosystem.Contracts.asmdef`:
+- [X] T006 Añadir a `server-nakama/scripts/contracts.ts` la comprobación «C# al día»: genera en memoria y compara con el archivo versionado, con el mensaje de contracts/csharp-contracts.md. Añadir sus casos a `server-nakama/test/unit/contracts.test.ts` (Red y después Green). Validar A1 y A2 de quickstart.md.
+- [X] T007 Crear `_Project/Scripts/Contracts/Ecosystem.Contracts.asmdef`:
   - referencia a Newtonsoft (`Newtonsoft.Json.dll` como referencia precompilada del paquete de Unity);
   - `autoReferenced: false`.
 
   Generar `Contracts.g.cs` con `npm run generate`, abrir Unity para crear los `.meta` y confirmar que compila.
-- [ ] T008 Escribir `_Project/Tests/EditMode/ContractExamplesTests.cs`:
+- [X] T008 Escribir `_Project/Tests/EditMode/ContractExamplesTests.cs`:
   - recorre `<Id>Contract.Examples` con los validadores C#: los ejemplos válidos deben pasar y los inválidos fallar;
   - añadir la referencia `Ecosystem.Contracts` al ensamblado `Ecosystem.Tests.EditMode`.
 
   Red: antes de T007 no compila. Green: pasa en modo batch.
-- [ ] T009 Crear el núcleo `_Project/Scripts/Connection/` con `Ecosystem.Connection.asmdef` (`noEngineReferences: true`; sin referencia a Nakama; referencia a `Ecosystem.Contracts`) y sus tipos base, sin lógica todavía (research.md R-7):
+- [X] T009 Crear el núcleo `_Project/Scripts/Connection/` con `Ecosystem.Connection.asmdef` (`noEngineReferences: true`; sin referencia a Nakama; referencia a `Ecosystem.Contracts`) y sus tipos base, sin lógica todavía (research.md R-7):
   - `ConnectionState.cs`, con los estados de `data-model.md` → *Estado de conexión* y los textos de contracts/connection-states.md;
   - los puertos `IGameServer.cs`, `ISessionStore.cs`, `IInstallationIdStore.cs`, `IDelay.cs` e `IAuthenticator.cs`;
   - los tipos de resultado (éxito, fallo transitorio, rechazo definitivo y respuesta inválida), sin excepciones como flujo normal (principio V).
@@ -399,3 +399,8 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T001 | 2026-11-25 | ✅ | Rama `feat/003-sesion-invitado-cliente`; Unity 6000.3.29f1; Node v26.13.1 / npm 11.20.0; Docker 29.9.3; `tools/tests/run.sh` 33/33; `npm run check` OK; línea base de Unity: EditMode 10/10 y PlayMode 1/1 |
 | T002 | 2026-11-25 | ✅ | `nakama-unity` por URL de Git fijada al commit `704f5da…` (el lockfile registra el hash) y `newtonsoft-json` 3.2.2. Solo cambian `manifest.json` y `packages-lock.json`. Una sonda temporal en el Editor (borrada) compila contra las API usadas: `Client(…, UnityWebRequestAdapter.Instance)`, `Timeout`, `GlobalRetryConfiguration = new RetryConfiguration(ms, 0)`, `AuthenticateDeviceAsync(id, null, true, null, null, ct)`, `Session.Restore`, `HasExpired`, `HasRefreshExpired`, `SessionRefreshAsync(s, null, null, ct)`, `RpcAsync(s, id, payload, null, ct)`, `ApiResponseException.StatusCode` / `.GrpcStatusCode` y `JToken.Parse`. Sin errores ni avisos de obsolescencia. EditMode 10/10 y PlayMode 1/1 con los paquetes nuevos |
 | T003 | 2026-11-25 | ✅ | `client-unity/LocalConfig/connection.example.json` versionado; `connection.local.json` ignorado (comprobado con `git check-ignore --no-index`) |
+| T004 Red | 2026-11-25 | ✅ | `generate-csharp.test.ts` falla: `generateCSharpSource` no existe |
+| T005 Green | 2026-11-25 | ✅ | 12/12. **Ampliación sobre el plan**: contrato de prueba `server-nakama/test/fixtures/contracts/rpc/keyword_coverage.json` con todas las palabras clave del subconjunto (y emoji en `pattern` y `maxLength`), generado como `Tests/EditMode/Generated/ContractFixtures.g.cs`; Ajv valida sus ejemplos en Node. **Ajustes**: Node en modo de solo eliminar tipos rechaza las propiedades de parámetro (`erasableSyntaxOnly`) → campo explícito. Ajv estricto no admite `type` como lista → se retira del subconjunto y el generador C# lo rechaza también (cliente y servidor admiten exactamente lo mismo). Generación en `scripts/generate-csharp.ts` |
+| T006 / A1–A2 | 2026-11-25 | ✅ | Red: las pruebas de `checkGeneratedCSharp` fallaban (no existía). Green: `contracts.test.ts` 20/20. Antes de generar, `contracts:check` → «Contracts.g.cs desactualizado» y «ContractFixtures.g.cs desactualizado» (A2); tras `npm run generate`, OK (A1). `npm run check` en verde; unitarias 83/83 |
+| T007 / T008 | 2026-11-25 | ✅ | `Ecosystem.Contracts` (sin referencias a Unity, con Newtonsoft). `ContractExamplesTests`: los **42 ejemplos** (11 de `protocol_version` y 31 de `keyword_coverage`) dan el mismo resultado que Ajv → EditMode 53/53. **Red de la prueba**: alterar el C# generado (`maxLength` 64 → 3) hace fallar 1 prueba en Unity **y** `contracts:check`; se restauró con `npm run generate` |
+| T009 | 2026-11-25 | ✅ | Núcleo `Ecosystem.Connection` (`noEngineReferences`, sin Nakama): `ConnectionState` y textos, `ServerResult`/`FailureKind` (sin excepciones como flujo), `SessionTokens`/`AuthenticatedSession` (identidad = `UserId`) y los puertos `IGameServer`, `ISessionStore`, `IInstallationIdStore`, `IDelay`, `IClock` e `IAuthenticator`. Compila y EditMode sigue en 53/53 |
