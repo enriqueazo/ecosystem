@@ -23,7 +23,9 @@ Comprueba que la API de cliente de Nakama responde en el anfitrión.
 | 1 | No hay respuesta en el puerto. | "backend no disponible", y si Docker está disponible: "¿has arrancado el entorno? (`docker compose up -d --wait` en deploy/local)" |
 | 2 | La respuesta no es correcta (código HTTP inesperado). | Código HTTP recibido. |
 | 3 | El demonio de Docker no está disponible (solo se comprueba tras fallar la conexión). | "Docker no está en ejecución" |
-| 64 | Uso incorrecto (argumentos no admitidos). | Uso. |
+| 64 | Uso incorrecto (argumentos no admitidos) o `NAKAMA_API_PORT` no es un puerto válido (1–65535). | Uso, o la variable y su valor. |
+
+Opción: `-h` / `--help` muestra la ayuda y devuelve 0. El archivo `.env` se lee sin ejecutarlo (no se usa `source`).
 
 ## `tools/check-repo.sh`
 
