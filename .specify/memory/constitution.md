@@ -1,13 +1,3 @@
-<!--
-SYNC IMPACT REPORT (temporal; eliminar antes de commitear)
-Version change: 1.0.0 → 1.1.0
-Principios modificados: ninguno
-Secciones modificadas: Flujo de Desarrollo y Calidad → Git (nueva cláusula "Una rama por spec")
-Secciones añadidas: ninguna
-Secciones eliminadas: ninguna
-TODOs diferidos:
-  - Nombre del proyecto: se usa "Ecosystem" (nombre del directorio); confirmar nombre definitivo.
--->
 # Ecosystem Constitution
 
 Juego móvil multiplataforma (Android e iOS) de estrategia con mundo y partidas en directo,
