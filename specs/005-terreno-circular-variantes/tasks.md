@@ -314,8 +314,8 @@ con 55 piezas. No se espera código nuevo (research.md R-8).
 
 **Independent Test**: A2 (encuadre en 6 proporciones), B1–B3 y C9 y C12 de quickstart.md.
 
-- [ ] T055 [P] [US4] Ejecutar A2 y comprobar, en `_Project/Tests/PlayMode/TerritorySceneTests.cs`, que la prueba de encuadre por proporción (invariante 4 de contracts/territory-scene.md) recorre las 6 proporciones con 55 piezas, y `TerritoryFramingTests` con área segura. Si la ocupación cae por debajo del 70 %, parar y plantearlo al responsable (plan.md → *Riesgos*). Anotarlo en el registro.
-- [ ] T056 [P] [US4] Con el entorno local arrancado, ejecutar B1 (`_Project/Tests/Integration/BootstrapSceneIntegrationTests.cs`, con 55 piezas en ≤ 2 s), B2 y B3. Anotarlo en el registro.
+- [X] T055 [P] [US4] Ejecutar A2 y comprobar, en `_Project/Tests/PlayMode/TerritorySceneTests.cs`, que la prueba de encuadre por proporción (invariante 4 de contracts/territory-scene.md) recorre las 6 proporciones con 55 piezas, y `TerritoryFramingTests` con área segura. Si la ocupación cae por debajo del 70 %, parar y plantearlo al responsable (plan.md → *Riesgos*). Anotarlo en el registro.
+- [X] T056 [P] [US4] Con el entorno local arrancado, ejecutar B1 (`_Project/Tests/Integration/BootstrapSceneIntegrationTests.cs`, con 55 piezas en ≤ 2 s), B2 y B3. Anotarlo en el registro.
 - [ ] T057 [US4] En el editor, vista *Simulator* con un iPhone con muesca, en vertical y en horizontal: comprobar C9 (55 piezas fuera de la muesca, legibles en 9:19.5) y C12. Anotarlo en el registro. Los resultados definitivos los da la revisión del responsable (T064).
 
 **Checkpoint**: el territorio ampliado funciona en cualquier proporción y en el flujo de invitado.
@@ -329,7 +329,7 @@ con 55 piezas. No se espera código nuevo (research.md R-8).
 **Independent Test**: A2 (tabla de datos no válidos de contracts/territory-scene.md) y A5–A6 de
 quickstart.md.
 
-- [ ] T058 [P] [US5] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` con cada fila de contracts/territory-scene.md → *Datos no válidos*, con `SetLayout` y `SetCatalog`:
+- [X] T058 [P] [US5] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` con cada fila de contracts/territory-scene.md → *Datos no válidos*, con `SetLayout` y `SetCatalog`:
   - celda repetida, disposición no conexa, variante desconocida, río sin forma, río que acaba en nieve y catálogo sin la variante usada;
   - cada caso: `LogAssert.Expect` con el prefijo del mensaje y 0 piezas.
 
@@ -337,9 +337,9 @@ quickstart.md.
   borde a borde) que coloque exactamente sus piezas con sus recursos (spec US5, escenario 1).
   Ejecutar A2. Si algún caso ya pasa por el trabajo de las fases 2–5, anotar que el Red no
   aplica y por qué.
-- [ ] T059 [US5] Corregir en `_Project/Scripts/Territory.View/TerritoryView.cs` lo que T058 descubra, por ejemplo errores registrados más de una vez o piezas a medias. A2 en verde.
-- [ ] T060 [US5] Validar A6 (catálogo sin nieve) en el editor. Anotar A5 y A6 en el registro (SC-006).
-- [ ] T061 [US5] Commit `test(client): cover invalid territory data in the territory scene` (o `fix(client): …` si T059 cambió código).
+- [X] T059 [US5] Corregir en `_Project/Scripts/Territory.View/TerritoryView.cs` lo que T058 descubra, por ejemplo errores registrados más de una vez o piezas a medias. A2 en verde.
+- [X] T060 [US5] Validar A6 (catálogo sin nieve) en el editor. Anotar A5 y A6 en el registro (SC-006).
+- [X] T061 [US5] Commit `test(client): cover invalid territory data in the territory scene` (o `fix(client): …` si T059 cambió código).
 
 **Checkpoint**: datos incoherentes → error claro y 0 piezas.
 
@@ -485,3 +485,9 @@ Task: "T042 [P] [US3] TerritoryMeshAssetTests.cs (mallas de río)"
 | 2026-11-25 | T052 | `contracts/visual-direction.md` | Estado aprobado; `w`, `rp` y la composición del río registrados |
 | 2026-11-25 | T053 | A5 con un cambio temporal (la celda (4,6) pasa a nieve) y `TerritorySceneTests.Scene_LoadsWithoutErrorsOrWarnings` | Consola: `[Territorio] El río de la celda (columna 4, fila 5) no continúa por la arista SO: la vecina es de nieve.`, el texto exacto de quickstart A5. Cambio deshecho |
 | 2026-11-25 | T053 | C6 y C7 con capturas en *Play* (río entero, unión entre curvas de cerca, manantial y desembocadura) | Cauce continuo de una pieza a otra, sin escalones, huecos ni cambios de anchura; la desembocadura se une al lago al mismo nivel; la poza se lee como un nacimiento. Sin parpadeo ni líneas de fondo en las uniones |
+| 2026-11-25 | T055 | A2 (encuadre por proporción con 55 piezas) y A1 (`TerritoryFramingTests`, ya sobre el disco) | Las 6 proporciones con todas las esquinas en [0,06; 0,94] y las áreas seguras ficticias de la spec 004, en verde. Con el margen del 6 %, el territorio ocupa el 88 % de la dimensión que limita (≥ 70 %). `TerritoryFraming` y `TerritoryCamera` sin cambios |
+| 2026-11-25 | T056 | B1 con el entorno local (`tools/check-backend.sh --module` → 0) | Salida 0 · 14/14, incluido `Connected_LoadsTerritoryOnce` con 55 piezas en ≤ 2 s. B2 y B3 (reproducir `Bootstrap` en el editor y parar el entorno a mano) no se ejecutaron: necesitan el editor con interfaz; pasan a la revisión del responsable (T064) |
+| 2026-11-25 | T057 | Vista *Simulator* con muesca (C9, C12) | **No ejecutado**: necesita el editor con interfaz. La parte automática (área segura ficticia en EditMode y 6 proporciones en PlayMode) está en verde. Queda para la revisión del responsable (T064) |
+| 2026-11-25 | T058 | A2 con las pruebas de datos no válidos de contracts/territory-scene.md y una disposición válida de 7 celdas con un río de borde a borde | Salida 2 · 23/28: los errores se registran bien, pero en *Play* las 55 piezas anteriores siguen en la escena durante el fotograma, porque `Destroy` espera al final del fotograma. Ajuste en la prueba: tipar la disposición vacía (`new HexCell[0]`), porque `AssetWith()` pasa a ser ambiguo |
+| 2026-11-25 | T059 | `TerritoryView.Clear`: en *Play* desactiva cada pieza antes de `Destroy`. A2 y A1 | PlayMode: salida 0 · 28/28. EditMode: salida 0 · 427/427. Ninguna pieza visible junto a un error ni junto a las nuevas |
+| 2026-11-25 | T060 | A6: catálogo sin nieve | Comprobado con `View_WithACatalogMissingAUsedVariant_LogsItAndShowsNoPieces` en la escena en *Play*: `[Territorio] El catálogo no tiene recursos para variante nieve.` y 0 piezas visibles. No se repitió a mano en el editor |

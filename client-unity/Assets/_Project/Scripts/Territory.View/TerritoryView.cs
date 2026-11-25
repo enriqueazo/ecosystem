@@ -123,8 +123,17 @@ namespace Ecosystem.Territory.View
             foreach (var tile in _tiles)
             {
                 if (tile == null) continue;
-                if (Application.isPlaying) Destroy(tile.gameObject);
-                else DestroyImmediate(tile.gameObject);
+                if (Application.isPlaying)
+                {
+                    // Destroy espera al final del fotograma: se desactiva ya para que no se vea
+                    // ninguna pieza antigua junto a un error ni junto a las nuevas.
+                    tile.gameObject.SetActive(false);
+                    Destroy(tile.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(tile.gameObject);
+                }
             }
 
             _tiles.Clear();
