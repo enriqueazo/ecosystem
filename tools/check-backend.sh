@@ -122,6 +122,11 @@ main() {
 
   echo "Error: backend no disponible en 127.0.0.1:${port}." >&2
   echo "¿Has arrancado el entorno? (docker compose up -d --wait en deploy/local)" >&2
+  # Nakama no arranca si falta el módulo (js_entrypoint): es la causa más probable en ese caso.
+  if [[ -f "$REPO_ROOT/server-nakama/package.json" && ! -f "$REPO_ROOT/server-nakama/build/index.js" ]]; then
+    echo "Falta server-nakama/build/index.js y Nakama no puede arrancar sin él:" >&2
+    echo "ejecuta npm ci && npm run build en server-nakama y vuelve a arrancar el entorno." >&2
+  fi
   exit 1
 }
 

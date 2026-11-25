@@ -128,6 +128,22 @@ test_check_backend() {
   assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "backend no disponible" \
     && assert_file_contains "$n" "$ERR" "docker compose up -d --wait" && pass "$n"
 
+  n="sin respuesta y sin server-nakama/build/index.js → 1 con la indicación de construir"
+  new_repo "$CB"; curl_stub; docker_stub
+  mkdir -p "$CASE_DIR/server-nakama"; printf '{}\n' >"$CASE_DIR/server-nakama/package.json"
+  run_in_case CURL_MODE=refused DOCKER_MODE=up -- "$CB"
+  assert_exit "$n" 1 && assert_file_contains "$n" "$ERR" "server-nakama/build/index.js" \
+    && assert_file_contains "$n" "$ERR" "npm run build" && pass "$n"
+
+  n="sin respuesta con el módulo construido → 1 sin la indicación de construir"
+  new_repo "$CB"; curl_stub; docker_stub
+  mkdir -p "$CASE_DIR/server-nakama/build"; printf '{}\n' >"$CASE_DIR/server-nakama/package.json"
+  printf 'function InitModule() {}\n' >"$CASE_DIR/server-nakama/build/index.js"
+  run_in_case CURL_MODE=refused DOCKER_MODE=up -- "$CB"
+  if assert_exit "$n" 1; then
+    if grep -q "npm run build" "$ERR"; then fail "$n" "sugiere construir aunque el módulo existe"; else pass "$n"; fi
+  fi
+
   n="HTTP 500 → 2"
   new_repo "$CB"; curl_stub; docker_stub
   run_in_case CURL_MODE=http500 -- "$CB"
