@@ -74,12 +74,12 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Tests (Red) ⚠️
 
-- [ ] T004 [P] Escribir `_Project/Tests/EditMode/Territory/HexCellTests.cs`:
+- [X] T004 [P] Escribir `_Project/Tests/EditMode/Territory/HexCellTests.cs`:
   - centro de cada celda según `data-model.md` → `HexCell.Column` y `HexCell.Row` (filas impares desplazadas `W/2`, `z = −1,5·R·Row`) con `HexMetrics.OuterRadius` = 0,5;
   - conversión a axial;
   - las seis direcciones de vecinos;
   - dos vecinas están a distancia `W` (tolerancia ≤ 0,1 % de `W`) y dos no vecinas, a más de `W`.
-- [ ] T005 [P] Escribir `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs`, sobre `data-model.md` → `TerritoryLayout.Cells`:
+- [X] T005 [P] Escribir `_Project/Tests/EditMode/Territory/TerritoryLayoutTests.cs`, sobre `data-model.md` → `TerritoryLayout.Cells`:
   - las 16 celdas `{0..3}×{0..3}` dan `Ok` y conservan el orden;
   - `AdjacentPairs() == 33`;
   - ninguna pareja está a menos de `W` (sin solapamientos);
@@ -87,7 +87,7 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
   - lista nula o vacía → `Empty`;
   - celda repetida → `Duplicate(cell)` con la primera repetida;
   - `Bounds` contiene todos los vértices a altura 0 y `HexMetrics.Height`.
-- [ ] T006 [P] Escribir `_Project/Tests/EditMode/Territory/HexPrismMeshBuilderTests.cs`, según `data-model.md` → *HexPrismMesh*:
+- [X] T006 [P] Escribir `_Project/Tests/EditMode/Territory/HexPrismMeshBuilderTests.cs`, según `data-model.md` → *HexPrismMesh*:
   - 30 vértices y 16 triángulos;
   - submalla 0 = cara superior y submalla 1 = laterales;
   - normales planas por cara;
@@ -100,19 +100,19 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Implementation (Green)
 
-- [ ] T007 Implementar `_Project/Scripts/Territory/Point.cs` (`Point2` y `Point3`, structs inmutables), `HexCell.cs` y `HexMetrics.cs`:
+- [X] T007 Implementar `_Project/Scripts/Territory/Point.cs` (`Point2` y `Point3`, structs inmutables), `HexCell.cs` y `HexMetrics.cs`:
   - `HexMetrics.Default` con `data-model.md` → `HexMetrics.OuterRadius` = 0,5 y `HexMetrics.Height` = 0,35. Es la **única fuente** de `R` y `h`;
   - `Center`, `Corner` y `AreNeighbours`.
 
   T004 en verde.
-- [ ] T008 Implementar `_Project/Scripts/Territory/TerritoryLayout.cs`:
+- [X] T008 Implementar `_Project/Scripts/Territory/TerritoryLayout.cs`:
   - `Create` devuelve un resultado `Ok`, `Empty` o `Duplicate`, sin excepciones (principio V);
   - `AdjacentPairs` y `Bounds(metrics)`;
   - mensajes en español según `data-model.md` → *TerritoryLayout* (tabla de creación).
 
   T005 en verde.
-- [ ] T009 Implementar `_Project/Scripts/Territory/HexPrismMeshBuilder.cs` (research.md R-3). Devuelve arrays planos: posiciones, normales, coordenadas de textura y los índices de las dos submallas. T006 en verde.
-- [ ] T010 Crear la malla guardada:
+- [X] T009 Implementar `_Project/Scripts/Territory/HexPrismMeshBuilder.cs` (research.md R-3). Devuelve arrays planos: posiciones, normales, coordenadas de textura y los índices de las dos submallas. T006 en verde.
+- [X] T010 Crear la malla guardada:
   - escribir primero `_Project/Tests/EditMode/Territory/HexTileMeshAssetTests.cs`: carga `_Project/Art/Territory/Meshes/HexTile.asset` con `AssetDatabase` y la compara, vértice a vértice y por índices de submalla, con `HexPrismMeshBuilder(HexMetrics.Default)`. Falla (Red) porque el asset no existe;
   - implementar `_Project/Scripts/Territory.Editor/HexTileMeshMenu.cs`, con el menú *Ecosystem → Territorio → Regenerar malla de pieza*, que crea o sobrescribe el asset;
   - ejecutar el menú para generar `HexTile.asset` y su `.meta`. La prueba pasa a verde.
@@ -414,3 +414,7 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T001 | `tools/check-repo.sh` | Salida 0 (compose, secrets, ignored) |
 | 2026-11-25 | T002 | ADR-0011, índice y `pendientes.md` | D-08 en *Resueltas*. Sin otras referencias vivas que actualizar (las de la spec 001 son históricas) |
 | 2026-11-25 | T003 | Apertura en modo batch tras crear los tres asmdef y referenciarlos en las pruebas | Salida 0, 0 errores de compilación (solo el aviso esperado de «asmdef sin scripts»). Desviación: las carpetas `Art/Territory/*`, `Data/Territory` y `Tests/EditMode/Territory` se crean con su primer archivo y no vacías, porque Git no versiona carpetas vacías y un `.meta` de carpeta sin la carpeta haría que Unity lo borrara en cada clon |
+| 2026-11-25 | T004–T006 | A1 con las pruebas nuevas, sin implementación (Red) | Salida 1: el ensamblado de pruebas no compila porque faltan `HexMetrics`, `TerritoryLayout`, `HexPrismMeshData` y `Point3` |
+| 2026-11-25 | T007–T009 | A1 (Green) | Salida 0 · 151/151 (113 previas + 38 nuevas) |
+| 2026-11-25 | T010 | A1 con `HexTileMeshAssetTests` y sin el asset (Red) | Salida 2 · 151/152, falla `SavedMesh_MatchesTheGeneratorOutput` (falta la malla) |
+| 2026-11-25 | T010 | `-executeMethod Ecosystem.Territory.Editor.HexTileMeshMenu.Regenerate`, y A1 | Malla guardada (6,7 KB, texto YAML). Salida 0 · 152/152. Regenerar otra vez da un archivo idéntico |
