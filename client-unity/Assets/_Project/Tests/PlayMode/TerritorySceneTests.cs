@@ -120,7 +120,7 @@ namespace Ecosystem.Tests.PlayMode
         private static readonly System.Type[] AllowedComponents =
         {
             typeof(Transform), typeof(Camera), typeof(UniversalAdditionalCameraData), typeof(Light),
-            typeof(UniversalAdditionalLightData), typeof(TerritoryView),
+            typeof(UniversalAdditionalLightData), typeof(TerritoryView), typeof(TerritoryCamera),
             typeof(MeshFilter), typeof(MeshRenderer),
         };
 
@@ -139,6 +139,37 @@ namespace Ecosystem.Tests.PlayMode
 
             Assert.That(Object.FindObjectsByType<Volume>(FindObjectsSortMode.None), Is.Empty);
             Assert.That(Object.FindObjectsByType<ConnectionScreen>(FindObjectsSortMode.None), Is.Empty);
+        }
+
+        private static readonly float[] ReferenceAspects = { 16f / 9f, 19.5f / 9f, 4f / 3f, 9f / 16f, 9f / 19.5f, 3f / 4f };
+
+        /// <summary>Invariante 3 de contracts/territory-scene.md (FR-018, SC-004).</summary>
+        [Test]
+        public void Framing_KeepsTheWholeBoardInsideTheMarginForEveryReferenceAspect([ValueSource(nameof(ReferenceAspects))] float aspect)
+        {
+            var framing = _camera.GetComponent<TerritoryCamera>();
+            Assert.That(framing, Is.Not.Null, "La cámara necesita TerritoryCamera.");
+            var corners = _view.Layout.Bounds(HexMetrics.Default).Corners();
+            try
+            {
+                const int height = 1000;
+                var width = Mathf.RoundToInt(height * aspect);
+                _camera.aspect = (float)width / height;
+                framing.Apply(width, height, new Rect(0, 0, width, height));
+
+                foreach (var corner in corners)
+                {
+                    var world = _view.transform.TransformPoint(new Vector3(corner.X, corner.Y, corner.Z));
+                    var viewport = _camera.WorldToViewportPoint(world);
+                    Assert.That(viewport.x, Is.InRange(0.06f - 1e-3f, 0.94f + 1e-3f), $"aspecto {aspect:0.###}");
+                    Assert.That(viewport.y, Is.InRange(0.06f - 1e-3f, 0.94f + 1e-3f), $"aspecto {aspect:0.###}");
+                    Assert.That(viewport.z, Is.GreaterThan(_camera.nearClipPlane), "Delante de la cámara.");
+                }
+            }
+            finally
+            {
+                _camera.ResetAspect();
+            }
         }
 
         [UnityTest]

@@ -213,24 +213,24 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T023 [P] [US3] Escribir `_Project/Tests/EditMode/Territory/TerritoryFramingTests.cs` con las entradas de `data-model.md` → `TerritoryFraming.boardCorners`, `.tiltDegrees`, `.screen`, `.safeArea` y `.marginFraction`:
+- [X] T023 [P] [US3] Escribir `_Project/Tests/EditMode/Territory/TerritoryFramingTests.cs` con las entradas de `data-model.md` → `TerritoryFraming.boardCorners`, `.tiltDegrees`, `.screen`, `.safeArea` y `.marginFraction`:
   - para 16:9, 19.5:9, 4:3, 9:16, 9:19.5 y 3:4 a pantalla completa, todas las esquinas proyectadas caen dentro del área segura menos el margen de 0,06, y el tablero ocupa ≥ 70 % de la dimensión que limita;
   - con un área segura ficticia (muesca arriba en vertical, laterales en horizontal), el tablero queda centrado en ella y fuera de la zona no segura;
   - un área segura igual a la pantalla da `CameraOffset` 0.
-- [ ] T024 [P] [US3] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` con la invariante 3 de [contracts/territory-scene.md](contracts/territory-scene.md): para cada `camera.aspect` de referencia, tras aplicar el encuadre, `WorldToViewportPoint` de las esquinas de `Bounds` ∈ [0,06; 0,94].
+- [X] T024 [P] [US3] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs` con la invariante 3 de [contracts/territory-scene.md](contracts/territory-scene.md): para cada `camera.aspect` de referencia, tras aplicar el encuadre, `WorldToViewportPoint` de las esquinas de `Bounds` ∈ [0,06; 0,94].
 
   Ejecutar A1 y A2: fallan (Red).
 
 ### Implementation for User Story 3
 
-- [ ] T025 [US3] Implementar `_Project/Scripts/Territory/TerritoryFraming.cs` (research.md R-6), con salida `data-model.md` → `TerritoryFraming.OrthographicSize` y `.CameraOffset`. T023 en verde.
-- [ ] T026 [US3] Implementar `_Project/Scripts/Territory.View/TerritoryCamera.cs` según `data-model.md` → *Componentes de escena* → `TerritoryCamera`:
+- [X] T025 [US3] Implementar `_Project/Scripts/Territory/TerritoryFraming.cs` (research.md R-6), con salida `data-model.md` → `TerritoryFraming.OrthographicSize` y `.CameraOffset`. T023 en verde.
+- [X] T026 [US3] Implementar `_Project/Scripts/Territory.View/TerritoryCamera.cs` según `data-model.md` → *Componentes de escena* → `TerritoryCamera`:
   - `[ExecuteAlways]`;
   - en `LateUpdate` recalcula solo si cambian `Screen.width`, `Screen.height` o `Screen.safeArea`;
   - expone un método interno `Apply(width, height, safeArea)` para la prueba PlayMode.
 
   Añadirlo a `Main Camera` en `Territory.unity` y quitar el `orthographicSize` provisional de T016. T024 en verde, y las invariantes de T011 siguen en verde.
-- [ ] T027 [US3] Validar a mano quickstart C7, en las seis proporciones y en *Simulator* con un iPhone con muesca en vertical y horizontal, y C10, cambiando de proporción durante *Play*. Registrarlo.
+- [ ] T027 [US3] *(Pendiente del responsable: necesita la vista Simulator del editor; las partes automatizables están verificadas, ver el registro)* Validar a mano quickstart C7, en las seis proporciones y en *Simulator* con un iPhone con muesca en vertical y horizontal, y C10, cambiando de proporción durante *Play*. Registrarlo.
 
 **Checkpoint**: commit `feat(client): frame the territory for any aspect and safe area …` (T023–T027).
 
@@ -425,3 +425,6 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T017 | A3, automatizado en `TerritorySceneAssetTests.TerritoryScene_OpenedInTheEditor_ShowsSixteenPiecesAndStaysClean` | Abierta sin *Play*: 16 piezas `DontSave` y `scene.isDirty == false` |
 | 2026-11-25 | T017 | A4: 10 ejecuciones seguidas de `TerritorySceneTests` en modo batch (incluye `LogAssert.NoUnexpectedReceived`) | 10/10 sin errores ni avisos. `-repeat 10` del Test Framework no repite la prueba, así que se lanzan 10 procesos |
 | 2026-11-25 | T017 | Captura en *Play* (prueba temporal, no versionada), 16:9 y 9:19.5 | 16 prismas con césped verde arriba y tierra en los laterales frontales, sin huecos ni parpadeo visibles. Sin borde en la textura, las caras superiores se leen como una sola superficie (riesgo previsto, se resuelve en US2). En 9:19.5 el tablero se recorta con el tamaño fijo provisional (se resuelve en US3). Nota: con `camera.Render()` desde el editor, la cara superior sale con el material de tierra; en *Play* es correcta, así que las capturas se hacen siempre en *Play* |
+| 2026-11-25 | T023–T024 | A1 con `TerritoryFramingTests` y A2 con el encuadre por aspecto (Red) | Salida 1: faltan `TerritoryFramingResult`, `TerritoryFraming` y `TerritoryCamera` |
+| 2026-11-25 | T025–T026 | A1 y A2 (Green), con `TerritoryCamera` añadido a `Main Camera` mediante un script de editor temporal (no versionado) | EditMode: salida 0 · 164/164 (6 proporciones a pantalla completa, muesca en vertical, muescas laterales en horizontal, proyección). PlayMode: 15/15 de las pruebas del proyecto (incluidas las 6 proporciones con `WorldToViewportPoint ∈ [0,06; 0,94]`) |
+| 2026-11-25 | T027 | Captura en *Play* a 9:19.5 tras el encuadre | Tablero entero, centrado, con el margen del 6 % a los lados (88 % del ancho). Quedan pendientes para el responsable la vista *Simulator* con muesca (C7) y el cambio de proporción durante *Play* (C10) |
