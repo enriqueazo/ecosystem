@@ -14,13 +14,6 @@ se sustituye por un enlace en la sección *Resueltas*.
 - **Información necesaria**: nombre comercial y organización que publicará la aplicación.
 - **Límite**: antes de configurar la firma o publicar en tiendas.
 
-### D-08 · Uso de Git LFS para binarios
-
-- **Opciones**: usar Git LFS para arte y audio, o no usarlo.
-- **Bloquea**: nada en la fase actual (no hay recursos binarios).
-- **Información necesaria**: volumen previsto de recursos binarios y límites del alojamiento Git.
-- **Límite**: antes de añadir el primer recurso de arte o audio.
-
 ### D-09 · Comprobación automática de formato y análisis de C#
 
 - **Estado**: aplazada.
@@ -45,3 +38,4 @@ se sustituye por un enlace en la sección *Resueltas*.
 | D-04 | Proveedor de CI: GitHub Actions (repositorio, servidor y backend; sin Unity) | [ADR-0007](0007-ci-github-actions.md) |
 | D-05 | Formato de contratos: JSON versionado con JSON Schema 2020-12 | [ADR-0008](0008-contratos-json-versionados.md) |
 | D-07 | Pipeline de render del cliente: URP | [ADR-0003](0003-pipeline-render-urp.md) |
+| D-08 | Binarios de arte sin Git LFS, con umbral de revisión (5 MB por archivo, primer audio o vídeo, 50 MB en total) | [ADR-0011](0011-sin-git-lfs.md) |

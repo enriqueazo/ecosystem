@@ -44,12 +44,12 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-- [ ] T001 Comprobar precondiciones y anotarlas en `specs/004-territorio-hexagonal/tasks.md` → *Registro de verificación*:
+- [X] T001 Comprobar precondiciones y anotarlas en `specs/004-territorio-hexagonal/tasks.md` → *Registro de verificación*:
   - rama `feat/004-territorio-hexagonal` sin cambios pendientes;
   - Unity 6000.3.29f1 instalado;
   - pruebas EditMode y PlayMode actuales en verde (línea base, comandos A1 y A2);
   - `tools/check-repo.sh` → 0.
-- [ ] T002 Resolver D-08 antes de cualquier binario (FR-015, research.md R-1):
+- [X] T002 Resolver D-08 antes de cualquier binario (FR-015, research.md R-1):
   - crear `docs/decisions/0011-sin-git-lfs.md` con la plantilla `0000-plantilla.md`: contexto, opciones (LFS ahora, sin LFS), decisión y consecuencias, incluido el **umbral de revisión** (5 MB por archivo, primer audio o vídeo, 50 MB en total);
   - añadirlo al índice `docs/decisions/README.md`;
   - en `docs/decisions/pendientes.md`, sustituir la entrada D-08 por una fila en *Resueltas*.
@@ -407,4 +407,9 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 
 | Fecha | Tarea | Comando o comprobación | Resultado |
 |-------|-------|------------------------|-----------|
-| | | | |
+| 2026-11-25 | T001 | `git status`, rama | `feat/004-territorio-hexagonal`, sin cambios pendientes |
+| 2026-11-25 | T001 | Unity instalado | 6000.3.29f1 en `/Applications/Unity/Hub/Editor/` |
+| 2026-11-25 | T001 | A1 (EditMode, línea base) | Salida 0 · 113/113 |
+| 2026-11-25 | T001 | A2 (PlayMode, línea base) | Salida 0 · 2/2 |
+| 2026-11-25 | T001 | `tools/check-repo.sh` | Salida 0 (compose, secrets, ignored) |
+| 2026-11-25 | T002 | ADR-0011, índice y `pendientes.md` | D-08 en *Resueltas*. Sin otras referencias vivas que actualizar (las de la spec 001 son históricas) |
