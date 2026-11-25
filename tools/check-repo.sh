@@ -6,7 +6,8 @@
 #
 # Comprobaciones:
 #   compose  La configuración de deploy/local/compose.yaml es válida con .env.example.
-#   secrets  No hay archivos .env (salvo .env.example) ni datos de PostgreSQL en el índice de Git.
+#   secrets  No hay archivos .env (salvo .env.example), datos de PostgreSQL ni la configuración
+#            local del cliente (connection.local.json) en el índice de Git.
 #   ignored  Ningún archivo imprescindible para reconstruir el proyecto está ignorado.
 #
 # Códigos de salida: 0 todas pasan; 1 alguna falla; 64 uso incorrecto.
@@ -51,7 +52,7 @@ check_compose() {
 check_secrets() {
   local offenders
   offenders="$(git -C "$REPO_ROOT" ls-files --cached |
-    grep -E '(^|/)\.env(\.[^/]*)?$|(^|/)PG_VERSION$|(^|/)postgres-data/' |
+    grep -E '(^|/)\.env(\.[^/]*)?$|(^|/)PG_VERSION$|(^|/)postgres-data/|^client-unity/LocalConfig/connection\.local\.json$' |
     grep -vE '(^|/)\.env\.example$' || true)"
   if [[ -n "$offenders" ]]; then
     local file
