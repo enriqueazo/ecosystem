@@ -28,6 +28,10 @@ Módulos necesarios, verificados en la instalación inicial:
 - *Android Build Support*, con OpenJDK, Android SDK y NDK incluidos.
 - *iOS Build Support*, más Xcode en macOS para abrir el proyecto exportado.
 
+Licencia: **Unity Personal**, de forma provisional. Cambiar de plan (p. ej. a Pro) no cambia
+esta decisión de versión, pero sí afecta a la ejecución de Unity en CI (D-04) y a los requisitos
+de uso de Unity Personal. Debe revisarse antes de configurar la CI o de publicar.
+
 ## Consecuencias
 
 - El proyecto se abre solo con la revisión indicada en `ProjectVersion.txt`. Abrirlo con otra
