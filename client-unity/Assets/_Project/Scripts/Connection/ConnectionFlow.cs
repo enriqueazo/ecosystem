@@ -14,6 +14,9 @@ namespace Ecosystem.Connection
         public IClock Clock { get; set; }
         public IDelay Delay { get; set; }
         public Random Random { get; set; }
+
+        /// <summary>Versión de protocolo del cliente; por defecto, la de shared/contracts/protocol.json.</summary>
+        public int ClientProtocolVersion { get; set; } = Ecosystem.Contracts.ProtocolContracts.ProtocolVersion;
     }
 
     /// <summary>
@@ -54,6 +57,34 @@ namespace Ecosystem.Connection
             if (!session.IsSuccess)
             {
                 FailWith(session.Failure);
+                return;
+            }
+
+            var protocol = await _deps.Server.GetProtocolVersionAsync(session.Value, cancellationToken);
+            if (!protocol.IsSuccess && protocol.Failure == FailureKind.SessionRejected)
+            {
+                // FR-007: el servidor rechazó la sesión durante el uso → una sola reautenticación.
+                _deps.Sessions.Clear();
+                session = await AuthenticateAsync(cancellationToken);
+                if (!session.IsSuccess)
+                {
+                    FailWith(session.Failure);
+                    return;
+                }
+                protocol = await _deps.Server.GetProtocolVersionAsync(session.Value, cancellationToken);
+            }
+            if (!protocol.IsSuccess)
+            {
+                FailWith(protocol.Failure);
+                return;
+            }
+
+            var compatibility = ProtocolCompatibility.Evaluate(protocol.Value, _deps.ClientProtocolVersion);
+            if (compatibility != ConnectionState.Connected)
+            {
+                Fail(compatibility, compatibility == ConnectionState.UpdateRequired
+                    ? "El servidor usa una versión de protocolo mayor que la del cliente."
+                    : "El servidor no admite la versión de protocolo del cliente o su respuesta no cumple el contrato.");
                 return;
             }
 
