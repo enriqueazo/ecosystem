@@ -7,7 +7,14 @@
     "root": ".."
   },
   "files": {
-    "includes": ["**", "!build", "!src/generated", "!node_modules", "!package-lock.json"]
+    "includes": [
+      "**",
+      "!build",
+      "!src/generated",
+      "!node_modules",
+      "!package-lock.json",
+      "!**/*.md"
+    ]
   },
   "formatter": {
     "enabled": true,
