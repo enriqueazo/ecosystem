@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Ecosystem.Presentation;
 using Ecosystem.Territory;
 using Ecosystem.Territory.View;
@@ -170,6 +171,52 @@ namespace Ecosystem.Tests.PlayMode
             {
                 _camera.ResetAspect();
             }
+        }
+
+        private static TerritoryLayoutAsset AssetWith(params HexCell[] cells)
+        {
+            var asset = ScriptableObject.CreateInstance<TerritoryLayoutAsset>();
+            asset.SetCells(cells);
+            return asset;
+        }
+
+        /// <summary>US5: la escena coloca exactamente las piezas de la disposición que recibe.</summary>
+        [Test]
+        public void View_WithFifteenCells_ShowsFifteenPieces()
+        {
+            var cells = Enumerable.Range(0, 15).Select(i => new HexCell(i % 4, i / 4)).ToArray();
+            _view.SetLayout(AssetWith(cells));
+
+            Assert.That(_view.Tiles, Has.Count.EqualTo(15));
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        /// <summary>FR-003: una disposición no válida se rechaza con un error definido y sin piezas.</summary>
+        [Test]
+        public void View_WithAnEmptyLayout_LogsAnErrorAndShowsNoPieces()
+        {
+            LogAssert.Expect(LogType.Error, "[Territorio] La disposición del territorio está vacía.");
+            _view.SetLayout(AssetWith());
+
+            Assert.That(_view.Tiles, Is.Empty);
+        }
+
+        [Test]
+        public void View_WithARepeatedCell_LogsAnErrorAndShowsNoPieces()
+        {
+            LogAssert.Expect(LogType.Error, "[Territorio] La disposición repite la celda (columna 2, fila 1).");
+            _view.SetLayout(AssetWith(new HexCell(2, 1), new HexCell(0, 0), new HexCell(2, 1)));
+
+            Assert.That(_view.Tiles, Is.Empty);
+        }
+
+        [Test]
+        public void View_WithoutALayout_LogsAnErrorAndShowsNoPieces()
+        {
+            LogAssert.Expect(LogType.Error, new Regex(@"^\[Territorio\] "));
+            _view.SetLayout(null);
+
+            Assert.That(_view.Tiles, Is.Empty);
         }
 
         [UnityTest]

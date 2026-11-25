@@ -278,13 +278,13 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T034 [P] [US5] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutAssetTests.cs` (el caso de `InitialTerritory` ya existe desde T012):
+- [X] T034 [P] [US5] Ampliar `_Project/Tests/EditMode/Territory/TerritoryLayoutAssetTests.cs` (el caso de `InitialTerritory` ya existe desde T012):
   - un `TerritoryLayoutAsset` creado con `ScriptableObject.CreateInstance` con 15 celdas da `Ok` con 15;
   - vacío → `Empty`;
   - con una repetida → `Duplicate`.
 
   Todo según `data-model.md` → `TerritoryLayoutAsset.cells` y `TerritoryLayout.Cells`.
-- [ ] T035 [P] [US5] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs`: un `TerritoryView` con un asset de 15 celdas instancia 15 piezas, y con uno vacío, con uno con repetidas o con `layout` nulo:
+- [X] T035 [P] [US5] Ampliar `_Project/Tests/PlayMode/TerritorySceneTests.cs`: un `TerritoryView` con un asset de 15 celdas instancia 15 piezas, y con uno vacío, con uno con repetidas o con `layout` nulo:
   - `LogAssert.Expect(LogType.Error, ^"\[Territorio\] ")` con la causa;
   - 0 piezas.
 
@@ -292,13 +292,13 @@ verificación*. El arte y el aspecto se validan a mano con quickstart C (FR-024)
 
 ### Implementation for User Story 5
 
-- [ ] T036 [US5] En `_Project/Scripts/Territory.View/TerritoryView.cs`, tratar los resultados `Empty` y `Duplicate` y el `layout` nulo:
+- [X] T036 [US5] En `_Project/Scripts/Territory.View/TerritoryView.cs`, tratar los resultados `Empty` y `Duplicate` y el `layout` nulo:
   - `Debug.LogError("[Territorio] " + mensaje)`, con los mensajes de `data-model.md` → *TerritoryLayout*;
   - no instancia nada;
   - sin excepciones.
 
   T034 y T035 en verde.
-- [ ] T037 [US5] Validar a mano quickstart A5 (15 piezas, luego el error con repetidas) y deshacer los cambios del asset. Registrarlo.
+- [ ] T037 [US5] *(Comportamiento cubierto por `TerritorySceneTests.View_*`; queda para el responsable la edición en el inspector, que reconstruye vía `OnValidate`)* Validar a mano quickstart A5 (15 piezas, luego el error con repetidas) y deshacer los cambios del asset. Registrarlo.
 
 **Checkpoint**: commit `feat(client): reject invalid territory layouts …` (T034–T037).
 
@@ -432,3 +432,6 @@ Task: "T030 [P] [US4] BootstrapSceneIntegrationTests.Connected_LoadsTerritoryOnc
 | 2026-11-25 | T028–T030 | A1 e integración (B1) con las pruebas nuevas (Red) | EditMode: 163/164, falla `BuildScenes_AreBootstrapThenTerritory`. Integración: 13/14, falla `Connected_LoadsTerritoryOnce` (no se muestra el territorio). `WithoutConfiguration_DoesNotLoadTerritory` pasa ya (prueba de no regresión) |
 | 2026-11-25 | T031–T032 | A1, A2 y B1 (Green), con el backend local en marcha (`tools/check-backend.sh --module` → 0) | EditMode: 164/164. PlayMode: 16/16 de las pruebas del proyecto. Integración: 14/14, con el territorio visible **0,08 s** después de conectar, cargado una vez y sin errores ni avisos |
 | 2026-11-25 | T033 | B2 | Cubierto por `Connected_LoadsTerritoryOnce` sobre la escena real. B3 (parar Nakama, «Reintentar») queda para el responsable |
+| 2026-11-25 | T034–T035 | A1 y A2 con los casos de US5 (Red) | EditMode: 167/167 (los casos del asset ya pasan porque la validación vive en el núcleo desde la fase 2; se anotan como no regresión). PlayMode: fallan los tres casos de error (vacía, repetida, sin disposición), porque la vista no registra nada |
+| 2026-11-25 | T036 | A1 y A2 (Green) | EditMode: 167/167. PlayMode: 20/20 de las pruebas del proyecto: 15 celdas → 15 piezas; vacía, repetida o nula → `[Territorio] …` como error y 0 piezas |
+| 2026-11-25 | T037 | A5 | Comportamiento verificado por las pruebas anteriores con `SetLayout`. La edición en el inspector queda para el responsable |

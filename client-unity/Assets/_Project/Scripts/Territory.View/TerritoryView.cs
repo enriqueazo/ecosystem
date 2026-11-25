@@ -51,10 +51,25 @@ namespace Ecosystem.Territory.View
         internal void Rebuild()
         {
             Clear();
-            if (layout == null || tilePrefab == null) return;
+            if (tilePrefab == null)
+            {
+                Debug.LogError("[Territorio] Falta el prefab de pieza en TerritoryView.", this);
+                return;
+            }
 
+            if (layout == null)
+            {
+                Debug.LogError("[Territorio] Falta la disposición del territorio en TerritoryView.", this);
+                return;
+            }
+
+            // Disposición no válida: error de configuración del proyecto, no un estado del jugador (FR-003).
             var result = layout.ToLayout();
-            if (result.Status != TerritoryLayoutStatus.Ok) return;
+            if (result.Status != TerritoryLayoutStatus.Ok)
+            {
+                Debug.LogError("[Territorio] " + result.Message, layout);
+                return;
+            }
 
             _built = result.Layout;
             var metrics = HexMetrics.Default;
