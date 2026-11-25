@@ -40,6 +40,9 @@ docker compose up -d --wait
 ../../tools/check-backend.sh
 ```
 
+¿Algo falla (falta `.env`, Docker detenido, puerto ocupado…)? Consulta la
+[resolución de problemas](deploy/local/README.md#resolución-de-problemas).
+
 **Cliente Unity**: todavía no está disponible. Se creará cuando se resuelva
 [D-02](docs/decisions/pendientes.md#d-02--versión-exacta-de-unity-y-módulos); entonces sus
 instrucciones estarán en `client-unity/README.md`.

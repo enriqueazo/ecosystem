@@ -395,23 +395,23 @@ propio commit antes de T029.
 
 **Purpose**: Verificaciones transversales de la spec (SC-004, SC-008, SC-009) y cierre.
 
-- [ ] T036 Ejecutar quickstart.md A4:
+- [X] T036 Ejecutar quickstart.md A4:
   - cada área de `data-model.md` → `Área del repositorio.Ruta` tiene contenido o el README de
     `Área del repositorio.README`;
   - `git ls-files | grep -c .gitkeep` = 0;
   - eliminar las carpetas locales vacías que no se usen (p. ej. `docs/` tiene contenido; no
     crear nada más).
-- [ ] T037 [P] Revisar fuente única (FR-035, SC-009):
+- [X] T037 [P] Revisar fuente única (FR-035, SC-009):
   - `git grep -n "D-0[0-9]"` fuera de `specs/` y `docs/decisions/pendientes.md` solo debe
     devolver enlaces o menciones, no definiciones;
   - los comandos `docker compose` solo aparecen con detalle en `deploy/local/README.md`.
-- [ ] T038 [P] Auditar secretos en la rama (SC-004):
+- [X] T038 [P] Auditar secretos en la rama (SC-004):
   - `tools/check-repo.sh`;
   - `git log -p main..HEAD` filtrado con los valores reales de tu `deploy/local/.env` local:
     sin coincidencias;
   - confirmar que `.env.example` y los README solo contienen valores ficticios (FR-036).
   - Verifica `data-model.md` → `Configuración local.no versionado`.
-- [ ] T039 Ejecutar la validación completa de quickstart.md:
+- [X] T039 Ejecutar la validación completa de quickstart.md:
   - escenarios A, B y D; C solo si la US2 está desbloqueada;
   - B11: cronometrar desde un clon limpio en un directorio temporal;
   - anotar en `tasks.md` → *Registro de verificación* el resultado de cada escenario, marcando como
@@ -535,3 +535,12 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | A1 / T023 Green | 2026-11-25 | ✅ | `tools/tests/run.sh`: 21 correctas, 0 fallidas, 0 omitidas |
 | A2 | 2026-11-25 | ✅ | `tools/check-repo.sh` → 0 (compose, secrets, ignored) |
 | A3 | 2026-11-25 | ✅ | `git add -f deploy/local/.env` → `--only secrets` devuelve 1 nombrando el archivo; retirado con `git restore --staged` |
+| A4 / SC-008 | 2026-11-25 | ✅ | Todas las áreas versionadas tienen contenido o README; 0 `.gitkeep`; eliminada la carpeta local vacía `client-unity/` (no versionada; la creará Unity Hub) |
+| T037 / SC-009 | 2026-11-25 | ✅ | Definiciones D-NN solo en `docs/decisions/pendientes.md` (el resto son enlaces o menciones); procedimiento del backend solo en `deploy/local/README.md` (el README raíz tiene 3 líneas de inicio rápido y enlaza) |
+| T038 / SC-004 | 2026-11-25 | ✅ | `check-repo.sh --only secrets` → 0; ningún valor real de `deploy/local/.env` en `git log -p main..HEAD` ni en el árbol; `.env.example` solo contiene `cambia-esto-…`, `cambiaestolocal` y puertos |
+| B11 / SC-001 | 2026-11-25 | ⚠️ parcial | Clon limpio → `.env` → `up -d --wait` → `check-backend.sh` 0 en 10 s (imágenes ya descargadas). Primer intento: `up` falló en 6 s sin salida capturada; no se reprodujo en 4 intentos posteriores (incluidos 3 de `down -v` + `up` inmediato); causa sin identificar. **No verificado**: que una persona ajena al trabajo lo consiga leyendo solo el README (SC-001 requiere esa persona) |
+| D1 | 2026-11-25 | ✅ | README raíz con todos los apartados de FR-034 (resolución de problemas por enlace a `deploy/local/README.md`); CI «no configurada (D-04)» |
+| D2 | 2026-11-25 | ✅ | Ver T037 |
+| D3 | 2026-11-25 | ✅ | `shared/README.md` cubre (a)–(f); (b) pendiente de D-05; sin mensajes, RPC ni opcodes |
+| C1–C6 / US2 | 2026-11-25 | no verificado | Bloqueada por D-02: versión de Unity sin confirmar y Unity Hub/editor no instalados en la máquina. T025–T035 sin ejecutar |
+| T040 | 2026-11-25 | no ejecutada | `/speckit-implement` trata los archivos de `checklists/` como solo lectura; el estado final de los bloqueos queda en este registro (D-02 pendiente → US2 sin verificar; D-04 pendiente → CI no configurada) |
