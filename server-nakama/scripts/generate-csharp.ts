@@ -110,10 +110,10 @@ function checkPattern(contractId: string, path: string, pattern: string): void {
   }
   for (let i = 0; i < pattern.length; i++) {
     if (pattern[i] !== "\\") continue;
-    const escape = pattern.slice(i, i + 2);
-    if (!PATTERN_ESCAPES.has(escape)) {
+    const escapeSequence = pattern.slice(i, i + 2);
+    if (!PATTERN_ESCAPES.has(escapeSequence)) {
       throw new UnsupportedSchemaError(
-        `${contractId}: "pattern" con el escape ${escape} no admitido en ${path}`,
+        `${contractId}: "pattern" con el escape ${escapeSequence} no admitido en ${path}`,
       );
     }
     i++;
