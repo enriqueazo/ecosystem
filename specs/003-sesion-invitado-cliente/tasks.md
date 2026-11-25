@@ -271,15 +271,15 @@ carga, con PlayMode.
 
 **Independent Test**: quickstart.md, escenarios A3, A6, C1, C2 y C4.
 
-- [ ] T034 [P] [US5] Añadir a `tools/tests/run.sh` (Red) el caso «`client-unity/LocalConfig/connection.local.json` en el índice → `--only secrets` falla nombrándolo». Ampliar `tools/check-repo.sh` (Green) y actualizar su contrato de referencia en `specs/001-base-proyecto-entorno/contracts/tooling-cli.md`.
-- [ ] T035 [US5] Ejecutar los tres grupos en modo batch con los comandos de contracts/unity-tests-cli.md:
+- [X] T034 [P] [US5] Añadir a `tools/tests/run.sh` (Red) el caso «`client-unity/LocalConfig/connection.local.json` en el índice → `--only secrets` falla nombrándolo». Ampliar `tools/check-repo.sh` (Green) y actualizar su contrato de referencia en `specs/001-base-proyecto-entorno/contracts/tooling-cli.md`.
+- [X] T035 [US5] Ejecutar los tres grupos en modo batch con los comandos de contracts/unity-tests-cli.md:
   - A3: EditMode con el entorno **apagado**, 100 %;
   - PlayMode con el entorno apagado;
   - C1: integración con el entorno arrancado, 100 %;
   - C2: integración con el entorno apagado, falla en ≤ 15 s con el mensaje.
 
   Anotar los resultados (SC-006, FR-025).
-- [ ] T036 [US5] Actualizar `client-unity/README.md` (FR-026):
+- [X] T036 [US5] Actualizar `client-unity/README.md` (FR-026):
   - configuración local (copiar el ejemplo y tomar `NAKAMA_SERVER_KEY` del `.env`);
   - la escena de conexión y sus estados;
   - los tres grupos de pruebas con sus comandos;
@@ -425,3 +425,6 @@ Task: "T030 [P] [US4] ResilienceTests.cs"
 | T031 Green | 2026-11-25 | ✅ | `RetryPolicy` (3 reintentos con 1, 2 y 4 s ±20 %; solo se reintentan los transitorios; peor caso teórico 48,4 s) y `ConnectionFlow` reestructurado: intentos por generación (un resultado superado no cambia el estado ni guarda la sesión), reintentos con espera cancelable, cancelación sin pasar por estados de error, y la sesión se guarda al aplicar el resultado vigente. EditMode 113/113 |
 | T032 | 2026-11-25 | ✅ | El tiempo límite de 10 s y la cancelación por petición estaban en el adaptador desde T015. Los errores del SDK se traducen a transitorio o definitivo. La escena muestra `Offline` con «Reintentar» (`ConnectionTexts.CanRetry`) y no permite ejecuciones simultáneas |
 | T033 / B6–B8 / SC-003 | 2026-11-25 | ✅ (B7 en parte) | Automatizado con red real, sin Nakama: puerto cerrado → `Offline` en **6,2 s**; servidor TCP que acepta y nunca responde → los 4 intentos agotan el tiempo límite y `Offline` en **41,5 s** (≤ 60 s); salir de `Bootstrap` a mitad de conexión → sin errores ni excepciones (B8, `LogAssert`). Integración 13/13 y PlayMode 2/2. B7 («Reintentar» tras volver el servidor) está cubierto por la prueba unitaria; la pulsación real en el editor queda para el responsable |
+| T034 / A6 | 2026-11-25 | ✅ | Red: 1 caso nuevo fallaba; Green: `tools/tests/run.sh` 35/35 (también se permite `connection.example.json`). En el repositorio real, `git add -f connection.local.json` → `check-repo --only secrets` → 1 nombrando el archivo; retirado del índice. Contrato de la spec 001 actualizado |
+| T035 / A3 / C1 / C2 / SC-006 | 2026-11-25 | ✅ | **Entorno apagado**: EditMode 113/113 y PlayMode 2/2; integración → las 10 pruebas que necesitan Nakama fallan al instante (≤ 0,04 s cada una) con «Entorno local no disponible…», y las 3 de resiliencia (sin Nakama) pasan. **Entorno arrancado**: integración 13/13. **Ajuste de la propia prueba**: la cota inferior del caso «servidor mudo» (≥ 39 s) falló por 0,2 s (38,8 s), porque el tiempo límite de `UnityWebRequest` corta algo antes de 10 s. No es un requisito y se relaja al 90 % (≥ 36 s): sigue distinguiendo «tiempo agotado» de «rechazo» (≈ 6–7 s). Mediciones: 37,7 s y 7,4 s |
+| T036 | 2026-11-25 | ✅ | `client-unity/README.md`: estructura y dirección de dependencias, C# generado (no se edita), tres grupos de pruebas con comandos en modo batch, cómo llevarlos a la CI, recuperación ante la caché de Burst, conexión (identidad, sesión, versión, reintentos), configuración local, limitaciones (reinstalación = cuenta nueva) y paquetes nuevos. Sustituye «sin SDK» |

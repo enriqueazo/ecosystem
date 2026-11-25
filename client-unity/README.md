@@ -3,8 +3,7 @@
 Proyecto Unity del juego para **Android e iOS**, con Universal Render Pipeline (URP). Este
 documento es el procedimiento único del cliente; el README raíz enlaza aquí.
 
-> Estado: base del proyecto. Una escena inicial vacía (solo cámara) y pruebas de configuración.
-> Todavía no hay código de juego ni conexión con el servidor.
+> Estado: conexión como invitado con Nakama (spec 003). Todavía no hay código de juego.
 
 ## Versión y requisitos
 
@@ -32,49 +31,67 @@ Abrir y cerrar el proyecto sin cambiar nada no debe modificar ningún archivo ve
 
 ```text
 Assets/_Project/
-├── Scenes/Bootstrap.unity     Escena inicial: solo una cámara. Única escena de la build.
-├── Settings/                  Assets de URP: pipeline y renderer móviles, ajustes globales y
-│                              perfil de volumen por defecto.
+├── Scenes/Bootstrap.unity     Escena inicial y pantalla de conexión. Única escena de la build.
+├── Settings/                  Assets de URP (pipeline y renderer móviles, ajustes globales, volumen).
+├── Scripts/
+│   ├── Contracts/             Ecosystem.Contracts: validadores C# GENERADOS desde shared/contracts/
+│   ├── Connection/            Ecosystem.Connection: núcleo de conexión, sin Unity ni Nakama
+│   ├── Connection.Nakama/     Ecosystem.Connection.Nakama: adaptadores (SDK de Nakama, PlayerPrefs, config)
+│   └── Presentation/          Ecosystem.Presentation: ConnectionScreen (IMGUI provisional)
 └── Tests/
-    ├── EditMode/              Pruebas de configuración del proyecto (ensamblado solo de editor).
-    └── PlayMode/              Prueba de carga de la escena inicial.
+    ├── EditMode/              Configuración del proyecto, núcleo de conexión y ejemplos de contratos
+    ├── PlayMode/              Carga de Bootstrap y su pantalla de conexión
+    └── Integration/           Contra el Nakama local (PlayMode)
 ```
 
-Las carpetas de código de juego (p. ej. `Scripts/` con su definición de ensamblado) se crean con
-la primera funcionalidad que aporte código. No se crean carpetas vacías.
+Dependencias en una sola dirección:
+`Presentation → Connection.Nakama → Connection → Contracts`. El núcleo (`Connection`) no conoce
+Unity ni Nakama: todo pasa por puertos (`IGameServer`, `ISessionStore`, `IInstallationIdStore`,
+`IDelay`, `IClock`, `IAuthenticator`), así que se prueba con dobles.
+
+`Scripts/Contracts/Generated/Contracts.g.cs` y `Tests/EditMode/Generated/ContractFixtures.g.cs`
+los genera `npm run generate` en `server-nakama/`. **No se editan a mano**, y la CI falla si están
+desactualizados ([shared/README.md](../shared/README.md#g-validación-y-comprobación)).
 
 ## Pruebas
 
-Se usa Unity Test Framework (NUnit):
+Unity Test Framework (NUnit), en tres grupos que se ejecutan por separado:
 
-| Suite | Qué comprueba |
-|-------|---------------|
-| EditMode (`ProjectConfigurationTests`) | `Bootstrap` es la única escena de la build y está en el índice 0; IL2CPP en Android e iOS; Android solo ARM64; serialización *Force Text*; `.meta` visibles; URP en el pipeline por defecto y en todos los niveles de calidad; identificador provisional |
-| PlayMode (`BootstrapSceneTests`) | `Bootstrap` carga, tiene una cámara y no registra errores |
+| Grupo | Ensamblado | Necesita | Qué comprueba |
+|-------|-----------|----------|---------------|
+| EditMode | `Ecosystem.Tests.EditMode` | Nada | Configuración del proyecto; núcleo de conexión (sesión, reintentos, compatibilidad, cancelación, resultados tardíos) con dobles; los ejemplos de los contratos dan el mismo resultado con los validadores C# que con Ajv |
+| PlayMode | `Ecosystem.Tests.PlayMode` | Nada | `Bootstrap` carga sin errores y su pantalla muestra «Configuración ausente». La prueba fija `ECOSYSTEM_NAKAMA_CONFIG=none`, así que no depende de tu configuración local |
+| Integración | `Ecosystem.Tests.Integration` (PlayMode) | Entorno local arrancado con el módulo (`tools/check-backend.sh --module` → 0) y la configuración local | Alta de invitado, misma cuenta al volver (sesión, refresco, reautenticación), versión de protocolo, clave errónea, sin conexión y salida de la escena a mitad. Si el entorno no responde, falla al instante con «Entorno local no disponible» |
 
-**Desde el editor**: *Window → General → Test Runner*, pestañas *EditMode* y *PlayMode* →
-*Run All*.
+Las de integración son PlayMode porque el adaptador HTTP del SDK (`UnityWebRequestAdapter`) usa
+corrutinas y necesita el bucle del reproductor.
+
+**Desde el editor**: *Window → General → Test Runner*, pestañas *EditMode* y *PlayMode*.
 
 **En modo batch** (macOS; ajusta la ruta del editor en otros sistemas), desde la raíz del
 repositorio:
 
 ```sh
 UNITY="/Applications/Unity/Hub/Editor/6000.3.29f1/Unity.app/Contents/MacOS/Unity"
-"$UNITY" -batchmode -nographics -projectPath client-unity \
-  -runTests -testPlatform EditMode -testResults editmode-results.xml -logFile -
-"$UNITY" -batchmode -projectPath client-unity \
-  -runTests -testPlatform PlayMode -testResults playmode-results.xml -logFile -
+"$UNITY" -batchmode -nographics -projectPath client-unity -runTests -testPlatform EditMode \
+  -assemblyNames Ecosystem.Tests.EditMode -testResults editmode.xml -logFile -
+"$UNITY" -batchmode -projectPath client-unity -runTests -testPlatform PlayMode \
+  -assemblyNames Ecosystem.Tests.PlayMode -testResults playmode.xml -logFile -
+"$UNITY" -batchmode -projectPath client-unity -runTests -testPlatform PlayMode \
+  -assemblyNames Ecosystem.Tests.Integration -testResults integration.xml -logFile -
 ```
 
 - No añadas `-quit`: `-runTests` cierra el editor al terminar.
-- Código de salida: `0` si todas las pruebas pasan y `2` si alguna falla.
-- Los resultados quedan en el XML indicado; no los confirmes en Git.
+- Código de salida: `0` si todas pasan y `2` si alguna falla. No confirmes los XML en Git.
 - El proyecto no puede estar abierto en otro editor a la vez.
+- Si interrumpes Unity a mitad de una ejecución y el siguiente arranque falla en el compilador de
+  Burst, borra `client-unity/Temp/` y `client-unity/Library/BurstCache/` (se regeneran).
 
-Las API de Unity que usan las pruebas (`NamedBuildTarget`, `PlayerSettings`,
-`EditorBuildSettings`, `EditorSettings`, `VersionControlSettings`, `GraphicsSettings`,
-`QualitySettings`, `SceneManager`, `LogAssert`) se verificaron compilando contra 6000.3.29f1, sin
-avisos de obsolescencia.
+**Para llevarlas a la CI** (todavía no se ejecutan en GitHub Actions, ADR-0007): los mismos
+comandos con una licencia de Unity como secreto del repositorio y una acción o imagen de Unity
+fijada por versión. Los grupos EditMode y PlayMode no necesitan servidor. El de integración
+encajaría en el trabajo `backend`, que ya arranca el entorno, pasando la configuración por las
+variables `ECOSYSTEM_NAKAMA_*` (ver *Conexión con el servidor*).
 
 ## Builds de desarrollo
 
@@ -102,6 +119,8 @@ dependencias indirectas las fija `Packages/packages-lock.json`, que se versiona.
 | `com.unity.test-framework` | 1.6.0 | Pruebas EditMode y PlayMode (constitución, principio VI) |
 | `com.unity.ide.rider` | 3.1.0 | Integración con JetBrains Rider (generación de proyectos y depuración) |
 | `com.unity.ide.visualstudio` | 2.0.26 | Integración con Visual Studio y VS Code (generación de proyectos y depuración) |
+| `com.heroiclabs.nakama-unity` | 3.23.0 (commit `704f5da…`) | SDK de Nakama: autenticación, sesión y RPC ([ADR-0009](../docs/decisions/0009-sdk-nakama-unity.md)) |
+| `com.unity.nuget.newtonsoft-json` | 3.2.2 | Leer JSON para los validadores de contratos generados ([ADR-0010](../docs/decisions/0010-validadores-csharp-generados.md)) |
 
 El proyecto se creó con la plantilla **«3D URP»**, que es el nombre de la plantilla *Universal
 3D* en Unity 6.3. Se le retiraron los paquetes sin uso: Input System, uGUI, Timeline, Visual
@@ -121,7 +140,50 @@ Hasta resolver [D-06](../docs/decisions/pendientes.md#d-06--nombre-de-producto-e
 
 ## Conexión con el servidor
 
-El cliente **no** incluye todavía el SDK de Nakama ni ninguna configuración de conexión
-([ADR-0004](../docs/decisions/0004-conectividad-sin-sdk-cliente.md)). Se añadirá, con versión
-fijada y su propio ADR, en la primera funcionalidad que lo necesite. El cliente nunca contendrá
-claves de servidor.
+Al abrir `Bootstrap`, el cliente entra como **invitado** en el Nakama configurado
+([ADR-0009](../docs/decisions/0009-sdk-nakama-unity.md)):
+
+1. **Identidad**: un identificador de instalación aleatorio, guardado en `PlayerPrefs` y nunca
+   derivado del hardware, sirve para la autenticación por dispositivo. La identidad del jugador es
+   su **cuenta en el servidor** (`userId`). Más adelante se podrán vincular otras credenciales a
+   esa misma cuenta (`IAuthenticator`).
+2. **Sesión**: se guarda en `PlayerPrefs`. Si sigue vigente, se reutiliza; si ha caducado (2 h),
+   se refresca (el refresco dura 7 días); si no se puede, se vuelve a autenticar la misma
+   instalación y se recupera **la misma cuenta**.
+3. **Versión de protocolo**: llama al RPC `protocol_version` y valida la respuesta con el
+   contrato generado. Si el servidor tiene una versión mayor, «actualiza el juego»; si es menor o
+   la respuesta no cumple el contrato, «servidor incompatible».
+4. **Fallos de red**: hasta 3 reintentos (1, 2 y 4 s) con 10 s de tiempo límite por petición y,
+   si no hay forma, «Sin conexión» con «Reintentar» en menos de 60 s. Al salir de la escena se
+   cancela todo sin errores.
+
+Estados y textos completos: [contrato de estados](../specs/003-sesion-invitado-cliente/contracts/connection-states.md).
+
+### Configuración local
+
+1. Copia `client-unity/LocalConfig/connection.example.json` a
+   `client-unity/LocalConfig/connection.local.json`. **No se versiona**: está en `.gitignore` y
+   `tools/check-repo.sh` lo rechaza si alguien lo añade.
+2. Pon en `serverKey` el valor de `NAKAMA_SERVER_KEY` de tu `deploy/local/.env`. Si cambiaste
+   `NAKAMA_API_PORT`, cámbialo también en `port`.
+3. Arranca el backend ([deploy/local/README.md](../deploy/local/README.md)) y reproduce
+   `Bootstrap`.
+
+En su lugar puedes usar las variables `ECOSYSTEM_NAKAMA_HOST`, `ECOSYSTEM_NAKAMA_PORT`,
+`ECOSYSTEM_NAKAMA_SERVER_KEY` y `ECOSYSTEM_NAKAMA_USE_SSL`, que tienen precedencia sobre el
+archivo. `ECOSYSTEM_NAKAMA_CONFIG=none` desactiva la configuración, y lo usan las pruebas.
+
+La carpeta `LocalConfig/` está fuera de `Assets/`, así que **las builds no llevan configuración**
+y muestran «Configuración de conexión ausente». Configurar builds de publicación queda para una
+spec posterior. La clave de servidor de Nakama es la clave pública de cliente; la `http_key` nunca
+va en el cliente.
+
+### Limitaciones conocidas
+
+- **Reinstalar la app o borrar sus datos crea una cuenta de invitado nueva**: se pierde el
+  identificador de instalación. Se resolverá con la vinculación de cuentas.
+- Cada dispositivo es una cuenta de invitado distinta.
+- Los tokens se guardan en `PlayerPrefs`. Al añadir cuentas registradas habrá que pasar a un
+  almacenamiento seguro (ADR-0009).
+- Solo se ha verificado en el editor contra `127.0.0.1`. Conectar dispositivos o emuladores al
+  backend local queda fuera de alcance.
