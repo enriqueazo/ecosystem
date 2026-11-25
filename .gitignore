@@ -1,4 +1,4 @@
-# --- Unity ---
+# --- Unity (client-unity/) ---
 /client-unity/[Ll]ibrary/
 /client-unity/[Tt]emp/
 /client-unity/[Oo]bj/
@@ -6,36 +6,40 @@
 /client-unity/[Bb]uilds/
 /client-unity/[Ll]ogs/
 /client-unity/[Uu]ser[Ss]ettings/
+/client-unity/[Rr]ecordings/
 /client-unity/MemoryCaptures/
-*.csproj
-*.sln
-*.suo
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svclog
-*.pdb
-*.mdb
-*.opendb
-*.VC.db
-*.VC.VC.opendb
+/client-unity/.utmp/
+
+# Proyectos y soluciones que genera el IDE a partir del proyecto Unity
+/client-unity/*.csproj
+/client-unity/*.sln
+/client-unity/*.slnx
+/client-unity/*.suo
+/client-unity/*.user
+/client-unity/*.userprefs
+/client-unity/*.pidb
+/client-unity/*.booproj
+/client-unity/*.svclog
+/client-unity/*.pdb
+/client-unity/*.mdb
+/client-unity/*.opendb
+/client-unity/*.VC.db
+/client-unity/*.VC.VC.opendb
+
+# Builds móviles y paquetes exportados
+*.apk
+*.aab
+*.ipa
+*.unitypackage
+crashlytics-build.properties
 
 # --- IDE ---
 .vs/
 .idea/
+.vscode/
 *.sln.iml
 
-# --- Go / Nakama ---
-/server-nakama/bin/
-/server-nakama/coverage.out
-/server-nakama/*.test
-/server-nakama/*.prof
-/server-nakama/*.so
-
-# --- Docker y datos locales ---
-/deploy/data/
-/deploy/volumes/
+# --- Registros ---
 *.log
 
 # --- Secretos y configuración local ---
