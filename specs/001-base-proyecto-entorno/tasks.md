@@ -366,14 +366,14 @@ escenarios de [quickstart.md](quickstart.md).
   - nombre de producto provisional;
   - asset URP asignado como pipeline por defecto y en los niveles de calidad.
   - Ejecutar EditMode y PlayMode: 100 % en verde (Green).
-- [ ] T033 [US2] Validar quickstart.md C1–C6:
+- [X] T033 [US2] Validar quickstart.md C1–C6:
   - abrir desde un clon limpio;
   - generar una build de desarrollo para Android en `client-unity/Builds/` (ignorada) y exportar
     el proyecto Xcode;
   - `git status` sin cambios tras cerrar el editor;
   - ejecutar `tools/check-repo.sh`, que ahora valida las rutas del cliente.
   - Anotar en `tasks.md` → *Registro de verificación* lo no verificado con su motivo.
-- [ ] T034 [US2] Crear `client-unity/README.md`, procedimiento único del cliente:
+- [X] T034 [US2] Crear `client-unity/README.md`, procedimiento único del cliente:
   - versión exacta (enlace a ADR-0005) y módulos requeridos;
   - cómo abrir el proyecto (versión exacta; no confirmar cambios de versión, Principio VIII);
   - estructura de `Assets/_Project/`;
@@ -382,7 +382,7 @@ escenarios de [quickstart.md](quickstart.md).
   - tabla de paquetes del manifiesto con la necesidad de cada uno (FR-010);
   - identificadores provisionales (D-06);
   - sin SDK de Nakama (ADR-0004).
-- [ ] T035 [US2] Actualizar la sección de requisitos y primeros pasos del cliente en `README.md`: sustituir el enlace a D-02 por la versión fijada y enlazar a `client-unity/README.md`.
+- [X] T035 [US2] Actualizar la sección de requisitos y primeros pasos del cliente en `README.md`: sustituir el enlace a D-02 por la versión fijada y enlazar a `client-unity/README.md`.
 
 **Checkpoint**: commits `docs(decisions)` (T025), `test(client)` (T029–T030), `feat(client)`
 (T026–T027 y T031–T032) y `docs(client)` (T034–T035). La US2 funciona de forma independiente.
@@ -552,3 +552,10 @@ Se copia a la descripción del PR solo cuando se pida crearlo.
 | T030 Red | 2026-11-25 | ✅ | PlayMode (batch): 1 caso, falla: «Scene 'Assets/_Project/Scenes/Bootstrap.unity' couldn't be loaded because it has not been added to the active build profile or shared scene list» |
 | T031 | 2026-11-25 | ✅ | `Assets/_Project/Scenes/Bootstrap.unity` solo con «Main Camera» (sin luz, sin AudioListener ni scripts); única escena de la build en el índice 0; `templateDefaultScene` apunta a ella. Creada con un script de editor temporal (`-executeMethod`) eliminado después, sin restos en archivos versionados |
 | T032 Green | 2026-11-25 | ✅ | IL2CPP en Android e iOS, ARM64, Force Text, `com.ecosystem.dev` en Android e iOS, producto y compañía «Ecosystem» (provisionales, D-06). EditMode 10/10 y PlayMode 1/1 en modo batch |
+| C1 | 2026-11-25 | ✅ | Clon limpio de la rama: el proyecto abre e importa en modo batch en 25 s, con 0 errores de compilación |
+| C2 / C3 | 2026-11-25 | ✅ | EditMode 10/10 (también en el clon limpio) y PlayMode 1/1 (la escena `Bootstrap` carga con cámara y sin registros inesperados) |
+| C4 | 2026-11-25 | ✅ | Build de desarrollo Android (`BuildPipeline`, script temporal eliminado): Succeeded, 0 errores, 0 avisos, APK de 33 MB en `client-unity/Builds/Android/` (ignorada) |
+| C5 | 2026-11-25 | ✅ | Exportación iOS: Succeeded, 0 errores; `Builds/iOS/Unity-iPhone.xcodeproj` generado. Compilar y firmar en Xcode queda fuera de alcance |
+| C6 / SC-007 | 2026-11-25 | ✅ | La primera build de cada plataforma completó ajustes de URP y del proyecto (filtrado de shaders y *batching*): versionados en `8495a4c`. Después, una segunda build de Android e iOS y una reapertura del editor dejan `git status` limpio; el clon limpio también queda limpio tras abrirse |
+| T033 check-repo | 2026-11-25 | ✅ | `tools/check-repo.sh` → 0, ahora con las 5 rutas imprescindibles (incluidas las del cliente) |
+| T034 / T035 | 2026-11-25 | ✅ | `client-unity/README.md` (versión, módulos, apertura, estructura, pruebas en editor y en modo batch, builds, paquetes justificados, valores provisionales D-06, sin SDK de Nakama). README raíz: mapa, requisitos (6000.3.29f1) y primeros pasos del cliente. FR-004: sin referencias cruzadas entre cliente y servidor |
