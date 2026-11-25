@@ -35,8 +35,8 @@ de Docker, pero sí el CLI de Docker para validar la configuración de Compose.
 | Comprobación | Falla si |
 |--------------|----------|
 | `compose` | `docker compose config --quiet` con `--env-file .env.example` devuelve error. |
-| `secrets` | Hay en el índice de Git un archivo `.env` o `.env.*` (salvo `.env.example`), o rutas de datos locales. |
-| `ignored` | Algún archivo imprescindible está ignorado (`.env.example`, `Packages/manifest.json`, `Packages/packages-lock.json`, `ProjectSettings/ProjectVersion.txt`, o un `.meta` de muestra). Las rutas del cliente solo se comprueban si existe `client-unity/ProjectSettings/`. |
+| `secrets` | Hay en el índice de Git un archivo `.env` o `.env.*` (salvo `.env.example`), o datos de PostgreSQL (un archivo `PG_VERSION` o una ruta bajo `postgres-data/`). |
+| `ignored` | Algún archivo imprescindible está ignorado (`.env.example`, `Packages/manifest.json`, `Packages/packages-lock.json`, `ProjectSettings/ProjectVersion.txt`, o `client-unity/Assets/_Project.meta`). Las rutas del cliente solo se comprueban si existe `client-unity/ProjectSettings/`. |
 
 | Código | Significado |
 |--------|-------------|
