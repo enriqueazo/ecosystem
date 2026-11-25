@@ -1,14 +1,12 @@
 <!--
 SYNC IMPACT REPORT (temporal; eliminar antes de commitear)
-Version change: (plantilla sin rellenar) → 1.0.0
-Principios modificados: ninguno renombrado (primera ratificación)
-Secciones añadidas: Principios I–VIII, Pila Tecnológica y Repositorio,
-  Flujo de Desarrollo y Calidad, Decisiones Abiertas, Gobernanza
+Version change: 1.0.0 → 1.1.0
+Principios modificados: ninguno
+Secciones modificadas: Flujo de Desarrollo y Calidad → Git (nueva cláusula "Una rama por spec")
+Secciones añadidas: ninguna
 Secciones eliminadas: ninguna
 TODOs diferidos:
   - Nombre del proyecto: se usa "Ecosystem" (nombre del directorio); confirmar nombre definitivo.
-  - Decisiones abiertas (runtime Nakama, sincronización, versiones fijas) listadas en
-    "Decisiones Abiertas"; no son placeholders sin resolver.
 -->
 # Ecosystem Constitution
 
@@ -164,6 +162,17 @@ que exista un flujo funcional en el repositorio.
 
 **Git**:
 - Ramas breves y descriptivas: `feat/…`, `fix/…`, `docs/…`, `refactor/…`.
+- **Una rama por spec**: cada nueva spec MUST desarrollarse en una rama propia, creada desde
+  `main` actualizada antes de escribir la spec, y MUST NOT reutilizarse para otra spec.
+  - Nombre normalizado: `<tipo>/<NNN>-<nombre-corto>`, donde `<tipo>` sigue la convención
+    anterior (normalmente `feat`), y `<NNN>-<nombre-corto>` coincide exactamente con el
+    directorio de la spec en `specs/` (p. ej. `feat/001-login-invitado` ↔
+    `specs/001-login-invitado/`).
+  - `<nombre-corto>`: 2–5 palabras en minúsculas, ASCII sin tildes ni `ñ`, separadas por
+    guiones, sin espacios, guiones bajos, mayúsculas ni caracteres especiales; descriptivo y
+    sin incluir nombres de personas o datos sensibles.
+  - Spec, plan, tareas, implementación y pruebas de esa spec MUST vivir en su rama; la
+    integración en `main` se hace mediante PR revisado y la rama se elimina tras el merge.
 - Commits atómicos (coherentes, revisables y, cuando sea posible, compilables con pruebas
   pasando) con Conventional Commits y ámbito cuando ayude (`feat(server): …`, `fix(client): …`).
 - MUST NOT mezclarse cambios sin relación ni incluirse archivos generados, secretos, cachés o
@@ -200,4 +209,4 @@ identificarse y resolverse antes de planificar la implementación.
 - **Revisión de cumplimiento**: en cada revisión de spec, plan y código se comprueban los
   principios I–VIII; la constitución se revisa al resolverse una decisión abierta que la afecte.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-24
+**Version**: 1.1.0 | **Ratified**: 2026-11-24 | **Last Amended**: 2026-11-25
