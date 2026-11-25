@@ -36,18 +36,18 @@ escenarios de [quickstart.md](quickstart.md).
 **Purpose**: Esqueleto del proyecto TypeScript y reglas del repositorio. Incluye la verificación
 temprana del riesgo de TypeScript 7 (research.md R-2).
 
-- [ ] T001 Comprobar precondiciones y anotarlas en `specs/002-servidor-typescript-ci/tasks.md` → *Registro de verificación*:
+- [X] T001 Comprobar precondiciones y anotarlas en `specs/002-servidor-typescript-ci/tasks.md` → *Registro de verificación*:
   - rama `feat/002-servidor-typescript-ci`;
   - `node --version` = v26.13.1 y `npm --version` = 11.20.0;
   - `docker info` responde;
   - las imágenes de `deploy/local/compose.yaml` están presentes.
-- [ ] T002 [P] Añadir a `.gitignore` las reglas de research.md R-10:
+- [X] T002 [P] Añadir a `.gitignore` las reglas de research.md R-10:
   - `/server-nakama/node_modules/`, `/server-nakama/build/`, `/server-nakama/src/generated/` y
     `*.tsbuildinfo`;
   - comprobar con `git check-ignore --no-index` que `server-nakama/package-lock.json`,
     `server-nakama/.node-version` y los archivos de configuración **no** quedan ignorados.
-- [ ] T003 [P] Añadir a `.editorconfig` la sección `[*.{ts,mjs}]` con `indent_size = 2`.
-- [ ] T004 Crear el esqueleto de `server-nakama/` según research.md R-1:
+- [X] T003 [P] Añadir a `.editorconfig` la sección `[*.{ts,mjs}]` con `indent_size = 2`.
+- [X] T004 Crear el esqueleto de `server-nakama/` según research.md R-1:
   - `server-nakama/.node-version` con `26.13.1`;
   - `server-nakama/.npmrc` con `engine-strict=true`;
   - `server-nakama/package.json`:
@@ -58,7 +58,7 @@ temprana del riesgo de TypeScript 7 (research.md R-2).
     - `scripts` según contracts/server-scripts.md, con marcadores donde la tarea que los
       implementa aún no existe;
   - `npm install` para generar `server-nakama/package-lock.json`.
-- [ ] T005 Crear la configuración de herramientas:
+- [X] T005 Crear la configuración de herramientas:
   - `server-nakama/tsconfig.json` para `src/`: `noEmit`, `strict`, `lib: ["es5"]`, tipos solo de
     `nakama-runtime`, `allowImportingTsExtensions`, `erasableSyntaxOnly`, `moduleResolution`
     adecuada para TypeScript 7;
@@ -69,7 +69,7 @@ temprana del riesgo de TypeScript 7 (research.md R-2).
   - `server-nakama/rollup.config.mjs`: entrada `src/main.ts`, `external: ["nakama-runtime"]`,
     node-resolve + commonjs + babel (`babelHelpers: "bundled"`, extensiones `.ts`/`.js`),
     salida `build/index.js` en formato `es`.
-- [ ] T006 Verificar el riesgo R-2 con un `server-nakama/src/main.ts` provisional:
+- [X] T006 Verificar el riesgo R-2 con un `server-nakama/src/main.ts` provisional:
   - el `src/main.ts` contiene una `InitModule` vacía con el truco `!InitModule &&
     InitModule.bind(null);`;
   - `npx tsc --noEmit -p server-nakama` debe aceptar las definiciones de `nakama-runtime` con
@@ -401,3 +401,8 @@ Se rellena durante la implementación. Cada fila es un escenario de quickstart.m
 
 | Escenario | Fecha | Resultado (✅ / ❌ / no verificado) | Evidencia o motivo |
 |-----------|-------|------------------------------------|--------------------|
+| T001 | 2026-11-25 | ✅ | Rama `feat/002-servidor-typescript-ci`; Node v26.13.1 y npm 11.20.0; Docker Engine 29.9.3 (actualizado desde 29.2.1 por Docker Desktop); imágenes `postgres:16.16-alpine` y `nakama:3.42.0` presentes |
+| T002 / T003 | 2026-11-25 | ✅ | `git check-ignore --no-index`: `node_modules/`, `build/` y `src/generated/` ignorados; `package-lock.json`, `.node-version`, `.npmrc`, `biome.json`, `tsconfig.json` y `rollup.config.mjs` versionados. `.editorconfig`: `[*.{ts,mjs}]` con 2 espacios |
+| T004 | 2026-11-25 | ✅ | `package.json` con versiones exactas y `engines` node `>=26.13.1 <27` y npm `>=11.20.0 <12`; 0 vulnerabilidades. **Ajuste**: `github:heroiclabs/nakama-common#v1.49.0` se resolvía como `git+ssh` en el lockfile (no funcionaría en la CI sin claves) → dependencia cambiada a la tarball HTTPS del commit `e6bf1ab…` (al que apunta la etiqueta v1.49.0), con `integrity` sha512. `@types/node` 26.6.10 añadido para pruebas y scripts. `fsevents` (opcional de macOS, sin uso) con `allowScripts: {fsevents: false}` explícito |
+| T005 | 2026-11-25 | ✅ | `tsconfig.json` (`lib: ["es5"]`, `module: preserve`, `moduleResolution: bundler`, `erasableSyntaxOnly`, `verbatimModuleSyntax`), `tsconfig.test.json` (tipos de Node), Babel (`ie 11` + TypeScript) y Rollup (`format: es`, sin envoltorio). **Ajustes de Biome 2.6**: `rules.recommended` obsoleto → `preset` (`biome migrate`); `vcs.root: ".."` porque `.gitignore` está en la raíz; sangría de 2 espacios explícita (Biome no lee el `.editorconfig` de la raíz); `package-lock.json` excluido de Biome para que lo formatee solo npm |
+| T006 / R-2 | 2026-11-25 | ✅ | TypeScript 7.0.2 acepta `nakama-runtime` con `lib: ["es5"]` (plan B innecesario). `[1].includes(1)` en `src/` → TS2550. Rollup genera `build/index.js` con `InitModule` global y acorn lo analiza como ES5 |

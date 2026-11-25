@@ -33,6 +33,12 @@
 *.unitypackage
 crashlytics-build.properties
 
+# --- Servidor TypeScript (server-nakama/) ---
+/server-nakama/node_modules/
+/server-nakama/build/
+/server-nakama/src/generated/
+*.tsbuildinfo
+
 # --- IDE ---
 .vs/
 .idea/
