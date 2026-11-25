@@ -3,8 +3,9 @@
 Proyecto Unity del juego para **Android e iOS**, con Universal Render Pipeline (URP). Este
 documento es el procedimiento único del cliente; el README raíz enlaza aquí.
 
-> Estado: conexión como invitado con Nakama (spec 003) y primer territorio visible: 16 piezas
-> hexagonales en vista isométrica (spec 004). Todavía no hay mecánicas de juego.
+> Estado: conexión como invitado con Nakama (spec 003) y territorio visible en vista isométrica: un
+> disco de 55 piezas hexagonales de hierba, nieve, arena y agua con un río (specs 004 y 005).
+> Todavía no hay mecánicas de juego.
 
 ## Versión y requisitos
 
@@ -32,8 +33,10 @@ Abrir y cerrar el proyecto sin cambiar nada no debe modificar ningún archivo ve
 
 ```text
 Assets/_Project/
-├── Art/Territory/             Texturas, materiales (URP Simple Lit), malla GENERADA y prefab de la pieza
-├── Data/Territory/            InitialTerritory.asset: disposición inicial (16 celdas)
+├── Art/Territory/             Texturas, materiales (URP Simple Lit), mallas GENERADAS (pieza, agua y
+│                              Meshes/River/ con las 15 de río) y un prefab por variante y para el río
+├── Data/Territory/            InitialTerritory.asset (disposición: 55 celdas con variante y río) y
+│                              TerrainCatalog.asset (catálogo de recursos por variante y pieza de río)
 ├── Scenes/
 │   ├── Bootstrap.unity        Escena inicial y pantalla de conexión. Índice 0 de la build.
 │   └── Territory.unity        Territorio hexagonal. Índice 1; se abre también sin backend.
@@ -43,9 +46,9 @@ Assets/_Project/
 │   ├── Connection/            Ecosystem.Connection: núcleo de conexión, sin Unity ni Nakama
 │   ├── Connection.Nakama/     Ecosystem.Connection.Nakama: adaptadores (SDK de Nakama, PlayerPrefs, config)
 │   ├── Presentation/          Ecosystem.Presentation: ConnectionScreen (IMGUI provisional)
-│   ├── Territory/             Ecosystem.Territory: rejilla hexagonal, disposición, malla y encuadre, sin Unity
-│   ├── Territory.View/        Ecosystem.Territory.View: TerritoryLayoutAsset, TerritoryView y TerritoryCamera
-│   └── Territory.Editor/      Ecosystem.Territory.Editor: comando para regenerar la malla (solo editor)
+│   ├── Territory/             Ecosystem.Territory: rejilla, aristas, disposición y su validación, río, mallas y encuadre, sin Unity
+│   ├── Territory.View/        Ecosystem.Territory.View: TerritoryLayoutAsset, TerrainCatalogAsset, TerritoryView y TerritoryCamera
+│   └── Territory.Editor/      Ecosystem.Territory.Editor: comando para regenerar las mallas (solo editor)
 └── Tests/
     ├── EditMode/              Configuración, conexión, contratos y núcleo del territorio
     ├── PlayMode/              Bootstrap y la escena del territorio
@@ -69,9 +72,9 @@ Unity Test Framework (NUnit), en tres grupos que se ejecutan por separado:
 
 | Grupo | Ensamblado | Necesita | Qué comprueba |
 |-------|-----------|----------|---------------|
-| EditMode | `Ecosystem.Tests.EditMode` | Nada | Configuración del proyecto (escenas de la build: `Bootstrap` y `Territory`); núcleo de conexión (sesión, reintentos, compatibilidad, cancelación, resultados tardíos) con dobles; los ejemplos de los contratos dan el mismo resultado con los validadores C# que con Ajv; territorio: celdas y vecinos, disposición y su validación, malla de la pieza y su asset al día, encuadre en 6 proporciones y con área segura, escena sin piezas guardadas |
-| PlayMode | `Ecosystem.Tests.PlayMode` | Nada | `Bootstrap` carga sin errores, muestra «Configuración ausente» y no pasa al territorio. La prueba fija `ECOSYSTEM_NAKAMA_CONFIG=none`, así que no depende de tu configuración local. `Territory` carga sin errores con 16 piezas, cámara ortográfica inclinada sin giro, fondo liso, sin sombras ni posprocesado, encuadre en las 6 proporciones y rechazo de disposiciones no válidas |
-| Integración | `Ecosystem.Tests.Integration` (PlayMode) | Entorno local arrancado con el módulo (`tools/check-backend.sh --module` → 0) y la configuración local | Alta de invitado, misma cuenta al volver (sesión, refresco, reautenticación), versión de protocolo, clave errónea, sin conexión, salida de la escena a mitad y paso al territorio al conectar (una vez, en ≤ 2 s). Si el entorno no responde, falla al instante con «Entorno local no disponible» |
+| EditMode | `Ecosystem.Tests.EditMode` | Nada | Configuración del proyecto (escenas de la build: `Bootstrap` y `Territory`); núcleo de conexión (sesión, reintentos, compatibilidad, cancelación, resultados tardíos) con dobles; los ejemplos de los contratos dan el mismo resultado con los validadores C# que con Ajv; territorio: celdas, aristas y vecinos, disposición y su validación (vacía, repetida, no conexa, variante, datos de río y río roto), disco inicial de 55 celdas y su composición, triangulador, mallas de pieza, agua y río y sus assets al día, catálogo, importación de texturas, encuadre en 6 proporciones y con área segura, escena sin piezas guardadas |
+| PlayMode | `Ecosystem.Tests.PlayMode` | Nada | `Bootstrap` carga sin errores, muestra «Configuración ausente» y no pasa al territorio. La prueba fija `ECOSYSTEM_NAKAMA_CONFIG=none`, así que no depende de tu configuración local. `Territory` carga sin errores con 55 piezas, cada una con los recursos de su variante o pieza de río, cámara ortográfica inclinada sin giro, fondo liso, sin sombras ni posprocesado, encuadre en las 6 proporciones, y datos no válidos (disposición o catálogo) sin ninguna pieza visible |
+| Integración | `Ecosystem.Tests.Integration` (PlayMode) | Entorno local arrancado con el módulo (`tools/check-backend.sh --module` → 0) y la configuración local | Alta de invitado, misma cuenta al volver (sesión, refresco, reautenticación), versión de protocolo, clave errónea, sin conexión, salida de la escena a mitad y paso al territorio al conectar (una vez, en ≤ 2 s, con 55 piezas). Si el entorno no responde, falla al instante con «Entorno local no disponible» |
 
 Las de integración son PlayMode porque el adaptador HTTP del SDK (`UnityWebRequestAdapter`) usa
 corrutinas y necesita el bucle del reproductor.
@@ -174,24 +177,45 @@ Al llegar a «Conectado», `Bootstrap` carga una vez la escena del territorio (`
 
 ## Territorio
 
-Primer elemento visual del juego (spec 004): 16 piezas hexagonales de tierra con césped, en 4 filas
-de 4 con las filas impares desplazadas media pieza, vistas con una cámara ortográfica inclinada 35°
-sobre un fondo gris azulado liso. Dirección visual y valores:
-[contrato de dirección visual](../specs/004-territorio-hexagonal/contracts/visual-direction.md).
+Territorio de las specs 004 y 005: un **disco de 55 piezas hexagonales** (9 filas de 3‑6‑7‑8‑7‑8‑7‑6‑3),
+vistas con una cámara ortográfica inclinada 35° sobre un fondo gris azulado liso. Hay cuatro
+variantes de terreno (hierba, nieve, arena y agua) y un río de piezas con cauce hundido, del
+manantial al lago. Dirección visual y valores:
+[spec 004](../specs/004-territorio-hexagonal/contracts/visual-direction.md) (hierba, cámara, luz y
+fondo) y [spec 005](../specs/005-terreno-circular-variantes/contracts/visual-direction.md)
+(variantes y río).
 
 - **Revisarlo sin backend**: abre `Assets/_Project/Scenes/Territory.unity`. Se ve ya sin pulsar
   *Play* (las piezas no se guardan en la escena) y en *Play* no necesita Nakama ni configuración
   local. La revisión visual completa está en el
-  [quickstart de la spec 004](../specs/004-territorio-hexagonal/quickstart.md#c-revisión-visual-manual-fr-024).
+  [quickstart de la spec 005](../specs/005-terreno-circular-variantes/quickstart.md#c-revisión-visual-manual-fr-027).
 - **Disposición**: `Assets/_Project/Data/Territory/InitialTerritory.asset`, una lista de celdas
-  `{column, row}` en coordenadas offset *odd-r*. Una disposición vacía o con celdas repetidas no
-  muestra piezas y registra un error `[Territorio] …`.
-- **Encuadre**: `TerritoryCamera` mantiene el tablero entero dentro del área segura, con un 6 % de
+  `{column, row, terrain, river, rotation}` en coordenadas offset *odd-r*:
+  - `terrain`: 0 hierba, 1 nieve, 2 arena, 3 agua y 4 río;
+  - `river` (solo en las de río): 1 manantial, 2 tramo recto y 3 curva suave;
+  - `rotation` (solo en las de río): de 0 a 5 pasos de 60° en sentido antihorario visto desde arriba.
+
+  Con giro 0, el manantial abre la arista E, el recto E y O, y la curva E y NO
+  ([research.md R-3](../specs/005-terreno-circular-variantes/research.md)).
+- **Cambiar la composición**: edita `InitialTerritory.asset` en el inspector. Una disposición vacía,
+  con celdas repetidas, no conexa, con una variante desconocida, con datos de río incoherentes o con
+  un río que no continúa (cada arista abierta debe dar a otra pieza de río que la continúe, a agua o
+  fuera del territorio) no muestra piezas y registra un error `[Territorio] …` que nombra la celda.
+- **Catálogo**: `Assets/_Project/Data/Territory/TerrainCatalog.asset` asocia cada variante con su
+  prefab (`HexTile`, `SnowTile`, `SandTile` y `WaterTile`) y cada pieza de río, por forma y giro
+  canónico, con su malla; todas usan `RiverTile.prefab`. Añadir una variante es añadir un prefab y
+  una entrada, sin tocar el código. Si falta una entrada que la disposición usa, no se muestran
+  piezas y se registra `[Territorio] El catálogo no tiene recursos para …`.
+- **Encuadre**: `TerritoryCamera` mantiene el territorio entero dentro del área segura, con un 6 % de
   margen por lado, en vertical y en horizontal (la rotación automática del proyecto no cambia).
-- **Malla de la pieza**: la genera el código (`HexPrismMeshBuilder`). Si cambias la altura en
-  `HexMetrics.Default`, ejecuta *Ecosystem → Territorio → Regenerar malla de pieza*; si no, la
-  prueba `HexTileMeshAssetTests` falla. En modo batch:
-  `"$UNITY" -batchmode -nographics -quit -projectPath client-unity -executeMethod Ecosystem.Territory.Editor.HexTileMeshMenu.Regenerate`.
+- **Mallas**: las genera el código (`HexPrismMeshBuilder` y `RiverPieceMeshBuilder`) y se guardan
+  como assets: `HexTile`, `WaterTile` y las 15 de río. Si cambias la altura en `HexMetrics.Default`
+  o el agua y el cauce en `RiverMetrics.Default`, ejecuta *Ecosystem → Territorio → Regenerar mallas
+  del territorio*; si no, `HexTileMeshAssetTests` o `TerritoryMeshAssetTests` fallan. En modo batch:
+  `"$UNITY" -batchmode -nographics -quit -projectPath client-unity -executeMethod Ecosystem.Territory.Editor.TerritoryMeshesMenu.Regenerate`.
+- **Agua sin costuras**: la cara superior del agua (celdas de agua y cauce) usa un mapeo en red y
+  una textura periódica en la red hexagonal, así que no hay corte entre piezas ni en la
+  desembocadura.
 - **Binarios**: las texturas van en Git normal, sin LFS, con el umbral de revisión de
   [ADR-0011](../docs/decisions/0011-sin-git-lfs.md).
 
