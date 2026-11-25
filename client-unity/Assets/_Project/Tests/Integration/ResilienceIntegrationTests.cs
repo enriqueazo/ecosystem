@@ -104,7 +104,9 @@ namespace Ecosystem.Tests.Integration
 
             Assert.That(flow.State, Is.EqualTo(ConnectionState.Offline), flow.Problem);
             Assert.That(stopwatch.Elapsed.TotalSeconds, Is.LessThanOrEqualTo(60), "SC-003");
-            Assert.That(stopwatch.Elapsed.TotalSeconds, Is.GreaterThanOrEqualTo(4 * NakamaGameServer.RequestTimeoutSeconds - 1),
+            // Cota inferior para distinguir «tiempo agotado» de «conexión rechazada» (≈ 6 s); el tiempo
+            // límite de UnityWebRequest puede cortar algo antes de 10 s, de ahí el 90 %.
+            Assert.That(stopwatch.Elapsed.TotalSeconds, Is.GreaterThanOrEqualTo(4 * NakamaGameServer.RequestTimeoutSeconds * 0.9),
                 "Cada uno de los 4 intentos debe agotar el tiempo límite");
             UnityEngine.Debug.Log($"[Prueba] Servidor mudo → Offline en {stopwatch.Elapsed.TotalSeconds:0.0} s");
         }
