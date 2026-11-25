@@ -1,0 +1,126 @@
+# Integración continua (ADR-0007).
+# Contrato: specs/002-servidor-typescript-ci/contracts/ci-workflow.md
+# - Sin secretos del repositorio: el entorno local se configura con valores aleatorios por ejecución.
+# - Acciones fijadas por commit (la versión legible va en el comentario).
+# - No ejecuta Unity: las pruebas del cliente se ejecutan en local (client-unity/README.md).
+# Los nombres de los trabajos (repo, server, backend) son estables: los usa la protección de rama.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  repo:
+    name: repo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Versiones de herramientas
+        run: |
+          bash --version | head -n 1
+          git --version
+          docker --version
+          docker compose version
+      - name: Pruebas de tools/
+        run: tools/tests/run.sh
+      - name: Comprobaciones del repositorio
+        run: tools/check-repo.sh
+
+  server:
+    name: server
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: server-nakama
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: server-nakama/.node-version
+          cache: npm
+          cache-dependency-path: server-nakama/package-lock.json
+      - name: Versiones de herramientas
+        run: |
+          node --version
+          npm --version
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Formato, análisis, tipos, pruebas, contratos y construcción
+        run: npm run check
+
+  backend:
+    name: backend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: server-nakama/.node-version
+          cache: npm
+          cache-dependency-path: server-nakama/package-lock.json
+      - name: Versiones de herramientas
+        run: |
+          node --version
+          npm --version
+          docker --version
+          docker compose version
+      - name: Construir el módulo de servidor
+        working-directory: server-nakama
+        run: |
+          npm ci
+          npm run build
+      - name: Configuración local efímera (valores aleatorios, no se imprimen)
+        working-directory: deploy/local
+        run: |
+          umask 077
+          cp .env.example .env
+          set_secret() {
+            local name="$1" value="$2"
+            echo "::add-mask::${value}"
+            sed -i "s|^${name}=.*|${name}=${value}|" .env
+          }
+          set_secret POSTGRES_PASSWORD "$(openssl rand -hex 16)"
+          for name in NAKAMA_SERVER_KEY NAKAMA_RUNTIME_HTTP_KEY NAKAMA_SESSION_ENCRYPTION_KEY \
+            NAKAMA_SESSION_REFRESH_ENCRYPTION_KEY NAKAMA_CONSOLE_PASSWORD NAKAMA_CONSOLE_SIGNING_KEY; do
+            set_secret "$name" "$(openssl rand -hex 32)"
+          done
+      - name: Arrancar Nakama y PostgreSQL
+        working-directory: deploy/local
+        run: docker compose up -d --wait --wait-timeout 300
+      - name: Verificar salud y módulo cargado
+        run: tools/check-backend.sh --module
+      - name: Pruebas de integración
+        working-directory: server-nakama
+        run: npm run test:integration
+      - name: Registros de los servicios (solo si algo falla)
+        if: failure()
+        working-directory: deploy/local
+        run: docker compose logs --no-color
+      - name: Limpiar el entorno
+        if: always()
+        working-directory: deploy/local
+        run: docker compose down -v
